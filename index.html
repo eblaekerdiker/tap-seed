@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Seed - Gelişmiş Versiyon</title>
+    <title>Tap Seed - Ultimate Versiyon</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -20,7 +20,7 @@
             touch-action: manipulation;
         }
 
-        /* --- YENİ: RÜZGAR ANİMASYONU (IDLE) --- */
+        /* --- ANİMASYONLAR --- */
         @keyframes sway {
             0% { transform: rotate(0deg) scale(1); }
             25% { transform: rotate(2deg) scale(1); }
@@ -28,98 +28,67 @@
             100% { transform: rotate(0deg) scale(1); }
         }
         
-        /* Bitki normalde sallanır */
         .plant-idle {
             animation: sway 4s ease-in-out infinite;
-            transform-origin: bottom center; /* Kökten sallasın */
+            transform-origin: bottom center;
         }
 
-        /* --- YENİ: ELASTİK TIKLAMA EFEKTİ --- */
         .seed-container:active .plant-idle {
-            animation: none; /* Tıklarken sallanmayı durdur */
-            transform: scale(0.95, 0.85); /* Basıklaştır */
+            animation: none;
+            transform: scale(0.95, 0.85);
             transition: transform 0.05s;
         }
 
-        /* Tıklama alanı */
-        .seed-container {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        #plant-img {
-            pointer-events: none;
-            filter: drop-shadow(0 10px 10px rgba(56, 5, 22, 0.2));
-            transition: all 0.2s ease;
-        }
-
-        /* --- YENİ: YAĞMUR EFEKTİ --- */
+        /* --- YAĞMUR EFEKTİ --- */
         .rain-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 100, 0.1); /* Hafif mavi ton */
-            pointer-events: none; /* Tıklamayı engelleme */
-            z-index: 5;
-            opacity: 0;
-            transition: opacity 1s;
-            display: flex;
-            justify-content: center;
-            overflow: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 100, 0.1); pointer-events: none; z-index: 5;
+            opacity: 0; transition: opacity 1s; display: flex; justify-content: center; overflow: hidden;
         }
         .rain-drop {
-            position: absolute;
-            background: #a0c4ff;
-            width: 2px;
-            height: 15px;
-            top: -20px;
+            position: absolute; background: #a0c4ff; width: 2px; height: 15px; top: -20px;
             animation: rainFall 0.7s linear infinite;
         }
-        @keyframes rainFall {
-            to { transform: translateY(100vh); }
-        }
+        @keyframes rainFall { to { transform: translateY(100vh); } }
 
+        /* --- ALTIN TOHUM PARLAMA --- */
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 2px gold); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 10px orange); transform: scale(1.1); }
+            100% { filter: drop-shadow(0 0 2px gold); transform: scale(1); }
+        }
+        #golden-seed { animation: glow 1s infinite; }
+
+        /* --- BAŞARIM STİLLERİ --- */
+        .achievement-unlocked { background-color: #dcfce7; border: 2px solid #22c55e; opacity: 1 !important; }
+        .achievement-locked { opacity: 0.6; filter: grayscale(100%); }
+
+        /* --- GENEL UI --- */
         .floating-text {
-            position: absolute;
-            font-weight: bold;
-            pointer-events: none;
-            animation: floatUp 1s forwards;
-            color: var(--primary);
-            z-index: 50;
+            position: absolute; font-weight: bold; pointer-events: none;
+            animation: floatUp 1s forwards; color: var(--primary); z-index: 50;
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
             100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
         }
 
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.35s;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-
-        .btn-upgrade {
-            transition: all 0.2s;
-            border: 1px solid var(--primary);
-        }
-        .btn-upgrade:hover:not(:disabled) {
-            background-color: var(--primary);
-            color: white;
-        }
-        .btn-upgrade:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            border-color: #ccc;
-            color: #ccc;
-        }
+        .btn-upgrade { transition: all 0.2s; border: 1px solid var(--primary); }
+        .btn-upgrade:hover:not(:disabled) { background-color: var(--primary); color: white; }
+        .btn-upgrade:disabled { opacity: 0.4; cursor: not-allowed; border-color: #ccc; color: #ccc; }
+        
+        .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col items-center justify-between p-6">
 
     <div id="rain-layer" class="rain-overlay"></div>
+    
+    <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none z-50 transition-all hover:scale-125 flex items-center justify-center">🌟</div>
+
+    <button onclick="game.toggleAchievements()" class="absolute top-4 right-4 text-xs font-bold bg-white/80 p-2 rounded hover:bg-white z-40 border border-[#380516]">
+        🏆 BAŞARIMLAR
+    </button>
 
     <header class="w-full max-w-md flex justify-between items-center text-sm font-bold opacity-80 z-20">
         <div>SEVİYE: <span id="level-display">TOHUM</span></div>
@@ -127,7 +96,6 @@
     </header>
 
     <main class="flex-grow flex flex-col items-center justify-center relative w-full z-20">
-        
         <div class="absolute top-10 text-4xl font-black tracking-tighter">
             <span id="score-display">0</span> SP
         </div>
@@ -151,7 +119,6 @@
     </main>
 
     <footer class="w-full max-w-md space-y-3 z-20 bg-[var(--bg-color)]">
-        
         <button id="btn-auto" onclick="game.buyUpgrade('auto')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white shadow-sm">
             <div class="flex items-center gap-3">
                 <div class="text-left">
@@ -191,22 +158,16 @@
              <button onclick="game.resetSave()" class="text-xs opacity-50 hover:opacity-100 text-red-500 underline">SIFIRLA</button>
         </div>
     </footer>
-        <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none animate-bounce z-50 transition-all hover:scale-125 flex items-center justify-center">
-        🌟
-    </div>
-
-    <button onclick="ui.toggleAchievements()" class="absolute top-4 right-4 text-xs font-bold bg-white/50 p-2 rounded hover:bg-white z-30">
-        🏆 BAŞARIMLAR
-    </button>
 
     <div id="achievement-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
         <div class="bg-[#fdfbf7] border-4 border-[#380516] p-6 rounded-xl w-80 max-h-[80vh] overflow-y-auto relative shadow-2xl">
             <h2 class="text-xl font-black text-center mb-4 border-b-2 border-[#380516] pb-2">BAŞARIMLAR</h2>
-            <button onclick="ui.toggleAchievements()" class="absolute top-2 right-2 text-xl font-bold hover:text-red-600">&times;</button>
-            
-            <div id="achievement-list" class="space-y-3 text-sm"></div>
+            <button onclick="game.toggleAchievements()" class="absolute top-2 right-2 text-xl font-bold hover:text-red-600">&times;</button>
+            <div id="achievement-list" class="space-y-3 text-sm">
+                </div>
         </div>
     </div>
+
     <script>
         const audioManager = {
             ctx: null, enabled: true,
@@ -220,6 +181,15 @@
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(); osc.stop(this.ctx.currentTime + 0.1);
             },
+            playDing() {
+                if (!this.enabled) return; this.init();
+                const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.5);
+            },
             toggle() {
                 this.enabled = !this.enabled;
                 document.getElementById('mute-btn').innerText = this.enabled ? "SES: AÇIK" : "SES: KAPALI";
@@ -230,10 +200,21 @@
             data: {
                 points: 0, clickCount: 0, clickPower: 1, autoPower: 0, prestigeMultiplier: 1,
                 stage: 0, boostEndTime: 0, lastSaveTime: Date.now(),
-                upgrades: { auto: { c: 0, b: 15 }, click: { c: 0, b: 50 }, boost: { c: 0, b: 500 } }
+                upgrades: { auto: { c: 0, b: 15 }, click: { c: 0, b: 50 }, boost: { c: 0, b: 500 } },
+                
+                // --- YENİ VERİLER ---
+                achievements: [
+                    { id: 'click100', title: 'Acemi Bahçıvan', desc: '100 kez tıkla', condition: (g) => g.clickCount >= 100, unlocked: false, reward: 'x1.1 Güç' },
+                    { id: 'point10k', title: 'Zengin Hasat', desc: '10.000 SP biriktir', condition: (g) => g.points >= 10000, unlocked: false, reward: 'x1.2 Güç' },
+                    { id: 'rain', title: 'Yağmur Dansı', desc: 'Yağmur yağarken tıkla', condition: (g) => g.clickedInRain, unlocked: false, reward: '+500 SP' },
+                    { id: 'prestige1', title: 'Yeniden Doğuş', desc: 'İlk kez Prestij yap', condition: (g) => g.prestigeMultiplier > 1, unlocked: false, reward: 'x1.5 Güç' }
+                ],
+                achievementMultiplier: 1,
+                clickedInRain: false
             },
-            isRaining: false, // Yağmur durumu
-            rainTimer: 0,
+            
+            isRaining: false, 
+            goldenTimeout: null, // Altın tohum sayacı
 
             stages: [
                 { name: "TOHUM", limit: 50, img: "level1.png" },
@@ -245,61 +226,125 @@
 
             init() {
                 this.load();
-                this.checkOfflineEarnings(); // --- YENİ: Offline Kazanç Kontrolü ---
+                this.checkOfflineEarnings();
                 this.updateUI();
                 this.renderPlant();
 
                 const area = document.getElementById('click-area');
                 area.addEventListener('mousedown', (e) => this.handleClick(e));
                 
-                // Yağmur Döngüsü Başlat
-                setInterval(() => this.weatherLoop(), 10000); // Her 10 saniyede bir hava durumunu kontrol et
+                // Döngüleri Başlat
+                setInterval(() => this.weatherLoop(), 10000); 
+                this.scheduleGoldenSeed(); // Altın tohumu planla
+                this.checkAchievements();  // Başarımları kontrol et
 
                 requestAnimationFrame(() => this.loop());
             },
 
-            // --- YENİ: Offline Kazanç Fonksiyonu ---
+            // --- YENİ: Altın Tohum ---
+            scheduleGoldenSeed() {
+                const delay = (Math.random() * 40000) + 20000; // 20-60 saniye
+                setTimeout(() => {
+                    this.showGoldenSeed();
+                    this.scheduleGoldenSeed();
+                }, delay);
+            },
+            showGoldenSeed() {
+                const el = document.getElementById('golden-seed');
+                const x = 10 + Math.random() * 80; // Ekran içinde rastgele
+                const y = 10 + Math.random() * 80;
+                el.style.left = x + '%';
+                el.style.top = y + '%';
+                el.classList.remove('hidden');
+                this.goldenTimeout = setTimeout(() => el.classList.add('hidden'), 3000); // 3 saniye durur
+            },
+            catchGoldenSeed() {
+                const el = document.getElementById('golden-seed');
+                if(el.classList.contains('hidden')) return;
+                el.classList.add('hidden');
+                clearTimeout(this.goldenTimeout);
+
+                const bonus = Math.max(100, Math.floor(this.data.points * 0.3)); // %30 Bonus
+                this.data.points += bonus;
+                audioManager.playDing();
+                alert(`🌟 ALTIN TOHUM YAKALANDI!\n+${bonus} SP Kazandın!`);
+                this.updateUI();
+            },
+
+            // --- YENİ: Başarımlar ---
+            toggleAchievements() {
+                document.getElementById('achievement-modal').classList.toggle('hidden');
+                this.renderAchievements();
+            },
+            renderAchievements() {
+                const list = document.getElementById('achievement-list');
+                list.innerHTML = '';
+                this.data.achievements.forEach(ach => {
+                    const div = document.createElement('div');
+                    div.className = `p-2 rounded border ${ach.unlocked ? 'achievement-unlocked' : 'achievement-locked'}`;
+                    div.innerHTML = `
+                        <div class="font-bold flex justify-between">
+                            <span>${ach.unlocked ? '✅' : '🔒'} ${ach.title}</span>
+                        </div>
+                        <div class="text-xs mt-1">${ach.desc}</div>
+                        <div class="text-[10px] text-gray-500 font-bold mt-1">Ödül: ${ach.reward}</div>
+                    `;
+                    list.appendChild(div);
+                });
+            },
+            checkAchievements() {
+                let changed = false;
+                let activeCount = 0;
+                this.data.achievements.forEach(ach => {
+                    if (!ach.unlocked && ach.condition(this.data)) {
+                        ach.unlocked = true;
+                        changed = true;
+                        if(ach.reward.includes('SP')) this.data.points += 500; // Anlık ödül
+                        
+                        // Bildirim
+                        const notif = document.createElement('div');
+                        notif.className = "fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded shadow-lg z-50 animate-bounce text-sm font-bold";
+                        notif.innerHTML = `BAŞARIM AÇILDI!<br>${ach.title}`;
+                        document.body.appendChild(notif);
+                        setTimeout(() => notif.remove(), 3000);
+                        audioManager.playDing();
+                    }
+                    if(ach.unlocked) activeCount++;
+                });
+                // Her başarım %10 kalıcı güç verir
+                this.data.achievementMultiplier = 1 + (activeCount * 0.1);
+                if(changed) this.save();
+            },
+
+            // --- Eski ve Gelişmiş Fonksiyonlar ---
             checkOfflineEarnings() {
                 if (this.data.autoPower > 0 && this.data.lastSaveTime) {
                     const now = Date.now();
                     const secondsPassed = (now - this.data.lastSaveTime) / 1000;
-                    if (secondsPassed > 60) { // 1 dakikadan fazla kapalı kaldıysa
-                        const earned = Math.floor(secondsPassed * this.data.autoPower * this.data.prestigeMultiplier * 0.5); // Offline %50 verim
+                    if (secondsPassed > 60) {
+                        const earned = Math.floor(secondsPassed * this.data.autoPower * this.data.prestigeMultiplier * 0.5);
                         if (earned > 0) {
                             this.data.points += earned;
-                            alert(`Hoş geldin! Sen yokken bitkin büyüdü ve ${earned} SP kazandırdı.`);
+                            alert(`Hoş geldin! Sen yokken bitkin ${earned} SP kazandı.`);
                         }
                     }
                 }
             },
-
-            // --- YENİ: Hava Durumu Mantığı ---
             weatherLoop() {
-                // %20 şansla yağmur başlar veya durur
-                if (Math.random() < 0.2) {
-                    this.toggleRain(!this.isRaining);
-                }
+                if (Math.random() < 0.2) this.toggleRain(!this.isRaining);
             },
-
             toggleRain(active) {
                 this.isRaining = active;
                 const layer = document.getElementById('rain-layer');
                 const status = document.getElementById('weather-status');
-                
                 if (active) {
-                    layer.style.opacity = 1;
-                    status.style.opacity = 1;
-                    this.createRainDrops();
+                    layer.style.opacity = 1; status.style.opacity = 1; this.createRainDrops();
                 } else {
-                    layer.style.opacity = 0;
-                    status.style.opacity = 0;
-                    layer.innerHTML = ''; // Damlaları temizle
+                    layer.style.opacity = 0; status.style.opacity = 0; layer.innerHTML = '';
                 }
             },
-
             createRainDrops() {
                 const layer = document.getElementById('rain-layer');
-                // Basitçe 20 damla ekle
                 for(let i=0; i<20; i++) {
                     const drop = document.createElement('div');
                     drop.className = 'rain-drop';
@@ -313,7 +358,10 @@
             handleClick(e) {
                 let mult = this.data.prestigeMultiplier;
                 if (Date.now() < this.data.boostEndTime) mult *= 2;
-                if (this.isRaining) mult *= 2; // --- YENİ: Yağmur bonusu ---
+                if (this.isRaining) { mult *= 2; this.data.clickedInRain = true; }
+                
+                // Başarım Çarpanını Dahil Et
+                mult *= this.data.achievementMultiplier;
 
                 let gain = this.data.clickPower * mult;
                 this.data.points += gain;
@@ -322,6 +370,7 @@
                 audioManager.playPop();
                 this.createFloatingText(e, `+${Math.floor(gain)}`);
                 this.checkGrowth();
+                this.checkAchievements(); // Tıklayınca başarım kontrolü
                 this.updateUI();
             },
 
@@ -343,23 +392,18 @@
 
             loop() {
                 const now = Date.now();
-                // Basit saniyelik döngü (frame independent değil ama basitlik için ok)
                 if (this.data.autoPower > 0) {
                     let mult = this.data.prestigeMultiplier;
                     if (now < this.data.boostEndTime) mult *= 2;
-                    if (this.isRaining) mult *= 2; // Yağmurda otomatik üretim de artar
-                    
-                    // 60FPS varsayımıyla her frame'de ekleme (daha pürüzsüz)
+                    if (this.isRaining) mult *= 2;
+                    mult *= this.data.achievementMultiplier; // Başarım etkisi otomatikte de olsun
+
                     this.data.points += (this.data.autoPower * mult) / 60;
                 }
                 
-                // Her 60 karede bir (yaklaşık 1 sn) arayüzü güncelle ki sayı çok titremesin
                 if(this.data.clickCount % 10 === 0 || Math.random() < 0.1) this.updateUI();
                 this.updateProgressRing();
-                
-                // Otomatik Kayıt
                 if (Math.floor(now / 1000) % 5 === 0) this.save();
-                
                 requestAnimationFrame(() => this.loop());
             },
 
@@ -382,8 +426,10 @@
                 this.data.clickPower = 1;
                 this.data.autoPower = 0;
                 this.data.upgrades = { auto: { c: 0, b: 15 }, click: { c: 0, b: 50 }, boost: { c: 0, b: 500 } };
+                // Başarımlar sıfırlanmaz ama kilitler sıfırlanırsa tekrar kazanılabilir (opsiyonel, burada tutuyoruz)
                 this.renderPlant();
                 this.updateUI();
+                this.checkAchievements();
                 this.save();
             },
 
@@ -406,12 +452,10 @@
                 const circle = document.getElementById('progress-ring');
                 const limit = this.stages[this.data.stage].limit;
                 if(limit === Infinity) { circle.style.strokeDashoffset = 0; return; }
-                
                 const prevLimit = this.data.stage > 0 ? this.stages[this.data.stage-1].limit : 0;
                 const total = limit - prevLimit;
                 const current = this.data.points - prevLimit;
                 const percent = Math.max(0, Math.min(100, (current/total)*100));
-                
                 const circ = 54 * 2 * Math.PI;
                 circle.style.strokeDashoffset = circ - (percent/100) * circ;
             },
@@ -422,12 +466,12 @@
                 let mult = this.data.prestigeMultiplier;
                 if(Date.now() < this.data.boostEndTime) mult *= 2;
                 if(this.isRaining) mult *= 2;
+                mult *= this.data.achievementMultiplier;
 
                 document.getElementById('sps-display').innerText = (this.data.autoPower * mult).toFixed(1);
                 document.getElementById('prestige-display').innerText = this.data.prestigeMultiplier.toFixed(1);
 
                 const up = this.data.upgrades;
-                // Maliyet hesaplamaları
                 const costAuto = Math.floor(up.auto.b * Math.pow(1.5, up.auto.c));
                 document.getElementById('cost-auto').innerText = costAuto + " SP";
                 document.getElementById('btn-auto').disabled = this.data.points < costAuto;
@@ -436,7 +480,6 @@
                 document.getElementById('cost-click').innerText = costClick + " SP";
                 document.getElementById('btn-click').disabled = this.data.points < costClick;
                 
-                // Boost butonu kontrolü
                 const btnBoost = document.getElementById('btn-boost');
                 if (Date.now() < this.data.boostEndTime) {
                     btnBoost.disabled = true;
@@ -450,17 +493,27 @@
 
             save() {
                 this.data.lastSaveTime = Date.now();
-                localStorage.setItem('tapSeedSavev2', JSON.stringify(this.data));
+                localStorage.setItem('tapSeedUltimate', JSON.stringify(this.data));
             },
             load() {
-                const saved = localStorage.getItem('tapSeedSavev2');
+                const saved = localStorage.getItem('tapSeedUltimate');
                 if (saved) {
                     const parsed = JSON.parse(saved);
+                    // Başarımlar sonradan eklendiği için eski kayıtta yoksa birleştir
                     this.data = { ...this.data, ...parsed };
+                    if(!this.data.achievements) {
+                         // Eğer eski save'den geliyorsa achievement arrayini default yap
+                         this.data.achievements = [
+                            { id: 'click100', title: 'Acemi Bahçıvan', desc: '100 kez tıkla', condition: (g) => g.clickCount >= 100, unlocked: false, reward: 'x1.1 Güç' },
+                            { id: 'point10k', title: 'Zengin Hasat', desc: '10.000 SP biriktir', condition: (g) => g.points >= 10000, unlocked: false, reward: 'x1.2 Güç' },
+                            { id: 'rain', title: 'Yağmur Dansı', desc: 'Yağmur yağarken tıkla', condition: (g) => g.clickedInRain, unlocked: false, reward: '+500 SP' },
+                            { id: 'prestige1', title: 'Yeniden Doğuş', desc: 'İlk kez Prestij yap', condition: (g) => g.prestigeMultiplier > 1, unlocked: false, reward: 'x1.5 Güç' }
+                        ];
+                    }
                 }
             },
             resetSave() {
-                localStorage.removeItem('tapSeedSavev2');
+                localStorage.removeItem('tapSeedUltimate');
                 location.reload();
             }
         };
