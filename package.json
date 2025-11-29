@@ -1,0 +1,20 @@
+{
+  "name": "tap-seed",
+  "version": "1.0.0",
+  "description": "Minimalist bitki büyütme oyunu",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "make": "electron-builder"
+  },
+  "keywords": [
+    "clicker",
+    "game",
+    "electron"
+  ],
+  "author": "Senin Adın",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^28.0.0"
+  }
+}

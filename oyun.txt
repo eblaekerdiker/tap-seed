@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap Seed - Resimli Versiyon</title>
+    <!-- Tailwind CSS (Hızlı stil için) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Özelleştirilmiş Renkler ve Animasyonlar */
+        :root {
+            --primary: #380516; /* İstenilen Bordo Renk */
+            --bg-color: #fdfbf7; /* Kağıt rengi */
+            --ui-bg: #ece5dd;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--primary);
+            font-family: 'Courier New', Courier, monospace; /* Minimalist font */
+            user-select: none; /* Metin seçimini engelle */
+            overflow: hidden; /* Kaydırmayı engelle */
+            touch-action: manipulation; /* Mobilde zoom'u engeller */
+        }
+
+        /* Tohum Tıklama Efekti */
+        .seed-container {
+            transition: transform 0.1s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .seed-container:active {
+            transform: scale(0.95);
+        }
+
+        /* Resim Stilleri - Resimlerin sürüklenmesini engelle ve ortala */
+        #plant-img {
+            pointer-events: none; /* Resme sağ tıklamayı/sürüklemeyi engeller */
+            filter: drop-shadow(0 10px 10px rgba(56, 5, 22, 0.2)); /* Hafif gölge */
+            transition: all 0.3s ease;
+        }
+
+        /* Yüzen Sayılar (+1, +5 vb.) */
+        .floating-text {
+            position: absolute;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 1s forwards;
+            color: var(--primary);
+            z-index: 50;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+        }
+
+        /* Güneş Işığı Modu Efekti */
+        .sunlight-active {
+            animation: pulseBg 2s infinite;
+        }
+        @keyframes pulseBg {
+            0% { background-color: var(--bg-color); }
+            50% { background-color: #fff0d4; } /* Hafif sarımsı */
+            100% { background-color: var(--bg-color); }
+        }
+
+        /* Progress Bar */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Butonlar */
+        .btn-upgrade {
+            transition: all 0.2s;
+            border: 1px solid var(--primary);
+        }
+        .btn-upgrade:hover:not(:disabled) {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-upgrade:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: #ccc;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-between p-6">
+
+    <!-- Üst Bilgi Paneli -->
+    <header class="w-full max-w-md flex justify-between items-center text-sm font-bold opacity-80">
+        <div>SEVİYE: <span id="level-display">TOHUM</span></div>
+        <div class="text-right">PRESTİJ: x<span id="prestige-display">1.0</span></div>
+    </header>
+
+    <!-- Ana Oyun Alanı (Tohum) -->
+    <main class="flex-grow flex flex-col items-center justify-center relative w-full">
+        
+        <!-- Puan Göstergesi -->
+        <div class="absolute top-10 text-4xl font-black tracking-tighter">
+            <span id="score-display">0</span> SP
+        </div>
+        <div class="text-xs mt-1 mb-8 opacity-60">Saniyede: <span id="sps-display">0.0</span></div>
+
+        <!-- Tıklanabilir Alan & Görsel -->
+        <!-- SVG yerine IMG etiketi kullanıyoruz -->
+        <div id="click-area" class="seed-container relative w-72 h-72 rounded-full bg-transparent">
+            <!-- Arka Plandaki İlerleme Çemberi -->
+            <svg class="absolute w-full h-full" viewBox="0 0 120 120">
+                <circle class="text-gray-200" stroke-width="2" stroke="currentColor" fill="transparent" r="54" cx="60" cy="60" />
+                <circle id="progress-ring" class="text-[#380516] progress-ring__circle" stroke-width="4" stroke="currentColor" fill="transparent" r="54" cx="60" cy="60" stroke-dasharray="339.292" stroke-dashoffset="339.292" />
+            </svg>
+
+            <!-- RESİM ALANI: Burası senin PNG'leri gösterecek -->
+            <img id="plant-img" src="level1.png" alt="Bitki" class="w-48 h-48 object-contain">
+        </div>
+
+        <!-- Mesaj Alanı -->
+        <div id="message-area" class="h-6 mt-4 text-sm font-bold text-[#380516] opacity-0 transition-opacity duration-500">
+            BONUS!
+        </div>
+    </main>
+
+    <!-- Alt Panel: Upgradeler -->
+    <footer class="w-full max-w-md space-y-3">
+        
+        <!-- Upgrade 1: Auto Tap -->
+        <button id="btn-auto" onclick="game.buyUpgrade('auto')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white shadow-sm">
+            <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                <div class="text-left">
+                    <div class="font-bold text-sm">AUTO-TAP I</div>
+                    <div class="text-xs opacity-60">+0.5/sn</div>
+                </div>
+            </div>
+            <div class="font-bold text-sm" id="cost-auto">15 SP</div>
+        </button>
+
+        <!-- Upgrade 2: Bigger Roots -->
+        <button id="btn-click" onclick="game.buyUpgrade('click')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white shadow-sm">
+            <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 20l5-10 5 10"/><path d="M12 10v10"/></svg>
+                <div class="text-left">
+                    <div class="font-bold text-sm">GÜÇLÜ KÖKLER</div>
+                    <div class="text-xs opacity-60">+1 Tık Gücü</div>
+                </div>
+            </div>
+            <div class="font-bold text-sm" id="cost-click">50 SP</div>
+        </button>
+
+        <!-- Upgrade 3: Sunlight (Geçici Boost) -->
+        <button id="btn-boost" onclick="game.buyUpgrade('boost')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white shadow-sm">
+            <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <div class="text-left">
+                    <div class="font-bold text-sm">GÜNEŞ IŞIĞI</div>
+                    <div class="text-xs opacity-60">60sn x2 Bonus</div>
+                </div>
+            </div>
+            <div class="font-bold text-sm" id="cost-boost">500 SP</div>
+        </button>
+
+        <!-- Prestige Butonu (Gizli başlar) -->
+        <button id="btn-prestige" onclick="game.prestige()" class="hidden w-full p-3 mt-4 bg-[#380516] text-white rounded-lg font-bold shadow-lg hover:bg-black transition-colors">
+            PRESTİJ: YENİ TOHUM (x1.5 Çarpan)
+        </button>
+        
+        <div class="flex justify-between mt-2 px-1">
+             <button onclick="audioManager.toggle()" id="mute-btn" class="text-xs opacity-50 hover:opacity-100 underline">SES: AÇIK</button>
+             <button onclick="game.resetSave()" class="text-xs opacity-50 hover:opacity-100 text-red-500 underline">SIFIRLA</button>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * SES YÖNETİCİSİ
+         */
+        const audioManager = {
+            ctx: null,
+            enabled: true,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playPop() {
+                if (!this.enabled) return;
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.1);
+            },
+            playDing() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.5);
+            },
+            toggle() {
+                this.enabled = !this.enabled;
+                document.getElementById('mute-btn').innerText = this.enabled ? "SES: AÇIK" : "SES: KAPALI";
+            }
+        };
+
+        /**
+         * OYUN MANTIĞI
+         */
+        const game = {
+            data: {
+                points: 0,
+                clickCount: 0,
+                clickPower: 1,
+                autoPower: 0,
+                prestigeMultiplier: 1,
+                stage: 0,
+                boostActive: false,
+                boostEndTime: 0,
+                upgrades: {
+                    auto: { count: 0, baseCost: 15 },
+                    click: { count: 0, baseCost: 50 },
+                    boost: { count: 0, baseCost: 500 }
+                }
+            },
+            
+            // --- RESİM DOSYA İSİMLERİ BURADA ---
+            // 5 aşama için elindeki 3 resmi paylaştırdım:
+            stages: [
+                { name: "TOHUM", limit: 50,   img: "level1.png" }, // Başlangıç
+                { name: "FİLİZ", limit: 200,  img: "level1.png" }, // Biraz büyüdü ama hala level1
+                { name: "BİTKİ", limit: 1000, img: "level2.png" }, // Orta seviye
+                { name: "ÇİÇEK", limit: 5000, img: "level2.png" }, // Çiçek açtı
+                { name: "AĞAÇ",  limit: Infinity, img: "level3.png" } // Son seviye
+            ],
+
+            lastTime: Date.now(),
+
+            init() {
+                this.load();
+                this.updateUI();
+                this.renderPlant();
+
+                const clickArea = document.getElementById('click-area');
+                clickArea.addEventListener('mousedown', (e) => this.handleClick(e));
+                clickArea.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.handleClick(e.touches[0]);
+                }, {passive: false});
+
+                requestAnimationFrame(() => this.loop());
+            },
+
+            handleClick(e) {
+                let multiplier = this.data.prestigeMultiplier;
+                if (Date.now() < this.data.boostEndTime) multiplier *= 2;
+
+                let isBonus = Math.random() < 0.05;
+                let gain = this.data.clickPower * multiplier;
+                if (isBonus) gain *= 5;
+
+                this.data.points += gain;
+                this.data.clickCount++;
+
+                audioManager.playPop();
+                this.createFloatingText(e, `+${Math.floor(gain)}`, isBonus);
+                
+                if (isBonus) this.showBonusMessage();
+                
+                this.checkGrowth();
+                this.updateUI();
+            },
+
+            buyUpgrade(type) {
+                const upgrade = this.data.upgrades[type];
+                let cost = Math.floor(upgrade.baseCost * Math.pow(1.5, upgrade.count));
+                if(type === 'boost') cost = upgrade.baseCost * (upgrade.count + 1);
+
+                if (this.data.points >= cost) {
+                    this.data.points -= cost;
+                    upgrade.count++;
+                    audioManager.playDing();
+
+                    if (type === 'auto') this.data.autoPower += 0.5;
+                    else if (type === 'click') this.data.clickPower += 1;
+                    else if (type === 'boost') this.activateBoost();
+
+                    this.updateUI();
+                    this.save();
+                }
+            },
+
+            activateBoost() {
+                this.data.boostEndTime = Date.now() + 60000;
+                document.body.classList.add('sunlight-active');
+                setTimeout(() => {
+                    document.body.classList.remove('sunlight-active');
+                    this.updateUI();
+                }, 60000);
+            },
+
+            loop() {
+                const now = Date.now();
+                const dt = (now - this.lastTime) / 1000;
+                this.lastTime = now;
+
+                if (this.data.autoPower > 0) {
+                    let multiplier = this.data.prestigeMultiplier;
+                    if (now < this.data.boostEndTime) multiplier *= 2;
+                    this.data.points += (this.data.autoPower * multiplier) * dt;
+                }
+
+                if (this.data.clickCount % 5 === 0 || this.data.autoPower > 0) {
+                    this.updateUI();
+                }
+
+                this.updateProgressRing();
+                if (Math.floor(now / 1000) % 10 === 0) this.save();
+                requestAnimationFrame(() => this.loop());
+            },
+
+            checkGrowth() {
+                const nextLimit = this.stages[this.data.stage].limit;
+                if (this.data.stage === this.stages.length - 1) {
+                    document.getElementById('btn-prestige').classList.remove('hidden');
+                    return;
+                }
+                if (this.data.points >= nextLimit) {
+                    this.data.stage++;
+                    this.renderPlant();
+                    audioManager.playDing();
+                }
+            },
+
+            prestige() {
+                if (!confirm("Sıfırlayıp bonus kazanmak istiyor musun?")) return;
+                this.data.prestigeMultiplier *= 1.5;
+                this.data.points = 0;
+                this.data.clickPower = 1;
+                this.data.autoPower = 0;
+                this.data.stage = 0;
+                this.data.upgrades.auto.count = 0;
+                this.data.upgrades.click.count = 0;
+                this.data.upgrades.boost.count = 0;
+                this.data.boostEndTime = 0;
+                document.getElementById('btn-prestige').classList.add('hidden');
+                this.renderPlant();
+                this.updateUI();
+                this.save();
+            },
+
+            renderPlant() {
+                // Resmi güncelle
+                const imgElement = document.getElementById('plant-img');
+                const currentImg = this.stages[this.data.stage].img;
+                
+                // Sadece değişirse güncelle (titremeyi önler)
+                if (!imgElement.src.includes(currentImg)) {
+                    imgElement.style.opacity = 0; // Geçiş efekti için önce gizle
+                    setTimeout(() => {
+                        imgElement.src = currentImg;
+                        imgElement.style.opacity = 1; // Sonra göster
+                    }, 150);
+                }
+                
+                document.getElementById('level-display').innerText = this.stages[this.data.stage].name;
+            },
+
+            createFloatingText(e, text, isBonus) {
+                const el = document.createElement('div');
+                el.classList.add('floating-text');
+                el.innerText = text;
+                const x = e.clientX || (window.innerWidth / 2);
+                const y = e.clientY || (window.innerHeight / 2);
+                el.style.left = (x - 10) + 'px';
+                el.style.top = (y - 30) + 'px';
+                if (isBonus) {
+                    el.style.color = '#d4af37';
+                    el.style.fontSize = '24px';
+                }
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 1000);
+            },
+
+            showBonusMessage() {
+                const el = document.getElementById('message-area');
+                el.style.opacity = 1;
+                setTimeout(() => el.style.opacity = 0, 1500);
+            },
+
+            updateProgressRing() {
+                const circle = document.getElementById('progress-ring');
+                const radius = circle.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                let currentLimit = this.stages[this.data.stage].limit;
+                if (currentLimit === Infinity) {
+                    circle.style.strokeDashoffset = 0;
+                    return;
+                }
+                let prevLimit = this.data.stage > 0 ? this.stages[this.data.stage - 1].limit : 0;
+                let range = currentLimit - prevLimit;
+                let currentInStage = this.data.points - prevLimit;
+                let percent = Math.min(100, Math.max(0, (currentInStage / range) * 100));
+                const offset = circumference - (percent / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+            },
+
+            updateUI() {
+                document.getElementById('score-display').innerText = Math.floor(this.data.points).toLocaleString();
+                let multiplier = this.data.prestigeMultiplier;
+                if (Date.now() < this.data.boostEndTime) multiplier *= 2;
+                document.getElementById('sps-display').innerText = (this.data.autoPower * multiplier).toFixed(1);
+                document.getElementById('prestige-display').innerText = this.data.prestigeMultiplier.toFixed(1);
+
+                this.updateBtn('auto', 'cost-auto', 'btn-auto');
+                this.updateBtn('click', 'cost-click', 'btn-click');
+                this.updateBtn('boost', 'cost-boost', 'btn-boost');
+
+                if (Date.now() < this.data.boostEndTime) {
+                    const timeLeft = Math.ceil((this.data.boostEndTime - Date.now()) / 1000);
+                    document.getElementById('btn-boost').disabled = true;
+                    document.getElementById('cost-boost').innerText = `${timeLeft}s`;
+                }
+            },
+
+            updateBtn(type, costId, btnId) {
+                const upgrade = this.data.upgrades[type];
+                let cost = Math.floor(upgrade.baseCost * Math.pow(1.5, upgrade.count));
+                if(type === 'boost') cost = upgrade.baseCost * (upgrade.count + 1);
+                const elCost = document.getElementById(costId);
+                const elBtn = document.getElementById(btnId);
+                if (type !== 'boost' || Date.now() > this.data.boostEndTime) {
+                    elCost.innerText = cost + " SP";
+                    elBtn.disabled = this.data.points < cost;
+                }
+            },
+
+            save() { localStorage.setItem('tapSeedSave', JSON.stringify(this.data)); },
+            load() {
+                const saved = localStorage.getItem('tapSeedSave');
+                if (saved) this.data = { ...this.data, ...JSON.parse(saved) };
+            },
+            resetSave() {
+                if(confirm("Sıfırlamak istiyor musun?")) {
+                    localStorage.removeItem('tapSeedSave');
+                    location.reload();
+                }
+            }
+        };
+
+        window.onload = () => game.init();
+    </script>
+</body>
+</html>
