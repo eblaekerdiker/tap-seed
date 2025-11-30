@@ -38,7 +38,21 @@
         @keyframes sway { 0% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } }
         .plant-idle { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
         .seed-container:active .plant-idle { animation: none; transform: scale(0.95); transition: transform 0.05s; }
-
+        /* Tıklama Alanı */
+        .seed-container {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            
+            /* --- İŞTE SİHİRLİ KODLAR BURADA --- */
+            -webkit-tap-highlight-color: transparent; /* Mobildeki mavi kutuyu yok eder */
+            -webkit-touch-callout: none; /* Basılı tutunca çıkan menüyü engeller */
+            outline: none; /* Bilgisayardaki çerçeveyi yok eder */
+            user-select: none; /* Seçilmesini engeller */
+        }
         /* --- PARTİKÜLLER (MEVSİM EFEKTLERİ) --- */
         .particle { position: absolute; pointer-events: none; z-index: 10; }
         .snowflake { color: #bae6fd; font-size: 20px; animation: fall linear infinite; text-shadow: 0 0 2px white; }
