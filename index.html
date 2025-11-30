@@ -6,30 +6,33 @@
     <title>Tap Seed - Resimli Dünya</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* --- NÜKLEER ÇÖZÜM: HER ŞEYDEN MAVİ KUTUYU KALDIR --- */
+        * {
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important;
+            outline: none !important;
+            user-select: none !important;
+        }
+
         /* --- TEMEL AYARLAR --- */
-        /* Renkleri hafif şeffaf (0.85) yaptık ki arkadaki resim görünsün */
         :root { --primary: #380516; --bg-color: rgba(253, 251, 247, 0.85); --pot-color: #e5e7eb; }
         
         body { 
             background-color: var(--bg-color); color: var(--primary); 
             font-family: 'Courier New', Courier, monospace; 
-            user-select: none; overflow: hidden; touch-action: manipulation; 
+            overflow: hidden; touch-action: manipulation; 
             transition: background-color 2s, color 1s; 
 
-            /* --- YENİ ARKA PLAN RESMİ --- */
-            background-image: url('bac.png'); /* Resim dosyanın adı */
-            background-size: cover; /* Tüm ekranı kapla */
-            background-position: center; /* Ortala */
-            background-attachment: fixed; /* Sabit dur */
-            background-blend-mode: soft-light; /* Tema rengiyle yumuşakça karıştır */
+            background-image: url('bac.png');
+            background-size: cover; background-position: center; 
+            background-attachment: fixed; background-blend-mode: soft-light; 
         }
 
-        /* MEVSİM RENKLERİ (Yarı şeffaf) */
-        body.season-spring { --bg-color: rgba(236, 253, 245, 0.85); } /* Yeşilimsi */
-        body.season-summer { --bg-color: rgba(255, 251, 235, 0.85); } /* Sarımsı */
-        body.season-autumn { --bg-color: rgba(255, 247, 237, 0.85); } /* Turuncumsu */
-        body.season-winter { --bg-color: rgba(240, 249, 255, 0.85); } /* Mavimsi */
-        /* GECE MODU (Daha koyu ve opak) */
+        /* MEVSİM RENKLERİ */
+        body.season-spring { --bg-color: rgba(236, 253, 245, 0.85); }
+        body.season-summer { --bg-color: rgba(255, 251, 235, 0.85); }
+        body.season-autumn { --bg-color: rgba(255, 247, 237, 0.85); }
+        body.season-winter { --bg-color: rgba(240, 249, 255, 0.85); }
         body.night-mode { background-color: rgba(15, 23, 42, 0.95) !important; color: #e2e8f0; background-blend-mode: multiply; }
 
         .pot-circle { color: var(--pot-color); transition: color 0.5s; }
@@ -38,22 +41,13 @@
         @keyframes sway { 0% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } }
         .plant-idle { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
         .seed-container:active .plant-idle { animation: none; transform: scale(0.95); transition: transform 0.05s; }
+        
         /* Tıklama Alanı */
         .seed-container {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 10;
-            
-            /* --- İŞTE SİHİRLİ KODLAR BURADA --- */
-            -webkit-tap-highlight-color: transparent; /* Mobildeki mavi kutuyu yok eder */
-            -webkit-touch-callout: none; /* Basılı tutunca çıkan menüyü engeller */
-            outline: none; /* Bilgisayardaki çerçeveyi yok eder */
-            user-select: none; /* Seçilmesini engeller */
+            cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10;
         }
-        /* --- PARTİKÜLLER (MEVSİM EFEKTLERİ) --- */
+
+        /* --- PARTİKÜLLER --- */
         .particle { position: absolute; pointer-events: none; z-index: 10; }
         .snowflake { color: #bae6fd; font-size: 20px; animation: fall linear infinite; text-shadow: 0 0 2px white; }
         .petal { color: #f472b6; font-size: 16px; animation: fallSway linear infinite; }
@@ -102,19 +96,23 @@
 
     <div id="sky-layer" class="fixed inset-0 pointer-events-none z-0"></div>
     <div id="rain-layer" class="fixed inset-0 pointer-events-none z-0"></div>
-    <div id="season-layer" class="fixed inset-0 pointer-events-none z-10"></div> <div id="bee-container"></div>
+    <div id="season-layer" class="fixed inset-0 pointer-events-none z-10"></div>
+    <div id="bee-container"></div>
     
-    <img id="ladybug" src="ladybug.png" class="ladybug-img hidden" alt="Uğur Böceği">
+    <img id="ladybug" src="ugurbocegi.png" class="ladybug-img hidden" alt="Uğur Böceği">
     
     <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none z-50 transition-all hover:scale-125 flex items-center justify-center">🌟</div>
 
     <div id="boss-overlay">
         <div id="boss-container" onclick="game.damageBoss(event)">
-            <div class="absolute -top-10 w-48 text-center bg-red-600 text-white text-sm font-bold px-2 py-1 rounded-full animate-bounce shadow-lg border-2 border-white">⚠️ ÜRETİMİ YİYOR!</div>
+            <div class="absolute -top-10 w-48 text-center bg-red-600 text-white text-sm font-bold px-2 py-1 rounded-full animate-bounce shadow-lg border-2 border-white">
+                ⚠️ ÜRETİMİ YİYOR!
+            </div>
             <div class="relative w-36 h-6 bg-gray-800 rounded-full border-2 border-white overflow-hidden mb-2 shadow-lg">
                 <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-100" style="width: 100%;"></div>
             </div>
-            <img src="caterpillar.png" class="boss-img" id="boss-img-el" alt="Obur Tırtıl">
+            <img src="tirtil.png" class="boss-img" id="boss-img-el" alt="Obur Tırtıl">
+            
             <div class="text-[12px] font-black text-red-500 mt-2 bg-white px-2 rounded-full">TIKLA VE YOK ET!</div>
         </div>
     </div>
@@ -221,7 +219,7 @@
             // BONUSLAR (RESİMLİ ARI)
             scheduleBee() { setTimeout(()=>{this.spawnBee();this.scheduleBee();},(Math.random()*60000)+30000); },
             spawnBee() { 
-                const b=document.createElement('img'); b.src = "bee.png"; b.className="bee-img"; 
+                const b=document.createElement('img'); b.src = "ari.png"; b.className="bee-img"; 
                 b.style.top=(10+Math.random()*50)+'%'; 
                 b.onclick=()=>{b.remove();let r=Math.max(500,Math.floor(this.data.autoPower*this.data.prestigeMultiplier*300));this.data.points+=r;audioManager.playDing();alert(`🐝 ARI!\n+${r} SP`);}; 
                 document.getElementById('bee-container').appendChild(b); 
