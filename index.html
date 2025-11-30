@@ -6,42 +6,18 @@
     <title>Tap Seed - Mükemmel Sürüm</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- 🛑 KARE KUTU YOK EDİCİ KODLAR 🛑 --- */
-        
-        /* 1. Tüm elementlerin seçim, ışık ve gölgelerini kapat */
+        /* --- KARE KUTU YOK EDİCİ --- */
         *, *::before, *::after {
             -webkit-tap-highlight-color: transparent !important;
-            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
             -webkit-touch-callout: none !important;
-            -webkit-user-select: none !important;
             user-select: none !important;
             outline: none !important;
-            border-style: none !important;
         }
+        *:focus, *:active { outline: none !important; box-shadow: none !important; }
+        img { -webkit-user-drag: none; pointer-events: none; }
+        button, .seed-container, .shop-item, #boss-container, .bee-img, #golden-seed, .leaf { pointer-events: auto !important; cursor: pointer; }
 
-        /* 2. Odaklanınca çıkan Tailwind halkalarını ve tarayıcı outline'larını öldür */
-        *:focus, *:active, *:hover {
-            outline: 0 !important;
-            outline-offset: 0 !important;
-            box-shadow: none !important;
-            --tw-ring-color: transparent !important;
-            --tw-ring-shadow: none !important;
-        }
-
-        /* 3. Resimlerin sürüklenmesini engelle (Mavi kare yapabilir) */
-        img {
-            -webkit-user-drag: none;
-            user-drag: none;
-            pointer-events: none; /* Resme tıklanmasın, kapsayıcıya tıklansın */
-        }
-
-        /* 4. Tıklanabilir alanların pointer-events'ini aç (Yoksa tıklayamazsın) */
-        button, .seed-container, .shop-item, #boss-container, .bee-img, #golden-seed, .leaf {
-            pointer-events: auto !important;
-            cursor: pointer;
-        }
-
-        /* --- TEMEL OYUN STİLLERİ --- */
+        /* --- TEMEL AYARLAR --- */
         :root { --primary: #380516; --bg-color: rgba(253, 251, 247, 0.85); --pot-color: #e5e7eb; }
         
         body { 
@@ -49,12 +25,13 @@
             font-family: 'Courier New', Courier, monospace; 
             overflow: hidden; touch-action: manipulation; 
             transition: background-color 2s, color 1s; 
+            /* DİKKAT: Arka plan resminin adı 'bac.png' olarak ayarlı. Eğer değiştirdiysen burayı güncelle */
             background-image: url('bac.png');
             background-size: cover; background-position: center; 
             background-attachment: fixed; background-blend-mode: soft-light; 
         }
 
-        /* Mevsimler */
+        /* MEVSİMLER */
         body.season-spring { --bg-color: rgba(236, 253, 245, 0.85); }
         body.season-summer { --bg-color: rgba(255, 251, 235, 0.85); }
         body.season-autumn { --bg-color: rgba(255, 247, 237, 0.85); }
@@ -67,14 +44,9 @@
         .plant-idle { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
         .seed-container:active .plant-idle { animation: none; transform: scale(0.95); transition: transform 0.05s; }
         
-        /* Tıklama Alanı */
-        .seed-container { 
-            display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; 
-            /* Ekstra güvenlik */
-            background: transparent !important;
-        }
+        .seed-container { display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background: transparent !important; }
 
-        /* Diğer Efektler */
+        /* Efektler */
         .particle { position: absolute; pointer-events: none; z-index: 10; }
         .snowflake { color: #bae6fd; font-size: 20px; animation: fall linear infinite; text-shadow: 0 0 2px white; }
         .petal { color: #f472b6; font-size: 16px; animation: fallSway linear infinite; }
@@ -110,12 +82,7 @@
         .achievement-locked { opacity: 0.6; filter: grayscale(100%); }
         .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
         
-        /* Butonları manuel olarak düzeltiyoruz ki Tailwind ezmesin */
-        .shop-item, .btn-upgrade, button { 
-            border: 2px solid #ccc !important; 
-            border-radius: 8px; 
-            transition: all 0.2s; 
-        }
+        .shop-item, .btn-upgrade, button { border: 2px solid #ccc !important; border-radius: 8px; transition: all 0.2s; }
         .shop-item:hover, .btn-upgrade:hover { transform: scale(1.02); border-color: #380516 !important; }
         .shop-item.purchased { background-color: #e0f2fe; border-color: #0ea5e9 !important; }
         .shop-item.equipped { background-color: #dcfce7; border-color: #22c55e !important; box-shadow: 0 0 10px #22c55e !important; }
@@ -128,14 +95,16 @@
     <div id="season-layer" class="fixed inset-0 pointer-events-none z-10"></div>
     <div id="bee-container"></div>
     
-    <img id="ladybug" src="ugurbocegi.png" class="ladybug-img hidden" alt="Uğur Böceği">
+    <img id="ladybug" src="ladybug.png" class="ladybug-img hidden" alt="Uğur Böceği">
     
     <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none z-50 transition-all hover:scale-125 flex items-center justify-center">🌟</div>
 
     <div id="boss-overlay">
         <div id="boss-container" onclick="game.damageBoss(event)">
             <div class="absolute -top-10 w-48 text-center bg-red-600 text-white text-sm font-bold px-2 py-1 rounded-full animate-bounce shadow-lg border-2 border-white">⚠️ ÜRETİMİ YİYOR!</div>
-            <div class="relative w-36 h-6 bg-gray-800 rounded-full border-2 border-white overflow-hidden mb-2 shadow-lg"><div id="boss-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-100" style="width: 100%;"></div></div>
+            <div class="relative w-36 h-6 bg-gray-800 rounded-full border-2 border-white overflow-hidden mb-2 shadow-lg">
+                <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-100" style="width: 100%;"></div>
+            </div>
             <img src="caterpillar.png" class="boss-img" id="boss-img-el" alt="Obur Tırtıl">
             <div class="text-[12px] font-black text-red-500 mt-2 bg-white px-2 rounded-full">TIKLA VE YOK ET!</div>
         </div>
@@ -232,18 +201,10 @@
             applyCosmetics() { const t = this.shopItems.themes.find(t=>t.id===this.data.equipped.theme); if(t) {document.body.classList.remove('theme-dark','theme-forest','theme-sunset'); document.body.classList.add(t.class);} const p = this.shopItems.pots.find(p=>p.id===this.data.equipped.pot); document.documentElement.style.setProperty('--pot-color', p?p.color:'#e5e7eb'); const lb = document.getElementById('ladybug'); if(this.data.equipped.pet==='ladybug') lb.classList.remove('hidden'); else lb.classList.add('hidden'); },
             ladybugClick() { if(this.data.equipped.pet==='ladybug' && !this.bossActive) { const lb=document.getElementById('ladybug'); lb.style.left=(40+Math.random()*20)+'%'; lb.style.top=(40+Math.random()*20)+'%'; lb.style.transform=`rotate(${Math.random()*360}deg)`; this.handleClick({clientX:window.innerWidth/2,clientY:window.innerHeight/2},true); } },
 
-            // ORTAM
-            weatherLoop() { const r = Math.random(); if(r<0.15) this.toggleRain(true); else this.toggleRain(false); },
-            toggleRain(active) { this.isRaining=active; const l=document.getElementById('rain-layer'); const s=document.getElementById('weather-status'); if(active) { l.style.opacity=1; s.innerText="🌧️ YAĞMUR (x2)"; s.style.opacity=1; if(l.childElementCount===0) this.createRainDrops(); } else { l.style.opacity=0; s.style.opacity=0; setTimeout(()=>l.innerHTML='',1000); this.hideStatus(); } },
-            createRainDrops() { const l=document.getElementById('rain-layer'); for(let i=0;i<30;i++){ const d=document.createElement('div'); d.className='rain-drop'; d.style.left=Math.random()*100+'%'; d.style.animationDuration=(0.5+Math.random()*0.5)+'s'; d.style.animationDelay=Math.random()+'s'; l.appendChild(d); } },
-            toggleNightMode() { this.isNight=!this.isNight; const b=document.body; const s=document.getElementById('sky-layer'); const st=document.getElementById('weather-status'); if(this.isNight){ b.classList.add('night-mode'); this.createStars(s); st.innerText="🌙 GECE (Auto x3)"; st.style.opacity=1; } else { b.classList.remove('night-mode'); s.innerHTML=''; st.style.opacity=0; } this.updateUI(); },
-            createStars(l) { for(let i=0;i<30;i++){ const s=document.createElement('div'); s.className='star'; s.style.width=Math.random()*3+'px'; s.style.height=s.style.width; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*60+'%'; s.style.animationDelay=Math.random()*2+'s'; l.appendChild(s); } },
-            hideStatus() { const e=document.getElementById('weather-status'); if(!this.isNight) e.style.opacity=0; },
-
-            // BONUSLAR (RESİMLİ ARI)
+            // BONUSLAR (DOSYA ADI DÜZELTİLDİ: bee.png)
             scheduleBee() { setTimeout(()=>{this.spawnBee();this.scheduleBee();},(Math.random()*60000)+30000); },
             spawnBee() { 
-                const b=document.createElement('img'); b.src = "ari.png"; b.className="bee-img"; 
+                const b=document.createElement('img'); b.src = "bee.png"; b.className="bee-img"; 
                 b.style.top=(10+Math.random()*50)+'%'; 
                 b.onclick=()=>{b.remove();let r=Math.max(500,Math.floor(this.data.autoPower*this.data.prestigeMultiplier*300));this.data.points+=r;audioManager.playDing();alert(`🐝 ARI!\n+${r} SP`);}; 
                 document.getElementById('bee-container').appendChild(b); 
@@ -293,9 +254,9 @@
             updateProgressRing() { const c=document.getElementById('progress-ring');const l=this.stages[this.data.stage].limit;if(l===Infinity){c.style.strokeDashoffset=0;return;}const p=this.data.stage>0?this.stages[this.data.stage-1].limit:0;const per=Math.max(0,Math.min(100,((this.data.points-p)/(l-p))*100));c.style.strokeDashoffset=(54*2*Math.PI)*(1-per/100);},
             buyUpgrade(t) { const u=this.data.upgrades[t];let c=t==='boost'?u.b*(u.c+1):Math.floor(u.b*Math.pow(1.5,u.c));if(this.data.points>=c){this.data.points-=c;u.c++;if(t==='auto')this.data.autoPower+=0.5;else if(t==='click')this.data.clickPower+=1;else if(t==='boost')this.data.boostEndTime=Date.now()+60000;this.updateUI();this.save();}},
             updateUI() { document.getElementById('score-display').innerText=Math.floor(this.data.points).toLocaleString();let m=this.data.prestigeMultiplier*this.data.achievementMultiplier;const s=this.seasons[this.data.seasonIndex];if(s==='spring')m*=1.5;if(s==='winter')m*=0.2;if(this.isNight)m*=(this.data.autoPower>0?3:0.5);if(Date.now()<this.data.boostEndTime)m*=2;if(this.isRaining)m*=2;if(Date.now()<this.frenzyEndTime)m*=4;document.getElementById('sps-display').innerText=(this.data.autoPower*m).toFixed(1);document.getElementById('prestige-display').innerText=this.data.prestigeMultiplier.toFixed(1);const up=this.data.upgrades;document.getElementById('cost-auto').innerText=Math.floor(up.auto.b*Math.pow(1.5,up.auto.c))+" SP";document.getElementById('btn-auto').disabled=this.data.points<Math.floor(up.auto.b*Math.pow(1.5,up.auto.c));document.getElementById('cost-click').innerText=Math.floor(up.click.b*Math.pow(1.5,up.click.c))+" SP";document.getElementById('btn-click').disabled=this.data.points<Math.floor(up.click.b*Math.pow(1.5,up.click.c));const bb=document.getElementById('btn-boost');if(Date.now()<this.data.boostEndTime){bb.disabled=true;document.getElementById('cost-boost').innerText=Math.ceil((this.data.boostEndTime-Date.now())/1000)+"s";}else{const cb=up.boost.b*(up.boost.c+1);document.getElementById('cost-boost').innerText=cb+" SP";bb.disabled=this.data.points<cb;}},
-            save() { this.data.lastSaveTime=Date.now();localStorage.setItem('tapSeed_FinalSeasonV4',JSON.stringify(this.data));},
-            load() { const s=localStorage.getItem('tapSeed_FinalSeasonV4');if(s){const p=JSON.parse(s);this.data={...this.data,...p};if(this.data.seasonIndex===undefined)this.data.seasonIndex=0;if(!this.data.inventory)this.resetSave();} },
-            resetSave() { if(confirm("Emin misin?")) { localStorage.removeItem('tapSeed_FinalSeasonV4'); location.reload(); } },
+            save() { this.data.lastSaveTime=Date.now();localStorage.setItem('tapSeed_FinalSeasonV5',JSON.stringify(this.data));},
+            load() { const s=localStorage.getItem('tapSeed_FinalSeasonV5');if(s){const p=JSON.parse(s);this.data={...this.data,...p};if(this.data.seasonIndex===undefined)this.data.seasonIndex=0;if(!this.data.inventory)this.resetSave();} },
+            resetSave() { if(confirm("Emin misin?")) { localStorage.removeItem('tapSeed_FinalSeasonV5'); location.reload(); } },
             toggleHelp() { document.getElementById('help-modal').classList.toggle('hidden'); },
             toggleAchievements() { document.getElementById('achievement-modal').classList.toggle('hidden'); this.renderAchievements(); },
             renderAchievements() { const l=document.getElementById('achievement-list');l.innerHTML='';this.data.achievements.forEach(a=>{const d=document.createElement('div');d.className=`p-2 rounded border ${a.unlocked?'achievement-unlocked':'achievement-locked'}`;d.innerHTML=`<div class="font-bold flex justify-between"><span>${a.unlocked?'✅':'🔒'} ${a.title}</span></div><div class="text-xs mt-1">${a.desc}</div><div class="text-[10px] opacity-70 font-bold mt-1">Ödül: ${a.reward}</div>`;l.appendChild(d);});}
