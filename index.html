@@ -2,16 +2,26 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap Seed - Resimli Dünya</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tap Seed - Efsanevi Doğa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- NÜKLEER ÇÖZÜM: HER ŞEYDEN MAVİ KUTUYU KALDIR --- */
-        * {
+        /* --- ATOM BOMBASI: MAVİ IŞIĞI VE KAREYİ YOK ETME --- */
+        *, *::before, *::after {
+            -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
             -webkit-tap-highlight-color: transparent !important;
             -webkit-touch-callout: none !important;
-            outline: none !important;
+            -webkit-user-select: none !important;
             user-select: none !important;
+            outline: none !important;
+            border: none !important;
+        }
+
+        /* Odaklanınca çıkan Tailwind halkalarını (ring) yok et */
+        button:focus, button:active, div:focus, div:active, img:focus, img:active {
+            outline: none !important;
+            box-shadow: none !important;
+            background-color: transparent; /* Arka plan yanıp sönmesin */
         }
 
         /* --- TEMEL AYARLAR --- */
@@ -23,6 +33,7 @@
             overflow: hidden; touch-action: manipulation; 
             transition: background-color 2s, color 1s; 
 
+            /* Arka Plan Resmi */
             background-image: url('bac.png');
             background-size: cover; background-position: center; 
             background-attachment: fixed; background-blend-mode: soft-light; 
@@ -43,9 +54,7 @@
         .seed-container:active .plant-idle { animation: none; transform: scale(0.95); transition: transform 0.05s; }
         
         /* Tıklama Alanı */
-        .seed-container {
-            cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10;
-        }
+        .seed-container { cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; }
 
         /* --- PARTİKÜLLER --- */
         .particle { position: absolute; pointer-events: none; z-index: 10; }
@@ -83,11 +92,15 @@
         .floating-text { position: absolute; font-weight: bold; pointer-events: none; animation: floatUp 1s forwards; color: var(--primary); z-index: 50; text-shadow: 0 0 2px rgba(255,255,255,0.5); }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
         .modal-bg { background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-        .achievement-unlocked { background-color: #dcfce7; border: 2px solid #22c55e; opacity: 1 !important; color: #166534; }
+        .achievement-unlocked { background-color: #dcfce7 !important; border: 2px solid #22c55e !important; opacity: 1 !important; color: #166534 !important; }
         .achievement-locked { opacity: 0.6; filter: grayscale(100%); }
         .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
-        .shop-item { border: 2px solid #ccc; border-radius: 8px; padding: 10px; cursor: pointer; transition: all 0.2s; background: white; color: black; }
-        .shop-item:hover { transform: scale(1.02); border-color: #380516; }
+        /* Buton düzeltmeleri */
+        .shop-item, .btn-upgrade, button { 
+            border: 2px solid #ccc; border-radius: 8px; cursor: pointer; transition: all 0.2s; 
+            -webkit-tap-highlight-color: transparent !important; /* Bir kez daha garanti */
+        }
+        .shop-item:hover, .btn-upgrade:hover { transform: scale(1.02); border-color: #380516; }
         .shop-item.purchased { background-color: #e0f2fe; border-color: #0ea5e9; }
         .shop-item.equipped { background-color: #dcfce7; border-color: #22c55e; box-shadow: 0 0 10px #22c55e; }
     </style>
@@ -112,7 +125,6 @@
                 <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-100" style="width: 100%;"></div>
             </div>
             <img src="tirtil.png" class="boss-img" id="boss-img-el" alt="Obur Tırtıl">
-            
             <div class="text-[12px] font-black text-red-500 mt-2 bg-white px-2 rounded-full">TIKLA VE YOK ET!</div>
         </div>
     </div>
@@ -216,7 +228,7 @@
             createStars(l) { for(let i=0;i<30;i++){ const s=document.createElement('div'); s.className='star'; s.style.width=Math.random()*3+'px'; s.style.height=s.style.width; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*60+'%'; s.style.animationDelay=Math.random()*2+'s'; l.appendChild(s); } },
             hideStatus() { const e=document.getElementById('weather-status'); if(!this.isNight) e.style.opacity=0; },
 
-            // BONUSLAR (RESİMLİ ARI)
+            // BONUSLAR
             scheduleBee() { setTimeout(()=>{this.spawnBee();this.scheduleBee();},(Math.random()*60000)+30000); },
             spawnBee() { 
                 const b=document.createElement('img'); b.src = "ari.png"; b.className="bee-img"; 
@@ -269,9 +281,9 @@
             updateProgressRing() { const c=document.getElementById('progress-ring');const l=this.stages[this.data.stage].limit;if(l===Infinity){c.style.strokeDashoffset=0;return;}const p=this.data.stage>0?this.stages[this.data.stage-1].limit:0;const per=Math.max(0,Math.min(100,((this.data.points-p)/(l-p))*100));c.style.strokeDashoffset=(54*2*Math.PI)*(1-per/100);},
             buyUpgrade(t) { const u=this.data.upgrades[t];let c=t==='boost'?u.b*(u.c+1):Math.floor(u.b*Math.pow(1.5,u.c));if(this.data.points>=c){this.data.points-=c;u.c++;if(t==='auto')this.data.autoPower+=0.5;else if(t==='click')this.data.clickPower+=1;else if(t==='boost')this.data.boostEndTime=Date.now()+60000;this.updateUI();this.save();}},
             updateUI() { document.getElementById('score-display').innerText=Math.floor(this.data.points).toLocaleString();let m=this.data.prestigeMultiplier*this.data.achievementMultiplier;const s=this.seasons[this.data.seasonIndex];if(s==='spring')m*=1.5;if(s==='winter')m*=0.2;if(this.isNight)m*=(this.data.autoPower>0?3:0.5);if(Date.now()<this.data.boostEndTime)m*=2;if(this.isRaining)m*=2;if(Date.now()<this.frenzyEndTime)m*=4;document.getElementById('sps-display').innerText=(this.data.autoPower*m).toFixed(1);document.getElementById('prestige-display').innerText=this.data.prestigeMultiplier.toFixed(1);const up=this.data.upgrades;document.getElementById('cost-auto').innerText=Math.floor(up.auto.b*Math.pow(1.5,up.auto.c))+" SP";document.getElementById('btn-auto').disabled=this.data.points<Math.floor(up.auto.b*Math.pow(1.5,up.auto.c));document.getElementById('cost-click').innerText=Math.floor(up.click.b*Math.pow(1.5,up.click.c))+" SP";document.getElementById('btn-click').disabled=this.data.points<Math.floor(up.click.b*Math.pow(1.5,up.click.c));const bb=document.getElementById('btn-boost');if(Date.now()<this.data.boostEndTime){bb.disabled=true;document.getElementById('cost-boost').innerText=Math.ceil((this.data.boostEndTime-Date.now())/1000)+"s";}else{const cb=up.boost.b*(up.boost.c+1);document.getElementById('cost-boost').innerText=cb+" SP";bb.disabled=this.data.points<cb;}},
-            save() { this.data.lastSaveTime=Date.now();localStorage.setItem('tapSeed_FinalSeasonV2',JSON.stringify(this.data));},
-            load() { const s=localStorage.getItem('tapSeed_FinalSeasonV2');if(s){const p=JSON.parse(s);this.data={...this.data,...p};if(this.data.seasonIndex===undefined)this.data.seasonIndex=0;if(!this.data.inventory)this.resetSave();} },
-            resetSave() { if(confirm("Emin misin?")) { localStorage.removeItem('tapSeed_FinalSeasonV2'); location.reload(); } },
+            save() { this.data.lastSaveTime=Date.now();localStorage.setItem('tapSeed_FinalSeasonV3',JSON.stringify(this.data));},
+            load() { const s=localStorage.getItem('tapSeed_FinalSeasonV3');if(s){const p=JSON.parse(s);this.data={...this.data,...p};if(this.data.seasonIndex===undefined)this.data.seasonIndex=0;if(!this.data.inventory)this.resetSave();} },
+            resetSave() { if(confirm("Emin misin?")) { localStorage.removeItem('tapSeed_FinalSeasonV3'); location.reload(); } },
             toggleHelp() { document.getElementById('help-modal').classList.toggle('hidden'); },
             toggleAchievements() { document.getElementById('achievement-modal').classList.toggle('hidden'); this.renderAchievements(); },
             renderAchievements() { const l=document.getElementById('achievement-list');l.innerHTML='';this.data.achievements.forEach(a=>{const d=document.createElement('div');d.className=`p-2 rounded border ${a.unlocked?'achievement-unlocked':'achievement-locked'}`;d.innerHTML=`<div class="font-bold flex justify-between"><span>${a.unlocked?'✅':'🔒'} ${a.title}</span></div><div class="text-xs mt-1">${a.desc}</div><div class="text-[10px] opacity-70 font-bold mt-1">Ödül: ${a.reward}</div>`;l.appendChild(d);});}
