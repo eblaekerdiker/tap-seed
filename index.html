@@ -90,7 +90,7 @@
     <div id="rain-layer" class="fixed inset-0 pointer-events-none z-0"></div>
     <div id="season-layer" class="fixed inset-0 pointer-events-none z-10"></div> <div id="bee-container"></div>
     
-    <img id="ladybug" src="ugurbocegi.png" class="ladybug-img hidden" alt="Uğur Böceği">
+    <img id="ladybug" src="ladybug.png" class="ladybug-img hidden" alt="Uğur Böceği">
     
     <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none z-50 transition-all hover:scale-125 flex items-center justify-center">🌟</div>
 
@@ -100,7 +100,7 @@
             <div class="relative w-36 h-6 bg-gray-800 rounded-full border-2 border-white overflow-hidden mb-2 shadow-lg">
                 <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-100" style="width: 100%;"></div>
             </div>
-            <img src="tirtil.png" class="boss-img" id="boss-img-el" alt="Obur Tırtıl">
+            <img src="caterpillar.png" class="boss-img" id="boss-img-el" alt="Obur Tırtıl">
             <div class="text-[12px] font-black text-red-500 mt-2 bg-white px-2 rounded-full">TIKLA VE YOK ET!</div>
         </div>
     </div>
@@ -207,7 +207,7 @@
             // BONUSLAR (RESİMLİ ARI)
             scheduleBee() { setTimeout(()=>{this.spawnBee();this.scheduleBee();},(Math.random()*60000)+30000); },
             spawnBee() { 
-                const b=document.createElement('img'); b.src = "ari.png"; b.className="bee-img"; 
+                const b=document.createElement('img'); b.src = "bee.png"; b.className="bee-img"; 
                 b.style.top=(10+Math.random()*50)+'%'; 
                 b.onclick=()=>{b.remove();let r=Math.max(500,Math.floor(this.data.autoPower*this.data.prestigeMultiplier*300));this.data.points+=r;audioManager.playDing();alert(`🐝 ARI!\n+${r} SP`);}; 
                 document.getElementById('bee-container').appendChild(b); 
