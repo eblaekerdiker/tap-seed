@@ -15,7 +15,7 @@
         }
         *:focus, *:active { outline: none !important; box-shadow: none !important; }
         img { -webkit-user-drag: none; pointer-events: none; }
-        button, .seed-container, .shop-item, #boss-container, .bee-img, #golden-seed, .leaf { pointer-events: auto !important; cursor: pointer; }
+        button, .seed-container, .shop-item, #boss-container, .bee-img, #golden-seed, .leaf, .toast-notification { pointer-events: auto !important; cursor: pointer; }
 
         /* --- TEMEL AYARLAR --- */
         :root { --primary: #380516; --bg-color: rgba(253, 251, 247, 0.85); --pot-color: #e5e7eb; }
@@ -25,7 +25,7 @@
             font-family: 'Courier New', Courier, monospace; 
             overflow: hidden; touch-action: manipulation; 
             transition: background-color 2s, color 1s; 
-            /* DİKKAT: Arka plan resminin adı 'bac.png' olarak ayarlı. Eğer değiştirdiysen burayı güncelle */
+            /* DİKKAT: Arka plan resminin adı 'bac.png' olarak ayarlı. */
             background-image: url('bac.png');
             background-size: cover; background-position: center; 
             background-attachment: fixed; background-blend-mode: soft-light; 
@@ -86,6 +86,30 @@
         .shop-item:hover, .btn-upgrade:hover { transform: scale(1.02); border-color: #380516 !important; }
         .shop-item.purchased { background-color: #e0f2fe; border-color: #0ea5e9 !important; }
         .shop-item.equipped { background-color: #dcfce7; border-color: #22c55e !important; box-shadow: 0 0 10px #22c55e !important; }
+
+        /* --- YENİ BİLDİRİM STİLLERİ --- */
+        #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
+        .toast-notification {
+            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-left: 6px solid #333;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex; align-items: center; justify-content: space-between;
+            min-width: 280px; max-width: 320px;
+            animation: slideInRight 0.4s ease-out forwards;
+            font-size: 0.9rem;
+            color: #333;
+        }
+        .toast-notification.hide { animation: slideOutRight 0.4s ease-in forwards; }
+        .toast-notification.success { border-color: #22c55e; background: #f0fdf4; }
+        .toast-notification.danger { border-color: #dc2626; background: #fef2f2; }
+        .toast-notification.error { border-color: #6b7280; background: #f9fafb; }
+        
+        @keyframes slideInRight { 0% { transform: translateX(100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOutRight { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(120%); opacity: 0; } }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col items-center justify-between p-6 overflow-hidden">
@@ -95,6 +119,8 @@
     <div id="season-layer" class="fixed inset-0 pointer-events-none z-10"></div>
     <div id="bee-container"></div>
     
+    <div id="toast-container"></div>
+
     <img id="ladybug" src="ladybug.png" class="ladybug-img hidden" alt="Uğur Böceği">
     
     <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none z-50 transition-all hover:scale-125 flex items-center justify-center">🌟</div>
@@ -171,12 +197,41 @@
                 this.applyCosmetics(); this.updateUI(); this.renderPlant(); this.updateSeasonUI();
                 document.getElementById('click-area').addEventListener('mousedown', (e) => this.handleClick(e));
                 setInterval(() => this.weatherLoop(), 10000); setInterval(() => this.toggleNightMode(), 180000); setInterval(() => this.ladybugClick(), 3000); setInterval(() => this.changeSeason(), 120000); 
-                this.scheduleGoldenSeed(); this.scheduleBee(); this.checkAchievements();
+                this.scheduleGoldenSeed(); this.scheduleBee(); this.checkAchievements(); this.checkOfflineEarnings();
                 requestAnimationFrame(() => this.loop());
             },
 
+            // --- YENİ BİLDİRİM SİSTEMİ ---
+            showToast(title, msg, type = 'info') {
+                const c = document.getElementById('toast-container');
+                const t = document.createElement('div');
+                t.className = `toast-notification ${type}`;
+                let icon = 'ℹ️';
+                if(type === 'success') icon = '🎉';
+                if(type === 'danger') icon = '⚠️';
+                if(type === 'error') icon = '⛔';
+                
+                t.innerHTML = `<div class="flex-1">
+                    <div class="font-bold flex items-center gap-2"><span>${icon}</span> ${title}</div>
+                    <div class="text-xs opacity-90 mt-1">${msg}</div>
+                </div>`;
+                
+                t.onclick = () => { t.classList.add('hide'); setTimeout(()=>t.remove(), 400); };
+                c.appendChild(t);
+                
+                // Max 5 bildirim
+                if(c.children.length > 5) c.firstChild.remove();
+                
+                setTimeout(() => {
+                    if(t.parentElement) {
+                        t.classList.add('hide');
+                        setTimeout(()=>t.remove(), 400);
+                    }
+                }, 4000);
+            },
+
             // MEVSİMLER
-            changeSeason() { this.data.seasonIndex = (this.data.seasonIndex + 1) % 4; this.updateSeasonUI(); },
+            changeSeason() { this.data.seasonIndex = (this.data.seasonIndex + 1) % 4; this.updateSeasonUI(); this.showToast("Mevsim Değişti!", `${this.seasonNames[this.data.seasonIndex]} başladı.`, "info"); },
             updateSeasonUI() {
                 const s = this.seasons[this.data.seasonIndex];
                 document.body.className = document.body.className.replace(/season-\w+/g, ''); document.body.classList.add(`season-${s}`);
@@ -189,29 +244,77 @@
             createParticles(l, c, h, n) { for(let i=0; i<n; i++) { const d = document.createElement('div'); d.className = `particle ${c}`; d.innerText = h; d.style.left = Math.random()*100 + '%'; d.style.animationDuration = (3+Math.random()*5) + 's'; d.style.animationDelay = Math.random()*5 + 's'; l.appendChild(d); } },
 
             // BOSS
-            spawnBoss() { if(this.bossActive) return; this.bossActive = true; this.bossMaxHP = (this.data.clickPower * 30) + 100; this.bossCurrentHP = this.bossMaxHP; document.getElementById('boss-overlay').classList.add('active'); this.updateBossUI(); alert("⚠️ OBUR TIRTIL GELDİ!\nÜretim durdu! Puanlarını yiyor!"); },
+            spawnBoss() { 
+                if(this.bossActive) return; 
+                this.bossActive = true; 
+                this.bossMaxHP = (this.data.clickPower * 30) + 100; 
+                this.bossCurrentHP = this.bossMaxHP; 
+                document.getElementById('boss-overlay').classList.add('active'); 
+                this.updateBossUI(); 
+                this.showToast("BOSS GELDİ!", "Obur Tırtıl puanlarını yiyor! Çabuk yok et!", "danger");
+                audioManager.playDing();
+            },
             damageBoss(e) { e.stopPropagation(); e.preventDefault(); const damage = this.data.clickPower; this.bossCurrentHP -= damage; const el = document.getElementById('boss-img-el'); el.classList.add('boss-hit'); setTimeout(() => el.classList.remove('boss-hit'), 100); const txt = document.createElement('div'); txt.innerText = `-${Math.floor(damage)}`; txt.className = 'damage-text'; txt.style.left = (50+(Math.random()*40-20))+'%'; txt.style.top = (Math.random()*20)+'%'; document.getElementById('boss-container').appendChild(txt); setTimeout(()=>txt.remove(), 500); if(this.bossCurrentHP <= 0) this.killBoss(); this.updateBossUI(); },
-            killBoss() { this.bossActive = false; document.getElementById('boss-overlay').classList.remove('active'); const reward = this.data.points * 0.1 + 2000; this.data.points += reward; this.data.boss.defeatedCount++; this.data.boss.nextSpawn = Date.now() + 300000; audioManager.playDing(); alert(`🎉 TIRTIL ÖLDÜ!\nKazancın: +${Math.floor(reward)} SP`); this.checkAchievements(); },
+            killBoss() { 
+                this.bossActive = false; 
+                document.getElementById('boss-overlay').classList.remove('active'); 
+                const reward = this.data.points * 0.1 + 2000; 
+                this.data.points += reward; 
+                this.data.boss.defeatedCount++; 
+                this.data.boss.nextSpawn = Date.now() + 300000; 
+                audioManager.playDing(); 
+                this.showToast("TIRTIL ÖLDÜ!", `Harika! +${Math.floor(reward)} SP kazandın.`, "success");
+                this.checkAchievements(); 
+            },
             updateBossUI() { document.getElementById('boss-hp-bar').style.width = ((this.bossCurrentHP / this.bossMaxHP) * 100) + '%'; },
 
             // MAĞAZA
             toggleShop() { const m = document.getElementById('shop-modal'); if(m.classList.contains('hidden')) { m.classList.remove('hidden'); this.renderShop(); } else m.classList.add('hidden'); },
             renderShop() { document.getElementById('shop-points').innerText = Math.floor(this.data.points); const createBtn = (item, type, isOwned, isEquipped) => { const btn = document.createElement('div'); btn.className = `shop-item ${isOwned?'purchased':''} ${isEquipped?'equipped':''}`; btn.innerHTML = `<div class="font-bold">${item.name}</div><div class="text-xs">${isOwned?(isEquipped?'KUŞANILDI':'KUŞAN'):item.cost+' SP'}</div>`; btn.onclick = () => this.buyOrEquip(type, item.id, item.cost); return btn; }; const pD = document.getElementById('shop-pets'); pD.innerHTML=''; this.shopItems.pets.forEach(i=>pD.appendChild(createBtn(i,'pets',this.data.inventory.pets[i.id],this.data.equipped.pet===i.id))); const tD = document.getElementById('shop-themes'); tD.innerHTML=''; this.shopItems.themes.forEach(i=>tD.appendChild(createBtn(i,'themes',this.data.inventory.themes[i.id],this.data.equipped.theme===i.id))); const potD = document.getElementById('shop-pots'); potD.innerHTML=''; this.shopItems.pots.forEach(i=>potD.appendChild(createBtn(i,'pots',this.data.inventory.pots[i.id],this.data.equipped.pot===i.id))); },
-            buyOrEquip(type, id, cost) { if (!this.data.inventory[type][id]) { if(this.data.points >= cost) { this.data.points-=cost; this.data.inventory[type][id]=true; audioManager.playDing(); this.renderShop(); this.updateUI(); this.checkAchievements(); } else alert("Yetersiz Puan!"); } else { if(type==='pets') this.data.equipped.pet = (this.data.equipped.pet===id)?null:id; else this.data.equipped[type.slice(0,-1)]=id; this.applyCosmetics(); this.renderShop(); } },
+            buyOrEquip(type, id, cost) { 
+                if (!this.data.inventory[type][id]) { 
+                    if(this.data.points >= cost) { 
+                        this.data.points-=cost; 
+                        this.data.inventory[type][id]=true; 
+                        audioManager.playDing(); 
+                        this.showToast("Satın Alındı!", "Yeni eşya eklendi.", "success");
+                        this.renderShop(); this.updateUI(); this.checkAchievements(); 
+                    } else {
+                        this.showToast("Yetersiz Puan", "Biraz daha SP biriktirmelisin.", "error");
+                    }
+                } else { 
+                    if(type==='pets') this.data.equipped.pet = (this.data.equipped.pet===id)?null:id; else this.data.equipped[type.slice(0,-1)]=id; 
+                    this.applyCosmetics(); this.renderShop(); 
+                } 
+            },
             applyCosmetics() { const t = this.shopItems.themes.find(t=>t.id===this.data.equipped.theme); if(t) {document.body.classList.remove('theme-dark','theme-forest','theme-sunset'); document.body.classList.add(t.class);} const p = this.shopItems.pots.find(p=>p.id===this.data.equipped.pot); document.documentElement.style.setProperty('--pot-color', p?p.color:'#e5e7eb'); const lb = document.getElementById('ladybug'); if(this.data.equipped.pet==='ladybug') lb.classList.remove('hidden'); else lb.classList.add('hidden'); },
             ladybugClick() { if(this.data.equipped.pet==='ladybug' && !this.bossActive) { const lb=document.getElementById('ladybug'); lb.style.left=(40+Math.random()*20)+'%'; lb.style.top=(40+Math.random()*20)+'%'; lb.style.transform=`rotate(${Math.random()*360}deg)`; this.handleClick({clientX:window.innerWidth/2,clientY:window.innerHeight/2},true); } },
 
-            // BONUSLAR (DOSYA ADI DÜZELTİLDİ: bee.png)
+            // BONUSLAR
             scheduleBee() { setTimeout(()=>{this.spawnBee();this.scheduleBee();},(Math.random()*60000)+30000); },
             spawnBee() { 
                 const b=document.createElement('img'); b.src = "bee.png"; b.className="bee-img"; 
                 b.style.top=(10+Math.random()*50)+'%'; 
-                b.onclick=()=>{b.remove();let r=Math.max(500,Math.floor(this.data.autoPower*this.data.prestigeMultiplier*300));this.data.points+=r;audioManager.playDing();alert(`🐝 ARI!\n+${r} SP`);}; 
+                b.onclick=()=>{
+                    b.remove();
+                    let r=Math.max(500,Math.floor(this.data.autoPower*this.data.prestigeMultiplier*300));
+                    this.data.points+=r;
+                    audioManager.playDing();
+                    this.showToast("Arı Yakaladın!", `+${r} SP kazandın!`, "success");
+                }; 
                 document.getElementById('bee-container').appendChild(b); 
             },
             scheduleGoldenSeed() { setTimeout(()=>{this.showGoldenSeed();this.scheduleGoldenSeed();},(Math.random()*40000)+20000); },
             showGoldenSeed() { const e=document.getElementById('golden-seed'); e.style.left=(10+Math.random()*80)+'%'; e.style.top=(10+Math.random()*80)+'%'; e.classList.remove('hidden'); this.goldenTimeout=setTimeout(()=>e.classList.add('hidden'),3000); },
-            catchGoldenSeed() { const e=document.getElementById('golden-seed'); if(e.classList.contains('hidden'))return; e.classList.add('hidden'); clearTimeout(this.goldenTimeout); const s=this.seasons[this.data.seasonIndex]; const b=Math.max(100,Math.floor(this.data.points*0.3)) * (s==='autumn'?2:1); this.data.points+=b; audioManager.playDing(); alert(`🌟 ALTIN TOHUM!\n+${b} SP!`); this.updateUI(); },
+            catchGoldenSeed() { 
+                const e=document.getElementById('golden-seed'); if(e.classList.contains('hidden'))return; e.classList.add('hidden'); clearTimeout(this.goldenTimeout); 
+                const s=this.seasons[this.data.seasonIndex]; 
+                const b=Math.max(100,Math.floor(this.data.points*0.3)) * (s==='autumn'?2:1); 
+                this.data.points+=b; 
+                audioManager.playDing(); 
+                this.showToast("Altın Tohum!", `+${b} SP! Şanslı günündesin!`, "success");
+                this.updateUI(); 
+            },
 
             // CORE
             handleClick(e, isAuto = false) {
@@ -245,10 +348,26 @@
 
             // UTILS
             updateComboBar() { const b=document.getElementById('combo-bar'); const s=document.getElementById('frenzy-status'); if(Date.now()<this.frenzyEndTime){b.style.width='100%';b.style.backgroundColor='#dc2626';s.classList.remove('hidden');}else{b.style.width=this.combo+'%';b.style.backgroundColor='#f97316';s.classList.add('hidden');} },
-            checkOfflineEarnings() { if(this.data.autoPower>0&&this.data.lastSaveTime){const s=(Date.now()-this.data.lastSaveTime)/1000;if(s>60){const e=Math.floor(s*this.data.autoPower*this.data.prestigeMultiplier*0.5);if(e>0){this.data.points+=e;alert(`Hoş geldin! Sen yokken ${e} SP kazandın.`);}}} },
+            checkOfflineEarnings() { 
+                if(this.data.autoPower>0&&this.data.lastSaveTime){
+                    const s=(Date.now()-this.data.lastSaveTime)/1000;
+                    if(s>60){
+                        const e=Math.floor(s*this.data.autoPower*this.data.prestigeMultiplier*0.5);
+                        if(e>0){
+                            this.data.points+=e;
+                            setTimeout(() => this.showToast("Hoş geldin!", `Sen yokken ${e} SP topladım.`, "success"), 1000);
+                        }
+                    }
+                } 
+            },
             checkGrowth() { const l=this.stages[this.data.stage].limit; if(this.data.stage<this.stages.length-1 && this.data.points>=l){this.data.stage++;this.renderPlant();} if(this.data.stage===this.stages.length-1) document.getElementById('btn-prestige').classList.remove('hidden'); },
-            prestige() { if(!confirm("Sıfırla ve bonus kazan?"))return; this.data.prestigeMultiplier*=1.5;this.data.points=0;this.data.stage=0;this.data.clickPower=1;this.data.autoPower=0;this.data.upgrades={auto:{c:0,b:15},click:{c:0,b:50},boost:{c:0,b:500}};this.renderPlant();this.updateUI();this.checkAchievements();this.save(); },
-            checkAchievements() { let c=false;let ac=0;this.data.achievements.forEach(a=>{if(a.condition&&!a.unlocked&&a.condition(this.data)){a.unlocked=true;c=true;if(a.reward.includes('SP'))this.data.points+=500;const n=document.createElement('div');n.className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded shadow-lg z-50 animate-bounce text-sm font-bold";n.innerHTML=`BAŞARIM AÇILDI!<br>${a.title}`;document.body.appendChild(n);setTimeout(()=>n.remove(),3000);audioManager.playDing();}if(a.unlocked)ac++;});this.data.achievementMultiplier=1+(ac*0.1);if(c)this.save();},
+            prestige() { 
+                if(!confirm("Sıfırlayıp kalıcı bonus kazanmak istiyor musun?")) return; 
+                this.data.prestigeMultiplier*=1.5;this.data.points=0;this.data.stage=0;this.data.clickPower=1;this.data.autoPower=0;this.data.upgrades={auto:{c:0,b:15},click:{c:0,b:50},boost:{c:0,b:500}};
+                this.renderPlant();this.updateUI();this.checkAchievements();this.save(); 
+                this.showToast("PRESTİJ!", "Yeniden doğdun! Artık daha güçlüsün.", "success");
+            },
+            checkAchievements() { let c=false;let ac=0;this.data.achievements.forEach(a=>{if(a.condition&&!a.unlocked&&a.condition(this.data)){a.unlocked=true;c=true;if(a.reward.includes('SP'))this.data.points+=500;this.showToast("BAŞARIM AÇILDI!", a.title, "success"); audioManager.playDing();}if(a.unlocked)ac++;});this.data.achievementMultiplier=1+(ac*0.1);if(c)this.save();},
             renderPlant() { document.getElementById('plant-img').src=this.stages[this.data.stage].img;document.getElementById('level-display').innerText=this.stages[this.data.stage].name; },
             createFloatingText(e,t,f) { const el=document.createElement('div');el.innerText=t;el.className=f?'floating-text text-3xl text-red-600 font-black':'floating-text text-2xl';const x=e.clientX||window.innerWidth/2;const y=e.clientY||window.innerHeight/2;el.style.left=x+'px';el.style.top=y+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000);},
             updateProgressRing() { const c=document.getElementById('progress-ring');const l=this.stages[this.data.stage].limit;if(l===Infinity){c.style.strokeDashoffset=0;return;}const p=this.data.stage>0?this.stages[this.data.stage-1].limit:0;const per=Math.max(0,Math.min(100,((this.data.points-p)/(l-p))*100));c.style.strokeDashoffset=(54*2*Math.PI)*(1-per/100);},
