@@ -2,11 +2,11 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tap Seed - Final Sürüm (15 Level)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tap Seed - Final Prestige Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- KARE KUTU YOK EDİCİ --- */
+        /* --- DOKUNMATİK VE MOBİL İYİLEŞTİRMELERİ --- */
         *, *::before, *::after {
             -webkit-tap-highlight-color: transparent !important;
             -webkit-touch-callout: none !important;
@@ -15,7 +15,8 @@
         }
         *:focus, *:active { outline: none !important; box-shadow: none !important; }
         img { -webkit-user-drag: none; pointer-events: none; }
-        button, .seed-container, .shop-item, #boss-container, .bee-img, #golden-seed, .leaf, .toast-notification { pointer-events: auto !important; cursor: pointer; }
+        /* Tıklanabilir öğeler */
+        button, .seed-container, .shop-item, #boss-container, .bee-img, #golden-seed, .toast-notification { pointer-events: auto !important; cursor: pointer; touch-action: manipulation; }
 
         /* --- TEMEL AYARLAR --- */
         :root { --primary: #380516; --bg-color: rgba(253, 251, 247, 0.85); --pot-color: #e5e7eb; }
@@ -23,11 +24,12 @@
         body { 
             background-color: var(--bg-color); color: var(--primary); 
             font-family: 'Courier New', Courier, monospace; 
-            overflow: hidden; touch-action: manipulation; 
+            height: 100dvh; width: 100vw; overflow: hidden; 
             transition: background-color 2s, color 1s; 
             background-image: url('bac.png');
             background-size: cover; background-position: center; 
-            background-attachment: fixed; background-blend-mode: soft-light; 
+            background-attachment: fixed; background-blend-mode: soft-light;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         /* MEVSİMLER */
@@ -39,13 +41,13 @@
 
         .pot-circle { color: var(--pot-color); transition: color 0.5s; }
 
+        /* ANİMASYONLAR */
         @keyframes sway { 0% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } }
         .plant-idle { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
         .seed-container:active .plant-idle { animation: none; transform: scale(0.95); transition: transform 0.05s; }
         
         .seed-container { display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background: transparent !important; }
 
-        /* Efektler */
         .particle { position: absolute; pointer-events: none; z-index: 10; }
         .snowflake { color: #bae6fd; font-size: 20px; animation: fall linear infinite; text-shadow: 0 0 2px white; }
         .petal { color: #f472b6; font-size: 16px; animation: fallSway linear infinite; }
@@ -59,7 +61,6 @@
         @keyframes flyRight { 0% { left: -60px; } 100% { left: 110vw; } }
         
         .boss-img { width: 140px; height: 140px; object-fit: contain; transition: transform 0.1s; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
-        .boss-img:active { transform: scale(0.9) hue-rotate(10deg); }
         .boss-hit { animation: shake 0.2s; filter: sepia(1) saturate(5) hue-rotate(-50deg) !important; }
         #boss-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         #boss-overlay.active { display: flex !important; }
@@ -69,14 +70,12 @@
         .damage-text { position: absolute; color: #dc2626; font-weight: 900; font-size: 28px; animation: floatUp 0.5s forwards; pointer-events: none; z-index: 1000; text-shadow: 0 0 2px white; }
         .rain-drop { position: absolute; background: #a0c4ff; width: 2px; height: 15px; top: -20px; animation: rainFall 0.7s linear infinite; }
         @keyframes rainFall { to { transform: translateY(100vh); } }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0; animation: twinkle 2s infinite; pointer-events: none; box-shadow: 0 0 5px white; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.5); } }
 
         .frenzy-active { animation: shake 0.5s infinite; color: #dc2626; }
         @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, -1px); } }
         .floating-text { position: absolute; font-weight: bold; pointer-events: none; animation: floatUp 1s forwards; color: var(--primary); z-index: 50; text-shadow: 0 0 2px rgba(255,255,255,0.5); }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
-        .modal-bg { background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+        .modal-bg { background-color: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
         .achievement-unlocked { background-color: #dcfce7 !important; border: 2px solid #22c55e !important; opacity: 1 !important; color: #166534 !important; }
         .achievement-locked { opacity: 0.6; filter: grayscale(100%); }
         .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
@@ -85,40 +84,40 @@
         .shop-item:hover, .btn-upgrade:hover { transform: scale(1.02); border-color: #380516 !important; }
         .shop-item.purchased { background-color: #e0f2fe; border-color: #0ea5e9 !important; }
         .shop-item.equipped { background-color: #dcfce7; border-color: #22c55e !important; box-shadow: 0 0 10px #22c55e !important; }
+        
+        /* PRESTİJ EFEKTİ */
+        .btn-prestige-active {
+            background: linear-gradient(45deg, #fceabb 0%, #f8b500 20%, #fceabb 40%, #fbdf93 100%);
+            border: 2px solid #b45309 !important;
+            color: #78350f !important;
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
 
-        /* --- YENİ BİLDİRİM STİLLERİ --- */
+        /* --- BİLDİRİM STİLLERİ --- */
         #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
         .toast-notification {
-            pointer-events: auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
-            border-left: 6px solid #333;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            display: flex; align-items: center; justify-content: space-between;
-            min-width: 280px; max-width: 320px; 
+            pointer-events: auto; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px);
+            border-left: 6px solid #333; padding: 12px 16px; border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); display: flex; align-items: center;
+            min-width: 280px; max-width: 320px; animation: slideInRight 0.4s ease-out forwards;
         }
         .toast-notification.hide { animation: slideOutRight 0.4s ease-in forwards; }
         .toast-notification.success { border-color: #22c55e; background: #f0fdf4; }
         .toast-notification.danger { border-color: #dc2626; background: #fef2f2; }
         .toast-notification.error { border-color: #6b7280; background: #f9fafb; }
-        
         @keyframes slideInRight { 0% { transform: translateX(100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
         @keyframes slideOutRight { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(120%); opacity: 0; } }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col items-center justify-between p-6 overflow-hidden">
+<body class="flex flex-col items-center p-4">
 
     <div id="sky-layer" class="fixed inset-0 pointer-events-none z-0"></div>
     <div id="rain-layer" class="fixed inset-0 pointer-events-none z-0"></div>
     <div id="season-layer" class="fixed inset-0 pointer-events-none z-10"></div>
     <div id="bee-container"></div>
-    
     <div id="toast-container"></div>
-
     <img id="ladybug" src="ladybug.png" class="ladybug-img hidden" alt="Uğur Böceği">
-    
     <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none z-50 transition-all hover:scale-125 flex items-center justify-center">🌟</div>
 
     <div id="boss-overlay">
@@ -138,35 +137,55 @@
     </div>
     <button onclick="game.toggleAchievements()" class="absolute top-4 right-4 text-xs font-bold bg-white/80 p-2 rounded hover:bg-white z-40 border border-gray-500 text-black shadow-md">🏆 BAŞARIMLAR</button>
 
-    <header class="w-full max-w-md flex justify-between items-center text-sm font-bold opacity-80 z-20 mt-8" style="text-shadow: 0 0 2px white;">
+    <header class="w-full max-w-md flex justify-between items-center text-sm font-bold opacity-80 z-20 mt-10 mb-2" style="text-shadow: 0 0 2px white;">
         <div>SEVİYE: <span id="level-display">TOHUM</span></div>
         <div class="text-right">PRESTİJ: x<span id="prestige-display">1.0</span></div>
     </header>
 
-    <main class="flex-grow flex flex-col items-center justify-center relative w-full z-20">
-        <div class="absolute top-6 text-4xl font-black tracking-tighter transition-all" id="score-container" style="text-shadow: 0 0 3px white;"><span id="score-display">0</span> SP</div>
+    <main class="flex-1 flex flex-col items-center justify-center relative w-full z-20 min-h-0">
+        <div class="text-4xl font-black tracking-tighter transition-all mb-4" id="score-container" style="text-shadow: 0 0 3px white;"><span id="score-display">0</span> SP</div>
         
-        <div class="flex flex-col items-center justify-center mb-4 mt-16 w-full text-center bg-white/30 p-2 rounded-full backdrop-blur-sm">
-            <span id="season-status" class="text-xs font-bold text-gray-700 transition-all mb-1">🌸 İLKBAHAR</span>
-            <span id="weather-status" class="text-xs font-bold transition-opacity opacity-0 text-black">☀️ GÜNEŞLİ</span>
-            <span id="frenzy-status" class="text-red-600 hidden absolute top-28 animate-pulse text-lg font-bold text-shadow-sm">🔥 ÇILGINLIK MODU (x4) 🔥</span>
+        <div class="flex flex-col items-center justify-center mb-2 w-full text-center bg-white/30 p-1 rounded-full backdrop-blur-sm max-w-[200px]">
+            <span id="season-status" class="text-xs font-bold text-gray-700 transition-all">🌸 İLKBAHAR</span>
+            <span id="frenzy-status" class="text-red-600 hidden absolute top-20 animate-pulse text-lg font-bold text-shadow-sm z-50">🔥 ÇILGINLIK! 🔥</span>
         </div>
 
-        <div class="w-48 h-2 bg-gray-200 rounded-full mb-4 overflow-hidden border border-gray-300 relative shadow-sm"><div id="combo-bar" class="h-full bg-orange-500 transition-all duration-100 w-0"></div></div>
+        <div class="w-48 h-2 bg-gray-200 rounded-full mb-2 overflow-hidden border border-gray-300 relative shadow-sm"><div id="combo-bar" class="h-full bg-orange-500 transition-all duration-100 w-0"></div></div>
         <div class="text-xs opacity-80 mb-2 font-bold bg-white/50 px-2 rounded-full">Saniyede: <span id="sps-display">0.0</span></div>
         
-        <div id="click-area" class="seed-container relative w-72 h-72 rounded-full bg-transparent flex items-center justify-center">
+        <div id="click-area" class="seed-container relative w-full h-full max-h-[45vh] aspect-square rounded-full bg-transparent flex items-center justify-center">
             <svg class="absolute w-full h-full" viewBox="0 0 120 120" style="filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));"><circle class="text-gray-200 pot-circle" stroke-width="2" stroke="currentColor" fill="transparent" r="54" cx="60" cy="60" /><circle id="progress-ring" class="text-current progress-ring__circle" stroke-width="4" stroke="currentColor" fill="transparent" r="54" cx="60" cy="60" stroke-dasharray="339.292" stroke-dashoffset="339.292" /></svg>
-            <img id="plant-img" src="level1.png" alt="Bitki" class="plant-idle w-48 h-48 object-contain absolute inset-0 m-auto pointer-events-none" style="filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));">
+            <img id="plant-img" src="level1.png" alt="Bitki" class="plant-idle w-[70%] h-[70%] object-contain absolute inset-0 m-auto pointer-events-none" style="filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));">
         </div>
     </main>
 
-    <footer class="w-full max-w-md space-y-2 z-20">
-        <button id="btn-auto" onclick="game.buyUpgrade('auto')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white"><div class="flex items-center gap-3"><div class="text-left"><div class="font-bold text-sm">AUTO-TAP I</div><div class="text-xs opacity-60">+0.5/sn</div></div></div><div class="font-bold text-sm" id="cost-auto">15 SP</div></button>
-        <button id="btn-click" onclick="game.buyUpgrade('click')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white"><div class="flex items-center gap-3"><div class="text-left"><div class="font-bold text-sm">GÜÇLÜ KÖKLER</div><div class="text-xs opacity-60">+1 Tık Gücü</div></div></div><div class="font-bold text-sm" id="cost-click">50 SP</div></button>
-        <button id="btn-boost" onclick="game.buyUpgrade('boost')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white"><div class="flex items-center gap-3"><div class="text-left"><div class="font-bold text-sm">GÜNEŞ IŞIĞI</div><div class="text-xs opacity-60">60sn x2 Bonus</div></div></div><div class="font-bold text-sm" id="cost-boost">500 SP</div></button>
-        <button id="btn-prestige" onclick="game.prestige()" class="hidden w-full p-3 mt-2 bg-[#380516] text-white rounded-lg font-bold shadow-lg hover:bg-black transition-colors">PRESTİJ: YENİ TOHUM (x1.5)</button>
-        <div class="flex justify-between mt-1 px-1 text-sm font-bold" style="text-shadow: 0 0 2px white;"><button onclick="audioManager.toggle()" id="mute-btn" class="opacity-70 hover:opacity-100 underline">SES: AÇIK</button><button onclick="game.resetSave()" class="text-red-600 opacity-70 hover:opacity-100 underline">SIFIRLA</button></div>
+    <footer class="w-full max-w-md z-30 flex flex-col gap-2 mt-2 flex-none">
+        <div class="grid grid-cols-3 gap-2">
+            <button id="btn-auto" onclick="game.buyUpgrade('auto')" class="btn-upgrade p-2 flex flex-col justify-center items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white h-16">
+                <div class="font-bold text-[10px]">AUTO-TAP</div>
+                <div class="text-[9px] opacity-60">+0.5/sn</div>
+                <div class="font-bold text-xs text-blue-800" id="cost-auto">15 SP</div>
+            </button>
+            <button id="btn-click" onclick="game.buyUpgrade('click')" class="btn-upgrade p-2 flex flex-col justify-center items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white h-16">
+                <div class="font-bold text-[10px]">GÜÇLÜ KÖK</div>
+                <div class="text-[9px] opacity-60">+1 Güç</div>
+                <div class="font-bold text-xs text-green-800" id="cost-click">50 SP</div>
+            </button>
+            <button id="btn-boost" onclick="game.buyUpgrade('boost')" class="btn-upgrade p-2 flex flex-col justify-center items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white h-16">
+                <div class="font-bold text-[10px]">GÜNEŞ</div>
+                <div class="text-[9px] opacity-60">60sn x2</div>
+                <div class="font-bold text-xs text-orange-600" id="cost-boost">500 SP</div>
+            </button>
+        </div>
+        
+        <button id="btn-prestige" onclick="game.prestige()" class="hidden w-full p-3 bg-gray-200 text-gray-500 rounded-lg font-bold shadow-lg transition-all text-sm border-2 border-gray-400">
+            👑 EVRENİ SIFIRLA VE GÜÇLEN 👑
+        </button>
+
+        <div class="flex justify-between px-1 text-[10px] font-bold opacity-80" style="text-shadow: 0 0 2px white;">
+            <button onclick="audioManager.toggle()" id="mute-btn" class="hover:opacity-100">SES: AÇIK</button>
+            <button onclick="game.resetSave()" class="text-red-600 hover:opacity-100">SIFIRLA</button>
+        </div>
     </footer>
 
     <div id="shop-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center"><div class="bg-[#fdfbf7] border-4 border-[#380516] p-6 rounded-xl w-96 max-h-[85vh] overflow-y-auto relative shadow-2xl text-black"><h2 class="text-xl font-black text-center mb-4 border-b-2 border-[#380516] pb-2">DOĞA MAĞAZASI</h2><button onclick="game.toggleShop()" class="absolute top-2 right-2 text-xl font-bold hover:text-red-600">&times;</button><div class="text-center mb-4 font-bold text-lg">Puanın: <span id="shop-points">0</span> SP</div><h3 class="font-bold text-gray-500 mb-2">🐾 Yoldaşlar</h3><div class="grid grid-cols-2 gap-2 mb-4" id="shop-pets"></div><h3 class="font-bold text-gray-500 mb-2">🎨 Temalar</h3><div class="grid grid-cols-2 gap-2 mb-4" id="shop-themes"></div><h3 class="font-bold text-gray-500 mb-2">🪴 Saksı Renkleri</h3><div class="grid grid-cols-2 gap-2" id="shop-pots"></div></div></div>
@@ -191,15 +210,23 @@
                 { name: "MEYVE VEREN", limit: 50000, img: "level7.png" },
                 { name: "ORMAN BEKÇİSİ", limit: 150000, img: "level8.png" },
                 { name: "ULU ÇINAR", limit: 400000, img: "level9.png" },
-                { name: "KADİM MEŞE", limit: 1000000, img: "level10.png" }, // 1 Milyon
+                { name: "KADİM MEŞE", limit: 1000000, img: "level10.png" },
                 { name: "DOĞA RUHU", limit: 3000000, img: "level11.png" },
-                { name: "HAYAT AĞACI", limit: 10000000, img: "level12.png" }, // 10 Milyon
+                { name: "HAYAT AĞACI", limit: 10000000, img: "level12.png" },
                 { name: "GÖKYÜZÜ SÜTUNU", limit: 50000000, img: "level13.png" },
-                { name: "YILDIZ TOHUMU", limit: 250000000, img: "level14.png" }, // 250 Milyon
-                { name: "EVRENİN NEFESİ", limit: Infinity, img: "level15.png" } // Son seviye (Sonsuz)
+                { name: "YILDIZ TOHUMU", limit: 250000000, img: "level14.png" },
+                { name: "EVRENİN NEFESİ", limit: Infinity, img: "level15.png" }
             ],
             
-            seasons: ['spring', 'summer', 'autumn', 'winter'], seasonNames: ['🌸 İLKBAHAR', '☀️ YAZ', '🍂 SONBAHAR', '❄️ KIŞ'],
+            seasons: ['spring', 'summer', 'autumn', 'winter'], 
+            seasonNames: ['🌸 İLKBAHAR', '☀️ YAZ', '🍂 SONBAHAR', '❄️ KIŞ'],
+            seasonDescriptions: [
+                "Doğa uyanıyor! Otomatik üretim x1.5 arttı.",
+                "Güneş yakıyor! Tıklama gücü x1.5 arttı.",
+                "Hasat zamanı! Altın Tohum ödülleri x2.",
+                "Soğuk hava! Auto düşer ama Tık gücü x3 olur."
+            ],
+            
             achievementMultiplier: 1, isRaining: false, isNight: false, goldenTimeout: null, combo: 0, frenzyEndTime: 0, bossActive: false, bossMaxHP: 100, bossCurrentHP: 100,
 
             init() {
@@ -215,37 +242,25 @@
                 requestAnimationFrame(() => this.loop());
             },
 
-            // --- YENİ BİLDİRİM SİSTEMİ ---
             showToast(title, msg, type = 'info') {
                 const c = document.getElementById('toast-container');
                 const t = document.createElement('div');
                 t.className = `toast-notification ${type}`;
-                let icon = 'ℹ️';
-                if(type === 'success') icon = '🎉';
-                if(type === 'danger') icon = '⚠️';
-                if(type === 'error') icon = '⛔';
-                
-                t.innerHTML = `<div class="flex-1">
-                    <div class="font-bold flex items-center gap-2"><span>${icon}</span> ${title}</div>
-                    <div class="text-xs opacity-90 mt-1">${msg}</div>
-                </div>`;
-                
+                let icon = 'ℹ️'; if(type === 'success') icon = '🎉'; if(type === 'danger') icon = '⚠️'; if(type === 'error') icon = '⛔';
+                t.innerHTML = `<div class="flex-1"><div class="font-bold flex items-center gap-2"><span>${icon}</span> ${title}</div><div class="text-xs opacity-90 mt-1">${msg}</div></div>`;
                 t.onclick = () => { t.classList.add('hide'); setTimeout(()=>t.remove(), 400); };
                 c.appendChild(t);
-                
-                // Max 5 bildirim
                 if(c.children.length > 5) c.firstChild.remove();
-                
-                setTimeout(() => {
-                    if(t.parentElement) {
-                        t.classList.add('hide');
-                        setTimeout(()=>t.remove(), 400);
-                    }
-                }, 4000);
+                setTimeout(() => { if(t.parentElement) { t.classList.add('hide'); setTimeout(()=>t.remove(), 400); } }, 4000);
             },
 
-            // MEVSİMLER
-            changeSeason() { this.data.seasonIndex = (this.data.seasonIndex + 1) % 4; this.updateSeasonUI(); this.showToast("Mevsim Değişti!", `${this.seasonNames[this.data.seasonIndex]} başladı.`, "info"); },
+            changeSeason() { 
+                this.data.seasonIndex = (this.data.seasonIndex + 1) % 4; 
+                this.updateSeasonUI(); 
+                // YENİ: Detaylı Açıklama
+                const desc = this.seasonDescriptions[this.data.seasonIndex];
+                this.showToast(this.seasonNames[this.data.seasonIndex], desc, "info"); 
+            },
             updateSeasonUI() {
                 const s = this.seasons[this.data.seasonIndex];
                 document.body.className = document.body.className.replace(/season-\w+/g, ''); document.body.classList.add(`season-${s}`);
@@ -257,7 +272,6 @@
             },
             createParticles(l, c, h, n) { for(let i=0; i<n; i++) { const d = document.createElement('div'); d.className = `particle ${c}`; d.innerText = h; d.style.left = Math.random()*100 + '%'; d.style.animationDuration = (3+Math.random()*5) + 's'; d.style.animationDelay = Math.random()*5 + 's'; l.appendChild(d); } },
 
-            // BOSS
             spawnBoss() { 
                 if(this.bossActive) return; 
                 this.bossActive = true; 
@@ -282,7 +296,6 @@
             },
             updateBossUI() { document.getElementById('boss-hp-bar').style.width = ((this.bossCurrentHP / this.bossMaxHP) * 100) + '%'; },
 
-            // MAĞAZA
             toggleShop() { const m = document.getElementById('shop-modal'); if(m.classList.contains('hidden')) { m.classList.remove('hidden'); this.renderShop(); } else m.classList.add('hidden'); },
             renderShop() { document.getElementById('shop-points').innerText = Math.floor(this.data.points); const createBtn = (item, type, isOwned, isEquipped) => { const btn = document.createElement('div'); btn.className = `shop-item ${isOwned?'purchased':''} ${isEquipped?'equipped':''}`; btn.innerHTML = `<div class="font-bold">${item.name}</div><div class="text-xs">${isOwned?(isEquipped?'KUŞANILDI':'KUŞAN'):item.cost+' SP'}</div>`; btn.onclick = () => this.buyOrEquip(type, item.id, item.cost); return btn; }; const pD = document.getElementById('shop-pets'); pD.innerHTML=''; this.shopItems.pets.forEach(i=>pD.appendChild(createBtn(i,'pets',this.data.inventory.pets[i.id],this.data.equipped.pet===i.id))); const tD = document.getElementById('shop-themes'); tD.innerHTML=''; this.shopItems.themes.forEach(i=>tD.appendChild(createBtn(i,'themes',this.data.inventory.themes[i.id],this.data.equipped.theme===i.id))); const potD = document.getElementById('shop-pots'); potD.innerHTML=''; this.shopItems.pots.forEach(i=>potD.appendChild(createBtn(i,'pots',this.data.inventory.pots[i.id],this.data.equipped.pot===i.id))); },
             buyOrEquip(type, id, cost) { 
@@ -304,7 +317,6 @@
             applyCosmetics() { const t = this.shopItems.themes.find(t=>t.id===this.data.equipped.theme); if(t) {document.body.classList.remove('theme-dark','theme-forest','theme-sunset'); document.body.classList.add(t.class);} const p = this.shopItems.pots.find(p=>p.id===this.data.equipped.pot); document.documentElement.style.setProperty('--pot-color', p?p.color:'#e5e7eb'); const lb = document.getElementById('ladybug'); if(this.data.equipped.pet==='ladybug') lb.classList.remove('hidden'); else lb.classList.add('hidden'); },
             ladybugClick() { if(this.data.equipped.pet==='ladybug' && !this.bossActive) { const lb=document.getElementById('ladybug'); lb.style.left=(40+Math.random()*20)+'%'; lb.style.top=(40+Math.random()*20)+'%'; lb.style.transform=`rotate(${Math.random()*360}deg)`; this.handleClick({clientX:window.innerWidth/2,clientY:window.innerHeight/2},true); } },
 
-            // BONUSLAR
             scheduleBee() { setTimeout(()=>{this.spawnBee();this.scheduleBee();},(Math.random()*60000)+30000); },
             spawnBee() { 
                 const b=document.createElement('img'); b.src = "bee.png"; b.className="bee-img"; 
@@ -330,7 +342,6 @@
                 this.updateUI(); 
             },
 
-            // CORE
             handleClick(e, isAuto = false) {
                 if(this.bossActive && isAuto) return; if(this.bossActive && !isAuto) return;
                 if(!isAuto && Date.now() > this.frenzyEndTime) { this.combo = Math.min(100, this.combo + 5); if(this.combo >= 100) this.activateFrenzy(); }
@@ -360,7 +371,6 @@
                 requestAnimationFrame(() => this.loop());
             },
 
-            // UTILS
             updateComboBar() { const b=document.getElementById('combo-bar'); const s=document.getElementById('frenzy-status'); if(Date.now()<this.frenzyEndTime){b.style.width='100%';b.style.backgroundColor='#dc2626';s.classList.remove('hidden');}else{b.style.width=this.combo+'%';b.style.backgroundColor='#f97316';s.classList.add('hidden');} },
             checkOfflineEarnings() { 
                 if(this.data.autoPower>0&&this.data.lastSaveTime){
@@ -375,26 +385,20 @@
                 } 
             },
             
-            // --- GÜNCELLENEN CHECK GROWTH (Oyun Bitişi Eklendi) ---
             checkGrowth() { 
                 const currentLimit = this.stages[this.data.stage].limit;
-                
-                // Eğer seviye yükselebilecek durumdaysak
                 if(this.data.stage < this.stages.length - 1 && this.data.points >= currentLimit){
-                    this.data.stage++; // Seviyeyi artır
-                    
+                    this.data.stage++; 
                     const newStageName = this.stages[this.data.stage].name; 
                     this.renderPlant(); 
-                    
-                    // SON SEVİYE KONTROLÜ
                     if(this.data.stage === this.stages.length - 1) {
-                        // OYUN BİTTİ / ZAFER
                         this.showToast("🏆 OYUN BİTTİ! 🏆", "Zirveye ulaştın! Evrenin Nefesi sensin.", "success");
                         audioManager.playDing();
-                        setTimeout(() => audioManager.playDing(), 300); // İkinci kez çalsın zafer için
-                        document.getElementById('btn-prestige').classList.remove('hidden'); // Prestij butonu açılır
+                        setTimeout(() => audioManager.playDing(), 300);
+                        const pb = document.getElementById('btn-prestige');
+                        pb.classList.remove('hidden');
+                        pb.classList.add('btn-prestige-active');
                     } else {
-                        // Normal seviye atlama
                         this.showToast("TEBRİKLER!", `${newStageName} seviyesine ulaştın!`, "success");
                         audioManager.playDing();
                     }
@@ -402,11 +406,27 @@
             },
 
             prestige() { 
-                if(!confirm("Sıfırlayıp kalıcı bonus kazanmak istiyor musun?")) return; 
-                this.data.prestigeMultiplier*=1.5;this.data.points=0;this.data.stage=0;this.data.clickPower=1;this.data.autoPower=0;this.data.upgrades={auto:{c:0,b:15},click:{c:0,b:50},boost:{c:0,b:500}};
-                this.renderPlant();this.updateUI();this.checkAchievements();this.save(); 
-                this.showToast("PRESTİJ!", "Yeniden doğdun! Artık daha güçlüsün.", "success");
+                if(!confirm("DİKKAT: Her şeyi sıfırlayıp kalıcı %50 bonus kazanacaksın. Onaylıyor musun?")) return; 
+                this.data.prestigeMultiplier*=1.5;
+                this.data.points=0;
+                this.data.stage=0;
+                this.data.clickPower=1;
+                this.data.autoPower=0;
+                this.data.upgrades={auto:{c:0,b:15},click:{c:0,b:50},boost:{c:0,b:500}};
+                
+                this.renderPlant();
+                this.updateUI();
+                this.checkAchievements();
+                this.save(); 
+                
+                // Butonu tekrar gizle
+                const pb = document.getElementById('btn-prestige');
+                pb.classList.add('hidden');
+                pb.classList.remove('btn-prestige-active');
+                
+                this.showToast("PRESTİJ!", "Yeniden doğdun! Artık çok daha güçlüsün.", "success");
             },
+
             checkAchievements() { let c=false;let ac=0;this.data.achievements.forEach(a=>{if(a.condition&&!a.unlocked&&a.condition(this.data)){a.unlocked=true;c=true;if(a.reward.includes('SP'))this.data.points+=500;this.showToast("BAŞARIM AÇILDI!", a.title, "success"); audioManager.playDing();}if(a.unlocked)ac++;});this.data.achievementMultiplier=1+(ac*0.1);if(c)this.save();},
             renderPlant() { document.getElementById('plant-img').src=this.stages[this.data.stage].img;document.getElementById('level-display').innerText=this.stages[this.data.stage].name; },
             createFloatingText(e,t,f) { const el=document.createElement('div');el.innerText=t;el.className=f?'floating-text text-3xl text-red-600 font-black':'floating-text text-2xl';const x=e.clientX||window.innerWidth/2;const y=e.clientY||window.innerHeight/2;el.style.left=x+'px';el.style.top=y+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000);},
@@ -418,7 +438,9 @@
             resetSave() { if(confirm("Emin misin?")) { localStorage.removeItem('tapSeed_FinalSeasonV5'); location.reload(); } },
             toggleHelp() { document.getElementById('help-modal').classList.toggle('hidden'); },
             toggleAchievements() { document.getElementById('achievement-modal').classList.toggle('hidden'); this.renderAchievements(); },
-            renderAchievements() { const l=document.getElementById('achievement-list');l.innerHTML='';this.data.achievements.forEach(a=>{const d=document.createElement('div');d.className=`p-2 rounded border ${a.unlocked?'achievement-unlocked':'achievement-locked'}`;d.innerHTML=`<div class="font-bold flex justify-between"><span>${a.unlocked?'✅':'🔒'} ${a.title}</span></div><div class="text-xs mt-1">${a.desc}</div><div class="text-[10px] opacity-70 font-bold mt-1">Ödül: ${a.reward}</div>`;l.appendChild(d);});}
+            renderAchievements() { const l=document.getElementById('achievement-list');l.innerHTML='';this.data.achievements.forEach(a=>{const d=document.createElement('div');d.className=`p-2 rounded border ${a.unlocked?'achievement-unlocked':'achievement-locked'}`;d.innerHTML=`<div class="font-bold flex justify-between"><span>${a.unlocked?'✅':'🔒'} ${a.title}</span></div><div class="text-xs mt-1">${a.desc}</div><div class="text-[10px] opacity-70 font-bold mt-1">Ödül: ${a.reward}</div>`;l.appendChild(d);});},
+            weatherLoop() { if(Math.random()<0.3){this.isRaining=true;document.getElementById('weather-status').style.opacity=1;document.getElementById('weather-status').innerText="🌧️ YAĞMURLU (x2 Güç)";document.getElementById('rain-layer').innerHTML='';for(let i=0;i<50;i++){const d=document.createElement('div');d.className='rain-drop';d.style.left=Math.random()*100+'%';d.style.animationDuration=0.5+Math.random()*0.5+'s';d.style.animationDelay=Math.random()+'s';document.getElementById('rain-layer').appendChild(d);}}else{this.isRaining=false;document.getElementById('weather-status').style.opacity=0;document.getElementById('rain-layer').innerHTML='';}},
+            toggleNightMode() { this.isNight = !this.isNight; if(this.isNight) { document.body.classList.add('night-mode'); this.showToast("GECE OLDU", "Ay ışığında bitkiler dinlenir (Auto x3)", "info"); } else { document.body.classList.remove('night-mode'); this.showToast("GÜN DOĞDU", "Güneş açtı!", "info"); } this.updateUI(); }
         };
         window.onload = () => game.init();
     </script>
