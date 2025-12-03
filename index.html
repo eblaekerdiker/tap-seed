@@ -3,173 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tap Seed - Mükemmel Sürüm</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* --- KARE KUTU YOK EDİCİ --- */
-        *, *::before, *::after {
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-touch-callout: none !important;
-            user-select: none !important;
-            outline: none !important;
-        }
-        *:focus, *:active { outline: none !important; box-shadow: none !important; }
-        img { -webkit-user-drag: none; pointer-events: none; }
-        button, .seed-container, .shop-item, #boss-container, .bee-img, #golden-seed, .leaf, .toast-notification { pointer-events: auto !important; cursor: pointer; }
-
-        /* --- TEMEL AYARLAR --- */
-        :root { --primary: #380516; --bg-color: rgba(253, 251, 247, 0.85); --pot-color: #e5e7eb; }
-        
-        body { 
-            background-color: var(--bg-color); color: var(--primary); 
-            font-family: 'Courier New', Courier, monospace; 
-            overflow: hidden; touch-action: manipulation; 
-            transition: background-color 2s, color 1s; 
-            /* DİKKAT: Arka plan resminin adı 'bac.png' olarak ayarlı. */
-            background-image: url('bac.png');
-            background-size: cover; background-position: center; 
-            background-attachment: fixed; background-blend-mode: soft-light; 
-        }
-
-        /* MEVSİMLER */
-        body.season-spring { --bg-color: rgba(236, 253, 245, 0.85); }
-        body.season-summer { --bg-color: rgba(255, 251, 235, 0.85); }
-        body.season-autumn { --bg-color: rgba(255, 247, 237, 0.85); }
-        body.season-winter { --bg-color: rgba(240, 249, 255, 0.85); }
-        body.night-mode { background-color: rgba(15, 23, 42, 0.95) !important; color: #e2e8f0; background-blend-mode: multiply; }
-
-        .pot-circle { color: var(--pot-color); transition: color 0.5s; }
-
-        @keyframes sway { 0% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } }
-        .plant-idle { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
-        .seed-container:active .plant-idle { animation: none; transform: scale(0.95); transition: transform 0.05s; }
-        
-        .seed-container { display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; background: transparent !important; }
-
-        /* Efektler */
-        .particle { position: absolute; pointer-events: none; z-index: 10; }
-        .snowflake { color: #bae6fd; font-size: 20px; animation: fall linear infinite; text-shadow: 0 0 2px white; }
-        .petal { color: #f472b6; font-size: 16px; animation: fallSway linear infinite; }
-        .fall-leaf { font-size: 20px; animation: fallRotate linear infinite; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3)); }
-        @keyframes fall { to { transform: translateY(110vh); } }
-        @keyframes fallSway { 0% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(20px, 50vh) rotate(180deg); } 100% { transform: translate(-20px, 110vh) rotate(360deg); } }
-        @keyframes fallRotate { to { transform: translateY(110vh) rotate(720deg); } }
-
-        .ladybug-img { position: absolute; width: 40px; height: 40px; z-index: 25; transition: all 1s ease-in-out; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); }
-        .bee-img { position: absolute; width: 60px; height: 60px; z-index: 70; animation: flyRight 6s linear forwards; object-fit: contain; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
-        @keyframes flyRight { 0% { left: -60px; } 100% { left: 110vw; } }
-        
-        .boss-img { width: 140px; height: 140px; object-fit: contain; transition: transform 0.1s; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
-        .boss-img:active { transform: scale(0.9) hue-rotate(10deg); }
-        .boss-hit { animation: shake 0.2s; filter: sepia(1) saturate(5) hue-rotate(-50deg) !important; }
-        #boss-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        #boss-overlay.active { display: flex !important; }
-        #boss-container { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: bossFloat 2s infinite ease-in-out; }
-        @keyframes bossFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-        .damage-text { position: absolute; color: #dc2626; font-weight: 900; font-size: 28px; animation: floatUp 0.5s forwards; pointer-events: none; z-index: 1000; text-shadow: 0 0 2px white; }
-        .rain-drop { position: absolute; background: #a0c4ff; width: 2px; height: 15px; top: -20px; animation: rainFall 0.7s linear infinite; }
-        @keyframes rainFall { to { transform: translateY(100vh); } }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0; animation: twinkle 2s infinite; pointer-events: none; box-shadow: 0 0 5px white; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.5); } }
-
-        .frenzy-active { animation: shake 0.5s infinite; color: #dc2626; }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, -1px); } }
-        .floating-text { position: absolute; font-weight: bold; pointer-events: none; animation: floatUp 1s forwards; color: var(--primary); z-index: 50; text-shadow: 0 0 2px rgba(255,255,255,0.5); }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
-        .modal-bg { background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-        .achievement-unlocked { background-color: #dcfce7 !important; border: 2px solid #22c55e !important; opacity: 1 !important; color: #166534 !important; }
-        .achievement-locked { opacity: 0.6; filter: grayscale(100%); }
-        .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
-        
-        .shop-item, .btn-upgrade, button { border: 2px solid #ccc !important; border-radius: 8px; transition: all 0.2s; }
-        .shop-item:hover, .btn-upgrade:hover { transform: scale(1.02); border-color: #380516 !important; }
-        .shop-item.purchased { background-color: #e0f2fe; border-color: #0ea5e9 !important; }
-        .shop-item.equipped { background-color: #dcfce7; border-color: #22c55e !important; box-shadow: 0 0 10px #22c55e !important; }
-
-        /* --- YENİ BİLDİRİM STİLLERİ --- */
-        #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
-        .toast-notification {
-            pointer-events: auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
-            border-left: 6px solid #333;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            display: flex; align-items: center; justify-content: space-between;
-            min-width: 280px; max-width: 320px;
-            animation: slideInRight 0.4s ease-out forwards;
-            font-size: 0.9rem;
-            color: #333;
-        }
-        .toast-notification.hide { animation: slideOutRight 0.4s ease-in forwards; }
-        .toast-notification.success { border-color: #22c55e; background: #f0fdf4; }
-        .toast-notification.danger { border-color: #dc2626; background: #fef2f2; }
-        .toast-notification.error { border-color: #6b7280; background: #f9fafb; }
-        
-        @keyframes slideInRight { 0% { transform: translateX(100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
-        @keyframes slideOutRight { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(120%); opacity: 0; } }
-    </style>
-</head>
-<body class="h-screen w-screen flex flex-col items-center justify-between p-6 overflow-hidden">
-
-    <div id="sky-layer" class="fixed inset-0 pointer-events-none z-0"></div>
-    <div id="rain-layer" class="fixed inset-0 pointer-events-none z-0"></div>
-    <div id="season-layer" class="fixed inset-0 pointer-events-none z-10"></div>
-    <div id="bee-container"></div>
-    
-    <div id="toast-container"></div>
-
-    <img id="ladybug" src="ladybug.png" class="ladybug-img hidden" alt="Uğur Böceği">
-    
-    <div id="golden-seed" onclick="game.catchGoldenSeed()" class="hidden absolute w-12 h-12 text-4xl cursor-pointer select-none z-50 transition-all hover:scale-125 flex items-center justify-center">🌟</div>
-
-    <div id="boss-overlay">
-        <div id="boss-container" onclick="game.damageBoss(event)">
-            <div class="absolute -top-10 w-48 text-center bg-red-600 text-white text-sm font-bold px-2 py-1 rounded-full animate-bounce shadow-lg border-2 border-white">⚠️ ÜRETİMİ YİYOR!</div>
-            <div class="relative w-36 h-6 bg-gray-800 rounded-full border-2 border-white overflow-hidden mb-2 shadow-lg">
-                <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-100" style="width: 100%;"></div>
-            </div>
-            <img src="caterpillar.png" class="boss-img" id="boss-img-el" alt="Obur Tırtıl">
-            <div class="text-[12px] font-black text-red-500 mt-2 bg-white px-2 rounded-full">TIKLA VE YOK ET!</div>
-        </div>
-    </div>
-
-    <div class="absolute top-4 left-4 flex flex-col gap-2 z-40">
-        <button onclick="game.toggleHelp()" class="text-xs font-bold bg-white/80 p-2 rounded hover:bg-yellow-100 border border-gray-500 text-black w-24 shadow-md">❓ BİLGİ</button>
-        <button onclick="game.toggleShop()" class="text-xs font-bold bg-white/80 p-2 rounded hover:bg-purple-100 border border-gray-500 text-black w-24 shadow-md">🛒 MAĞAZA</button>
-    </div>
-    <button onclick="game.toggleAchievements()" class="absolute top-4 right-4 text-xs font-bold bg-white/80 p-2 rounded hover:bg-white z-40 border border-gray-500 text-black shadow-md">🏆 BAŞARIMLAR</button>
-
-    <header class="w-full max-w-md flex justify-between items-center text-sm font-bold opacity-80 z-20 mt-8" style="text-shadow: 0 0 2px white;">
-        <div>SEVİYE: <span id="level-display">TOHUM</span></div>
-        <div class="text-right">PRESTİJ: x<span id="prestige-display">1.0</span></div>
-    </header>
-
-    <main class="flex-grow flex flex-col items-center justify-center relative w-full z-20">
-        <div class="absolute top-6 text-4xl font-black tracking-tighter transition-all" id="score-container" style="text-shadow: 0 0 3px white;"><span id="score-display">0</span> SP</div>
-        
-        <div class="flex flex-col items-center justify-center mb-4 mt-16 w-full text-center bg-white/30 p-2 rounded-full backdrop-blur-sm">
-            <span id="season-status" class="text-xs font-bold text-gray-700 transition-all mb-1">🌸 İLKBAHAR</span>
-            <span id="weather-status" class="text-xs font-bold transition-opacity opacity-0 text-black">☀️ GÜNEŞLİ</span>
-            <span id="frenzy-status" class="text-red-600 hidden absolute top-28 animate-pulse text-lg font-bold text-shadow-sm">🔥 ÇILGINLIK MODU (x4) 🔥</span>
-        </div>
-
-        <div class="w-48 h-2 bg-gray-200 rounded-full mb-4 overflow-hidden border border-gray-300 relative shadow-sm"><div id="combo-bar" class="h-full bg-orange-500 transition-all duration-100 w-0"></div></div>
-        <div class="text-xs opacity-80 mb-2 font-bold bg-white/50 px-2 rounded-full">Saniyede: <span id="sps-display">0.0</span></div>
-        
-        <div id="click-area" class="seed-container relative w-72 h-72 rounded-full bg-transparent flex items-center justify-center">
-            <svg class="absolute w-full h-full" viewBox="0 0 120 120" style="filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));"><circle class="text-gray-200 pot-circle" stroke-width="2" stroke="currentColor" fill="transparent" r="54" cx="60" cy="60" /><circle id="progress-ring" class="text-current progress-ring__circle" stroke-width="4" stroke="currentColor" fill="transparent" r="54" cx="60" cy="60" stroke-dasharray="339.292" stroke-dashoffset="339.292" /></svg>
-            <img id="plant-img" src="level1.png" alt="Bitki" class="plant-idle w-48 h-48 object-contain absolute inset-0 m-auto pointer-events-none" style="filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));">
-        </div>
-    </main>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tap Seed - Mükemmel Sürüm v2</title>
+    <title>Tap Seed - Final Sürüm (15 Level)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* --- KARE KUTU YOK EDİCİ --- */
@@ -263,10 +97,7 @@
             border-radius: 8px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             display: flex; align-items: center; justify-content: space-between;
-            min-width: 280px; max-width: 320px;
-            animation: slideInRight 0.4s ease-out forwards;
-            font-size: 0.9rem;
-            color: #333;
+            min-width: 280px; max-width: 320px; 
         }
         .toast-notification.hide { animation: slideOutRight 0.4s ease-in forwards; }
         .toast-notification.success { border-color: #22c55e; background: #f0fdf4; }
@@ -350,14 +181,22 @@
             shopItems: { pets: [{ id: 'ladybug', name: 'Uğur Böceği', cost: 5000, desc: '3sn\'de bir tıklar.' }], themes: [{ id: 'dark', name: 'Gece Modu', cost: 1000, class: 'theme-dark' }, { id: 'forest', name: 'Orman', cost: 2500, class: 'theme-forest' }, { id: 'sunset', name: 'Gün Batımı', cost: 2500, class: 'theme-sunset' }], pots: [{ id: 'blue', name: 'Mavi', cost: 500, color: '#60a5fa' }, { id: 'pink', name: 'Pembe', cost: 500, color: '#f472b6' }, { id: 'gold', name: 'Altın', cost: 10000, color: '#fbbf24' }] },
             achievementDefinitions: [ { id: 'click100', title: 'Acemi Bahçıvan', desc: '100 kez tıkla', condition: (g) => g.clickCount >= 100, unlocked: false, reward: 'x1.1 Güç' }, { id: 'point10k', title: 'Zengin Hasat', desc: '10.000 SP biriktir', condition: (g) => g.points >= 10000, unlocked: false, reward: 'x1.2 Güç' }, { id: 'boss', title: 'Böcek Avcısı', desc: 'Tırtılı yen', condition: (g) => g.boss.defeatedCount > 0, unlocked: false, reward: '+2000 SP' }, { id: 'shop', title: 'Alışveriş', desc: 'Mağazadan bir şey al', condition: (g) => Object.values(g.inventory.themes).some(x=>x), unlocked: false, reward: 'x1.1 Güç' }, { id: 'prestige1', title: 'Yeniden Doğuş', desc: 'Prestij yap', condition: (g) => g.prestigeMultiplier > 1, unlocked: false, reward: 'x1.5 Güç' } ],
             
-            // --- GÜNCELLENEN SEVİYE LİSTESİ ---
-            stages: [ 
-                { name: "TOHUM", limit: 50, img: "level1.png" }, 
-                { name: "FİLİZ", limit: 200, img: "level1.png" }, 
-                { name: "BİTKİ", limit: 1000, img: "level2.png" }, 
-                { name: "ÇİÇEK", limit: 5000, img: "level2.png" }, 
-                { name: "AĞAÇ", limit: 20000, img: "level3.png" }, // Artık limiti var
-                { name: "MİSTİK", limit: Infinity, img: "level4.png" } // YENİ EKLENEN LEVEL 4
+            stages: [
+                { name: "TOHUM", limit: 100, img: "level1.png" },
+                { name: "MİNİK FİLİZ", limit: 300, img: "level2.png" },
+                { name: "YEŞEREN FİDAN", limit: 800, img: "level3.png" },
+                { name: "GENÇ AĞAÇ", limit: 2500, img: "level4.png" },
+                { name: "GÜÇLÜ GÖVDE", limit: 7500, img: "level5.png" },
+                { name: "ÇİÇEKLİ AĞAÇ", limit: 20000, img: "level6.png" },
+                { name: "MEYVE VEREN", limit: 50000, img: "level7.png" },
+                { name: "ORMAN BEKÇİSİ", limit: 150000, img: "level8.png" },
+                { name: "ULU ÇINAR", limit: 400000, img: "level9.png" },
+                { name: "KADİM MEŞE", limit: 1000000, img: "level10.png" }, // 1 Milyon
+                { name: "DOĞA RUHU", limit: 3000000, img: "level11.png" },
+                { name: "HAYAT AĞACI", limit: 10000000, img: "level12.png" }, // 10 Milyon
+                { name: "GÖKYÜZÜ SÜTUNU", limit: 50000000, img: "level13.png" },
+                { name: "YILDIZ TOHUMU", limit: 250000000, img: "level14.png" }, // 250 Milyon
+                { name: "EVRENİN NEFESİ", limit: Infinity, img: "level15.png" } // Son seviye (Sonsuz)
             ],
             
             seasons: ['spring', 'summer', 'autumn', 'winter'], seasonNames: ['🌸 İLKBAHAR', '☀️ YAZ', '🍂 SONBAHAR', '❄️ KIŞ'],
@@ -535,226 +374,33 @@
                     }
                 } 
             },
-            checkGrowth() { const l=this.stages[this.data.stage].limit; if(this.data.stage<this.stages.length-1 && this.data.points>=l){this.data.stage++;this.renderPlant();} if(this.data.stage===this.stages.length-1) document.getElementById('btn-prestige').classList.remove('hidden'); },
-            prestige() { 
-                if(!confirm("Sıfırlayıp kalıcı bonus kazanmak istiyor musun?")) return; 
-                this.data.prestigeMultiplier*=1.5;this.data.points=0;this.data.stage=0;this.data.clickPower=1;this.data.autoPower=0;this.data.upgrades={auto:{c:0,b:15},click:{c:0,b:50},boost:{c:0,b:500}};
-                this.renderPlant();this.updateUI();this.checkAchievements();this.save(); 
-                this.showToast("PRESTİJ!", "Yeniden doğdun! Artık daha güçlüsün.", "success");
-            },
-            checkAchievements() { let c=false;let ac=0;this.data.achievements.forEach(a=>{if(a.condition&&!a.unlocked&&a.condition(this.data)){a.unlocked=true;c=true;if(a.reward.includes('SP'))this.data.points+=500;this.showToast("BAŞARIM AÇILDI!", a.title, "success"); audioManager.playDing();}if(a.unlocked)ac++;});this.data.achievementMultiplier=1+(ac*0.1);if(c)this.save();},
-            renderPlant() { document.getElementById('plant-img').src=this.stages[this.data.stage].img;document.getElementById('level-display').innerText=this.stages[this.data.stage].name; },
-            createFloatingText(e,t,f) { const el=document.createElement('div');el.innerText=t;el.className=f?'floating-text text-3xl text-red-600 font-black':'floating-text text-2xl';const x=e.clientX||window.innerWidth/2;const y=e.clientY||window.innerHeight/2;el.style.left=x+'px';el.style.top=y+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1000);},
-            updateProgressRing() { const c=document.getElementById('progress-ring');const l=this.stages[this.data.stage].limit;if(l===Infinity){c.style.strokeDashoffset=0;return;}const p=this.data.stage>0?this.stages[this.data.stage-1].limit:0;const per=Math.max(0,Math.min(100,((this.data.points-p)/(l-p))*100));c.style.strokeDashoffset=(54*2*Math.PI)*(1-per/100);},
-            buyUpgrade(t) { const u=this.data.upgrades[t];let c=t==='boost'?u.b*(u.c+1):Math.floor(u.b*Math.pow(1.5,u.c));if(this.data.points>=c){this.data.points-=c;u.c++;if(t==='auto')this.data.autoPower+=0.5;else if(t==='click')this.data.clickPower+=1;else if(t==='boost')this.data.boostEndTime=Date.now()+60000;this.updateUI();this.save();}},
-            updateUI() { document.getElementById('score-display').innerText=Math.floor(this.data.points).toLocaleString();let m=this.data.prestigeMultiplier*this.data.achievementMultiplier;const s=this.seasons[this.data.seasonIndex];if(s==='spring')m*=1.5;if(s==='winter')m*=0.2;if(this.isNight)m*=(this.data.autoPower>0?3:0.5);if(Date.now()<this.data.boostEndTime)m*=2;if(this.isRaining)m*=2;if(Date.now()<this.frenzyEndTime)m*=4;document.getElementById('sps-display').innerText=(this.data.autoPower*m).toFixed(1);document.getElementById('prestige-display').innerText=this.data.prestigeMultiplier.toFixed(1);const up=this.data.upgrades;document.getElementById('cost-auto').innerText=Math.floor(up.auto.b*Math.pow(1.5,up.auto.c))+" SP";document.getElementById('btn-auto').disabled=this.data.points<Math.floor(up.auto.b*Math.pow(1.5,up.auto.c));document.getElementById('cost-click').innerText=Math.floor(up.click.b*Math.pow(1.5,up.click.c))+" SP";document.getElementById('btn-click').disabled=this.data.points<Math.floor(up.click.b*Math.pow(1.5,up.click.c));const bb=document.getElementById('btn-boost');if(Date.now()<this.data.boostEndTime){bb.disabled=true;document.getElementById('cost-boost').innerText=Math.ceil((this.data.boostEndTime-Date.now())/1000)+"s";}else{const cb=up.boost.b*(up.boost.c+1);document.getElementById('cost-boost').innerText=cb+" SP";bb.disabled=this.data.points<cb;}},
-            save() { this.data.lastSaveTime=Date.now();localStorage.setItem('tapSeed_FinalSeasonV5',JSON.stringify(this.data));},
-            load() { const s=localStorage.getItem('tapSeed_FinalSeasonV5');if(s){const p=JSON.parse(s);this.data={...this.data,...p};if(this.data.seasonIndex===undefined)this.data.seasonIndex=0;if(!this.data.inventory)this.resetSave();} },
-            resetSave() { if(confirm("Emin misin?")) { localStorage.removeItem('tapSeed_FinalSeasonV5'); location.reload(); } },
-            toggleHelp() { document.getElementById('help-modal').classList.toggle('hidden'); },
-            toggleAchievements() { document.getElementById('achievement-modal').classList.toggle('hidden'); this.renderAchievements(); },
-            renderAchievements() { const l=document.getElementById('achievement-list');l.innerHTML='';this.data.achievements.forEach(a=>{const d=document.createElement('div');d.className=`p-2 rounded border ${a.unlocked?'achievement-unlocked':'achievement-locked'}`;d.innerHTML=`<div class="font-bold flex justify-between"><span>${a.unlocked?'✅':'🔒'} ${a.title}</span></div><div class="text-xs mt-1">${a.desc}</div><div class="text-[10px] opacity-70 font-bold mt-1">Ödül: ${a.reward}</div>`;l.appendChild(d);});}
-        };
-        window.onload = () => game.init();
-    </script>
-</body>
-</html>
-    <footer class="w-full max-w-md space-y-2 z-20">
-        <button id="btn-auto" onclick="game.buyUpgrade('auto')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white"><div class="flex items-center gap-3"><div class="text-left"><div class="font-bold text-sm">AUTO-TAP I</div><div class="text-xs opacity-60">+0.5/sn</div></div></div><div class="font-bold text-sm" id="cost-auto">15 SP</div></button>
-        <button id="btn-click" onclick="game.buyUpgrade('click')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white"><div class="flex items-center gap-3"><div class="text-left"><div class="font-bold text-sm">GÜÇLÜ KÖKLER</div><div class="text-xs opacity-60">+1 Tık Gücü</div></div></div><div class="font-bold text-sm" id="cost-click">50 SP</div></button>
-        <button id="btn-boost" onclick="game.buyUpgrade('boost')" class="btn-upgrade w-full p-3 rounded-lg flex justify-between items-center bg-white/90 shadow-sm text-black backdrop-blur-sm hover:bg-white"><div class="flex items-center gap-3"><div class="text-left"><div class="font-bold text-sm">GÜNEŞ IŞIĞI</div><div class="text-xs opacity-60">60sn x2 Bonus</div></div></div><div class="font-bold text-sm" id="cost-boost">500 SP</div></button>
-        <button id="btn-prestige" onclick="game.prestige()" class="hidden w-full p-3 mt-2 bg-[#380516] text-white rounded-lg font-bold shadow-lg hover:bg-black transition-colors">PRESTİJ: YENİ TOHUM (x1.5)</button>
-        <div class="flex justify-between mt-1 px-1 text-sm font-bold" style="text-shadow: 0 0 2px white;"><button onclick="audioManager.toggle()" id="mute-btn" class="opacity-70 hover:opacity-100 underline">SES: AÇIK</button><button onclick="game.resetSave()" class="text-red-600 opacity-70 hover:opacity-100 underline">SIFIRLA</button></div>
-    </footer>
-
-    <div id="shop-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center"><div class="bg-[#fdfbf7] border-4 border-[#380516] p-6 rounded-xl w-96 max-h-[85vh] overflow-y-auto relative shadow-2xl text-black"><h2 class="text-xl font-black text-center mb-4 border-b-2 border-[#380516] pb-2">DOĞA MAĞAZASI</h2><button onclick="game.toggleShop()" class="absolute top-2 right-2 text-xl font-bold hover:text-red-600">&times;</button><div class="text-center mb-4 font-bold text-lg">Puanın: <span id="shop-points">0</span> SP</div><h3 class="font-bold text-gray-500 mb-2">🐾 Yoldaşlar</h3><div class="grid grid-cols-2 gap-2 mb-4" id="shop-pets"></div><h3 class="font-bold text-gray-500 mb-2">🎨 Temalar</h3><div class="grid grid-cols-2 gap-2 mb-4" id="shop-themes"></div><h3 class="font-bold text-gray-500 mb-2">🪴 Saksı Renkleri</h3><div class="grid grid-cols-2 gap-2" id="shop-pots"></div></div></div>
-    <div id="achievement-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center"><div class="bg-[#fdfbf7] border-4 border-[#380516] p-6 rounded-xl w-80 max-h-[80vh] overflow-y-auto relative shadow-2xl text-black"><h2 class="text-xl font-black text-center mb-4 border-b-2 border-[#380516] pb-2">BAŞARIMLAR</h2><button onclick="game.toggleAchievements()" class="absolute top-2 right-2 text-xl font-bold hover:text-red-600">&times;</button><div id="achievement-list" class="space-y-3 text-sm"></div></div></div>
-    <div id="help-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center"><div class="bg-[#fdfbf7] border-4 border-[#380516] p-6 rounded-xl w-80 max-h-[80vh] overflow-y-auto relative shadow-2xl text-black"><h2 class="text-xl font-black text-center mb-4 border-b-2 border-[#380516] pb-2">NASIL OYNANIR?</h2><button onclick="game.toggleHelp()" class="absolute top-2 right-2 text-xl font-bold hover:text-red-600">&times;</button><div class="space-y-4 text-sm font-medium"><div><h3 class="font-bold text-lg text-purple-600">🌍 Mevsimler</h3><p class="opacity-80">2 dakikada bir değişir.<br><b>🌸 İlkbahar:</b> Auto-Tap Artar<br><b>☀️ Yaz:</b> Tıklama Gücü Artar<br><b>🍂 Sonbahar:</b> Altın Tohum Şansı<br><b>❄️ Kış:</b> Auto Düşer, Tık x3 Artar</p></div><div><h3 class="font-bold text-lg text-red-600">🐛 Tırtıl Boss</h3><p class="opacity-80">Gelince puanlarını yer! Hızla öldür.</p></div><div><h3 class="font-bold text-lg text-blue-800">🌑 Gece</h3><p class="opacity-80">Auto-Tap x3 olur.</p></div></div></div></div>
-
-    <script>
-        const audioManager = { ctx: null, enabled: true, init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }, resume() { if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume(); }, playPop() { if (!this.enabled) return; this.init(); this.resume(); const o = this.ctx.createOscillator(); const g = this.ctx.createGain(); o.frequency.setValueAtTime(600+Math.random()*200, this.ctx.currentTime); g.gain.setValueAtTime(0.1, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime+0.1); o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime+0.1); }, playDing() { if (!this.enabled) return; this.init(); this.resume(); const o = this.ctx.createOscillator(); const g = this.ctx.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(1200, this.ctx.currentTime); g.gain.setValueAtTime(0.1, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime+0.5); o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime+0.5); }, toggle() { this.enabled = !this.enabled; document.getElementById('mute-btn').innerText = this.enabled ? "SES: AÇIK" : "SES: KAPALI"; } };
-
-        const game = {
-            data: { points: 0, clickCount: 0, clickPower: 1, autoPower: 0, prestigeMultiplier: 1, stage: 0, boostEndTime: 0, lastSaveTime: Date.now(), upgrades: { auto: { c: 0, b: 15 }, click: { c: 0, b: 50 }, boost: { c: 0, b: 500 } }, achievements: [], inventory: { pets: { ladybug: false }, themes: { dark: false, forest: false, sunset: false }, pots: { blue: false, gold: false, pink: false } }, equipped: { theme: 'default', pot: 'default', pet: null }, boss: { nextSpawn: Date.now() + 300000, defeatedCount: 0 }, seasonIndex: 0 },
-            shopItems: { pets: [{ id: 'ladybug', name: 'Uğur Böceği', cost: 5000, desc: '3sn\'de bir tıklar.' }], themes: [{ id: 'dark', name: 'Gece Modu', cost: 1000, class: 'theme-dark' }, { id: 'forest', name: 'Orman', cost: 2500, class: 'theme-forest' }, { id: 'sunset', name: 'Gün Batımı', cost: 2500, class: 'theme-sunset' }], pots: [{ id: 'blue', name: 'Mavi', cost: 500, color: '#60a5fa' }, { id: 'pink', name: 'Pembe', cost: 500, color: '#f472b6' }, { id: 'gold', name: 'Altın', cost: 10000, color: '#fbbf24' }] },
-            achievementDefinitions: [ { id: 'click100', title: 'Acemi Bahçıvan', desc: '100 kez tıkla', condition: (g) => g.clickCount >= 100, unlocked: false, reward: 'x1.1 Güç' }, { id: 'point10k', title: 'Zengin Hasat', desc: '10.000 SP biriktir', condition: (g) => g.points >= 10000, unlocked: false, reward: 'x1.2 Güç' }, { id: 'boss', title: 'Böcek Avcısı', desc: 'Tırtılı yen', condition: (g) => g.boss.defeatedCount > 0, unlocked: false, reward: '+2000 SP' }, { id: 'shop', title: 'Alışveriş', desc: 'Mağazadan bir şey al', condition: (g) => Object.values(g.inventory.themes).some(x=>x), unlocked: false, reward: 'x1.1 Güç' }, { id: 'prestige1', title: 'Yeniden Doğuş', desc: 'Prestij yap', condition: (g) => g.prestigeMultiplier > 1, unlocked: false, reward: 'x1.5 Güç' } ],
-            stages: [ { name: "TOHUM", limit: 50, img: "level1.png" }, { name: "FİLİZ", limit: 200, img: "level1.png" }, { name: "BİTKİ", limit: 1000, img: "level2.png" }, { name: "ÇİÇEK", limit: 5000, img: "level2.png" }, { name: "AĞAÇ", limit: Infinity, img: "level3.png" } ],
-            seasons: ['spring', 'summer', 'autumn', 'winter'], seasonNames: ['🌸 İLKBAHAR', '☀️ YAZ', '🍂 SONBAHAR', '❄️ KIŞ'],
-            achievementMultiplier: 1, isRaining: false, isNight: false, goldenTimeout: null, combo: 0, frenzyEndTime: 0, bossActive: false, bossMaxHP: 100, bossCurrentHP: 100,
-
-            init() {
-                this.data.achievements = JSON.parse(JSON.stringify(this.achievementDefinitions));
-                this.load(); 
-                this.data.achievements = this.achievementDefinitions.map(def => { const saved = this.data.achievements.find(a => a.id === def.id); return { ...def, unlocked: saved ? saved.unlocked : false }; });
-                this.bossActive = false; document.getElementById('boss-overlay').classList.remove('active');
-                if (this.data.boss.nextSpawn < Date.now()) this.data.boss.nextSpawn = Date.now() + 180000;
-                this.applyCosmetics(); this.updateUI(); this.renderPlant(); this.updateSeasonUI();
-                document.getElementById('click-area').addEventListener('mousedown', (e) => this.handleClick(e));
-                setInterval(() => this.weatherLoop(), 10000); setInterval(() => this.toggleNightMode(), 180000); setInterval(() => this.ladybugClick(), 3000); setInterval(() => this.changeSeason(), 120000); 
-                this.scheduleGoldenSeed(); this.scheduleBee(); this.checkAchievements(); this.checkOfflineEarnings();
-                requestAnimationFrame(() => this.loop());
-            },
-
-            // --- YENİ BİLDİRİM SİSTEMİ ---
-            showToast(title, msg, type = 'info') {
-                const c = document.getElementById('toast-container');
-                const t = document.createElement('div');
-                t.className = `toast-notification ${type}`;
-                let icon = 'ℹ️';
-                if(type === 'success') icon = '🎉';
-                if(type === 'danger') icon = '⚠️';
-                if(type === 'error') icon = '⛔';
+            
+            // --- GÜNCELLENEN CHECK GROWTH (Oyun Bitişi Eklendi) ---
+            checkGrowth() { 
+                const currentLimit = this.stages[this.data.stage].limit;
                 
-                t.innerHTML = `<div class="flex-1">
-                    <div class="font-bold flex items-center gap-2"><span>${icon}</span> ${title}</div>
-                    <div class="text-xs opacity-90 mt-1">${msg}</div>
-                </div>`;
-                
-                t.onclick = () => { t.classList.add('hide'); setTimeout(()=>t.remove(), 400); };
-                c.appendChild(t);
-                
-                // Max 5 bildirim
-                if(c.children.length > 5) c.firstChild.remove();
-                
-                setTimeout(() => {
-                    if(t.parentElement) {
-                        t.classList.add('hide');
-                        setTimeout(()=>t.remove(), 400);
-                    }
-                }, 4000);
-            },
-
-            // MEVSİMLER
-            changeSeason() { this.data.seasonIndex = (this.data.seasonIndex + 1) % 4; this.updateSeasonUI(); this.showToast("Mevsim Değişti!", `${this.seasonNames[this.data.seasonIndex]} başladı.`, "info"); },
-            updateSeasonUI() {
-                const s = this.seasons[this.data.seasonIndex];
-                document.body.className = document.body.className.replace(/season-\w+/g, ''); document.body.classList.add(`season-${s}`);
-                document.getElementById('season-status').innerText = this.seasonNames[this.data.seasonIndex];
-                const l = document.getElementById('season-layer'); l.innerHTML = '';
-                if(s === 'spring') this.createParticles(l, 'petal', '🌸', 20);
-                if(s === 'winter') this.createParticles(l, 'snowflake', '❄️', 30);
-                if(s === 'autumn') this.createParticles(l, 'fall-leaf', '🍂', 15);
-            },
-            createParticles(l, c, h, n) { for(let i=0; i<n; i++) { const d = document.createElement('div'); d.className = `particle ${c}`; d.innerText = h; d.style.left = Math.random()*100 + '%'; d.style.animationDuration = (3+Math.random()*5) + 's'; d.style.animationDelay = Math.random()*5 + 's'; l.appendChild(d); } },
-
-            // BOSS
-            spawnBoss() { 
-                if(this.bossActive) return; 
-                this.bossActive = true; 
-                this.bossMaxHP = (this.data.clickPower * 30) + 100; 
-                this.bossCurrentHP = this.bossMaxHP; 
-                document.getElementById('boss-overlay').classList.add('active'); 
-                this.updateBossUI(); 
-                this.showToast("BOSS GELDİ!", "Obur Tırtıl puanlarını yiyor! Çabuk yok et!", "danger");
-                audioManager.playDing();
-            },
-            damageBoss(e) { e.stopPropagation(); e.preventDefault(); const damage = this.data.clickPower; this.bossCurrentHP -= damage; const el = document.getElementById('boss-img-el'); el.classList.add('boss-hit'); setTimeout(() => el.classList.remove('boss-hit'), 100); const txt = document.createElement('div'); txt.innerText = `-${Math.floor(damage)}`; txt.className = 'damage-text'; txt.style.left = (50+(Math.random()*40-20))+'%'; txt.style.top = (Math.random()*20)+'%'; document.getElementById('boss-container').appendChild(txt); setTimeout(()=>txt.remove(), 500); if(this.bossCurrentHP <= 0) this.killBoss(); this.updateBossUI(); },
-            killBoss() { 
-                this.bossActive = false; 
-                document.getElementById('boss-overlay').classList.remove('active'); 
-                const reward = this.data.points * 0.1 + 2000; 
-                this.data.points += reward; 
-                this.data.boss.defeatedCount++; 
-                this.data.boss.nextSpawn = Date.now() + 300000; 
-                audioManager.playDing(); 
-                this.showToast("TIRTIL ÖLDÜ!", `Harika! +${Math.floor(reward)} SP kazandın.`, "success");
-                this.checkAchievements(); 
-            },
-            updateBossUI() { document.getElementById('boss-hp-bar').style.width = ((this.bossCurrentHP / this.bossMaxHP) * 100) + '%'; },
-
-            // MAĞAZA
-            toggleShop() { const m = document.getElementById('shop-modal'); if(m.classList.contains('hidden')) { m.classList.remove('hidden'); this.renderShop(); } else m.classList.add('hidden'); },
-            renderShop() { document.getElementById('shop-points').innerText = Math.floor(this.data.points); const createBtn = (item, type, isOwned, isEquipped) => { const btn = document.createElement('div'); btn.className = `shop-item ${isOwned?'purchased':''} ${isEquipped?'equipped':''}`; btn.innerHTML = `<div class="font-bold">${item.name}</div><div class="text-xs">${isOwned?(isEquipped?'KUŞANILDI':'KUŞAN'):item.cost+' SP'}</div>`; btn.onclick = () => this.buyOrEquip(type, item.id, item.cost); return btn; }; const pD = document.getElementById('shop-pets'); pD.innerHTML=''; this.shopItems.pets.forEach(i=>pD.appendChild(createBtn(i,'pets',this.data.inventory.pets[i.id],this.data.equipped.pet===i.id))); const tD = document.getElementById('shop-themes'); tD.innerHTML=''; this.shopItems.themes.forEach(i=>tD.appendChild(createBtn(i,'themes',this.data.inventory.themes[i.id],this.data.equipped.theme===i.id))); const potD = document.getElementById('shop-pots'); potD.innerHTML=''; this.shopItems.pots.forEach(i=>potD.appendChild(createBtn(i,'pots',this.data.inventory.pots[i.id],this.data.equipped.pot===i.id))); },
-            buyOrEquip(type, id, cost) { 
-                if (!this.data.inventory[type][id]) { 
-                    if(this.data.points >= cost) { 
-                        this.data.points-=cost; 
-                        this.data.inventory[type][id]=true; 
-                        audioManager.playDing(); 
-                        this.showToast("Satın Alındı!", "Yeni eşya eklendi.", "success");
-                        this.renderShop(); this.updateUI(); this.checkAchievements(); 
+                // Eğer seviye yükselebilecek durumdaysak
+                if(this.data.stage < this.stages.length - 1 && this.data.points >= currentLimit){
+                    this.data.stage++; // Seviyeyi artır
+                    
+                    const newStageName = this.stages[this.data.stage].name; 
+                    this.renderPlant(); 
+                    
+                    // SON SEVİYE KONTROLÜ
+                    if(this.data.stage === this.stages.length - 1) {
+                        // OYUN BİTTİ / ZAFER
+                        this.showToast("🏆 OYUN BİTTİ! 🏆", "Zirveye ulaştın! Evrenin Nefesi sensin.", "success");
+                        audioManager.playDing();
+                        setTimeout(() => audioManager.playDing(), 300); // İkinci kez çalsın zafer için
+                        document.getElementById('btn-prestige').classList.remove('hidden'); // Prestij butonu açılır
                     } else {
-                        this.showToast("Yetersiz Puan", "Biraz daha SP biriktirmelisin.", "error");
-                    }
-                } else { 
-                    if(type==='pets') this.data.equipped.pet = (this.data.equipped.pet===id)?null:id; else this.data.equipped[type.slice(0,-1)]=id; 
-                    this.applyCosmetics(); this.renderShop(); 
-                } 
-            },
-            applyCosmetics() { const t = this.shopItems.themes.find(t=>t.id===this.data.equipped.theme); if(t) {document.body.classList.remove('theme-dark','theme-forest','theme-sunset'); document.body.classList.add(t.class);} const p = this.shopItems.pots.find(p=>p.id===this.data.equipped.pot); document.documentElement.style.setProperty('--pot-color', p?p.color:'#e5e7eb'); const lb = document.getElementById('ladybug'); if(this.data.equipped.pet==='ladybug') lb.classList.remove('hidden'); else lb.classList.add('hidden'); },
-            ladybugClick() { if(this.data.equipped.pet==='ladybug' && !this.bossActive) { const lb=document.getElementById('ladybug'); lb.style.left=(40+Math.random()*20)+'%'; lb.style.top=(40+Math.random()*20)+'%'; lb.style.transform=`rotate(${Math.random()*360}deg)`; this.handleClick({clientX:window.innerWidth/2,clientY:window.innerHeight/2},true); } },
-
-            // BONUSLAR
-            scheduleBee() { setTimeout(()=>{this.spawnBee();this.scheduleBee();},(Math.random()*60000)+30000); },
-            spawnBee() { 
-                const b=document.createElement('img'); b.src = "bee.png"; b.className="bee-img"; 
-                b.style.top=(10+Math.random()*50)+'%'; 
-                b.onclick=()=>{
-                    b.remove();
-                    let r=Math.max(500,Math.floor(this.data.autoPower*this.data.prestigeMultiplier*300));
-                    this.data.points+=r;
-                    audioManager.playDing();
-                    this.showToast("Arı Yakaladın!", `+${r} SP kazandın!`, "success");
-                }; 
-                document.getElementById('bee-container').appendChild(b); 
-            },
-            scheduleGoldenSeed() { setTimeout(()=>{this.showGoldenSeed();this.scheduleGoldenSeed();},(Math.random()*40000)+20000); },
-            showGoldenSeed() { const e=document.getElementById('golden-seed'); e.style.left=(10+Math.random()*80)+'%'; e.style.top=(10+Math.random()*80)+'%'; e.classList.remove('hidden'); this.goldenTimeout=setTimeout(()=>e.classList.add('hidden'),3000); },
-            catchGoldenSeed() { 
-                const e=document.getElementById('golden-seed'); if(e.classList.contains('hidden'))return; e.classList.add('hidden'); clearTimeout(this.goldenTimeout); 
-                const s=this.seasons[this.data.seasonIndex]; 
-                const b=Math.max(100,Math.floor(this.data.points*0.3)) * (s==='autumn'?2:1); 
-                this.data.points+=b; 
-                audioManager.playDing(); 
-                this.showToast("Altın Tohum!", `+${b} SP! Şanslı günündesin!`, "success");
-                this.updateUI(); 
-            },
-
-            // CORE
-            handleClick(e, isAuto = false) {
-                if(this.bossActive && isAuto) return; if(this.bossActive && !isAuto) return;
-                if(!isAuto && Date.now() > this.frenzyEndTime) { this.combo = Math.min(100, this.combo + 5); if(this.combo >= 100) this.activateFrenzy(); }
-                let m = this.data.prestigeMultiplier * this.data.achievementMultiplier;
-                const s = this.seasons[this.data.seasonIndex];
-                if(this.isNight) m *= 0.5; if(s === 'summer') m *= 1.5; if(s === 'winter') m *= 3;
-                if(Date.now()<this.data.boostEndTime) m *= 2; if(this.isRaining) { m *= 2; if(!isAuto) this.data.clickedInRain=true; } if(Date.now()<this.frenzyEndTime) m *= 4;
-                let g = this.data.clickPower * m; this.data.points += g; if(!isAuto) this.data.clickCount++;
-                if(!isAuto) { audioManager.playPop(); this.createFloatingText(e, `+${Math.floor(g)}`, Date.now()<this.frenzyEndTime); }
-                this.checkGrowth(); this.checkAchievements(); this.updateUI();
-            },
-            activateFrenzy() { this.frenzyEndTime = Date.now() + 5000; this.combo = 0; audioManager.playDing(); document.getElementById('score-container').classList.add('frenzy-active'); setTimeout(() => document.getElementById('score-container').classList.remove('frenzy-active'), 5000); },
-            loop() {
-                const now = Date.now();
-                if(now > this.frenzyEndTime && this.combo > 0) this.combo = Math.max(0, this.combo - 0.3); this.updateComboBar();
-                if(now > this.data.boss.nextSpawn && !this.bossActive) this.spawnBoss();
-                if(this.bossActive) { const p = Math.max(1, this.data.points * 0.005); this.data.points = Math.max(0, this.data.points - p/60); }
-                if (this.data.autoPower > 0 && !this.bossActive) {
-                    let m = this.data.prestigeMultiplier * this.data.achievementMultiplier;
-                    const s = this.seasons[this.data.seasonIndex];
-                    if(s === 'spring') m *= 1.5; if(s === 'winter') m *= 0.2;
-                    if(this.isNight) m *= 3; if(now < this.data.boostEndTime) m *= 2; if(this.isRaining) m *= 2; if(now < this.frenzyEndTime) m *= 4;
-                    this.data.points += (this.data.autoPower * m) / 60;
-                }
-                if(this.data.clickCount % 10 === 0 || Math.random() < 0.1) this.updateUI();
-                this.updateProgressRing(); if (Math.floor(now / 1000) % 5 === 0) this.save();
-                requestAnimationFrame(() => this.loop());
-            },
-
-            // UTILS
-            updateComboBar() { const b=document.getElementById('combo-bar'); const s=document.getElementById('frenzy-status'); if(Date.now()<this.frenzyEndTime){b.style.width='100%';b.style.backgroundColor='#dc2626';s.classList.remove('hidden');}else{b.style.width=this.combo+'%';b.style.backgroundColor='#f97316';s.classList.add('hidden');} },
-            checkOfflineEarnings() { 
-                if(this.data.autoPower>0&&this.data.lastSaveTime){
-                    const s=(Date.now()-this.data.lastSaveTime)/1000;
-                    if(s>60){
-                        const e=Math.floor(s*this.data.autoPower*this.data.prestigeMultiplier*0.5);
-                        if(e>0){
-                            this.data.points+=e;
-                            setTimeout(() => this.showToast("Hoş geldin!", `Sen yokken ${e} SP topladım.`, "success"), 1000);
-                        }
+                        // Normal seviye atlama
+                        this.showToast("TEBRİKLER!", `${newStageName} seviyesine ulaştın!`, "success");
+                        audioManager.playDing();
                     }
                 } 
             },
-            checkGrowth() { const l=this.stages[this.data.stage].limit; if(this.data.stage<this.stages.length-1 && this.data.points>=l){this.data.stage++;this.renderPlant();} if(this.data.stage===this.stages.length-1) document.getElementById('btn-prestige').classList.remove('hidden'); },
+
             prestige() { 
                 if(!confirm("Sıfırlayıp kalıcı bonus kazanmak istiyor musun?")) return; 
                 this.data.prestigeMultiplier*=1.5;this.data.points=0;this.data.stage=0;this.data.clickPower=1;this.data.autoPower=0;this.data.upgrades={auto:{c:0,b:15},click:{c:0,b:50},boost:{c:0,b:500}};
