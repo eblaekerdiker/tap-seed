@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - Tycoon Edition</title>
+    <title>Tap Seed - Tycoon Edition (Animated)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -48,6 +48,12 @@
       .dim-4 {
         filter: grayscale(1) contrast(1.2);
       }
+      .dim-5 {
+        filter: hue-rotate(90deg) saturate(3);
+      }
+      .dim-6 {
+        filter: contrast(4) grayscale(1);
+      }
 
       .particle {
         position: absolute;
@@ -67,7 +73,9 @@
         }
       }
 
-      /* Bitki Animasyonları */
+      /* --- YENİ: Bitki & Skor Animasyonları --- */
+
+      /* Bitki Salınımı */
       @keyframes sway {
         0%,
         100% {
@@ -83,30 +91,99 @@
       .plant-idle {
         animation: sway 5s ease-in-out infinite;
         transform-origin: bottom center;
-      }
-      #click-area:active .plant-idle {
-        transform: scale(0.97);
-        transition: 0.05s;
+        transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
 
-      /* Floating Text */
+      /* Tıklama Efekti (Squash) */
+      .plant-click-anim {
+        transform: scale(0.95, 0.95) !important;
+      }
+
+      /* YENİ: Bitki Üzerindeki Skor Konumu */
+      #plant-score-wrapper {
+        position: absolute;
+        top: 20%; /* Bitkinin biraz üstünde */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 60;
+        text-align: center;
+        pointer-events: none; /* Tıklamayı engellememesi için */
+        width: 100%;
+      }
+
+      /* Skor Metni Stili */
+      .big-score-text {
+        font-size: 4rem;
+        font-weight: 900;
+        color: white;
+        text-shadow: 0 4px 0 #166534,
+          /* 3D effect */ 0 0 20px rgba(255, 255, 255, 0.5),
+          /* Glow */ 0 10px 20px rgba(0, 0, 0, 0.5); /* Drop Shadow */
+        line-height: 1;
+        letter-spacing: -2px;
+        transition: transform 0.1s;
+        animation: float-gentle 3s ease-in-out infinite;
+      }
+
+      .sp-label {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #dcfce7;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        display: block;
+        margin-top: -5px;
+      }
+
+      /* Skor Artış Animasyonu (Pop) */
+      .score-pop {
+        animation: scorePopAnim 0.15s ease-out forwards;
+      }
+      @keyframes scorePopAnim {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+          color: #facc15;
+        } /* Sarı parlar */
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Hafif Süzülme (Idle) */
+      @keyframes float-gentle {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* Floating Text (Tıklayınca çıkan küçük sayılar) */
       .floating-text {
         position: absolute;
         font-weight: 900;
         pointer-events: none;
-        animation: floatUp 1s forwards;
-        color: white;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        z-index: 50;
+        animation: floatUp 0.8s cubic-bezier(0, 0.9, 0.57, 1) forwards;
+        color: #fff;
+        text-shadow: 0 2px 0 #000;
+        z-index: 70;
+        font-size: 1.5rem;
       }
       @keyframes floatUp {
         0% {
           opacity: 1;
-          transform: translateY(0) scale(1);
+          transform: translateY(0) scale(0.5);
+        }
+        50% {
+          transform: scale(1.2);
         }
         100% {
           opacity: 0;
-          transform: translateY(-80px) scale(1.2);
+          transform: translateY(-100px) scale(1);
         }
       }
 
@@ -196,6 +273,57 @@
           transform: translateX(120%);
         }
       }
+
+      /* --- GİRİŞ EKRANI CSS --- */
+      #start-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.5s;
+      }
+      #start-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .title-anim {
+        font-size: 3rem;
+        font-weight: 900;
+        color: white;
+        text-shadow: 0 0 20px #f59e0b;
+        animation: pulse-title 3s infinite;
+        text-align: center;
+      }
+      @keyframes pulse-title {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      .start-btn {
+        background: linear-gradient(to right, #f59e0b, #d97706);
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        border: 4px solid white;
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        margin-top: 2rem;
+        transition: transform 0.2s;
+      }
+      .start-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+      }
     </style>
   </head>
   <body class="flex h-screen w-full">
@@ -224,9 +352,14 @@
         class="absolute inset-0 pointer-events-none z-30"
       ></div>
 
+      <div id="plant-score-wrapper">
+        <div id="big-plant-score" class="big-score-text">0</div>
+        <span class="sp-label">TOHUM PUANI</span>
+      </div>
+
       <div
         id="click-area"
-        class="relative w-[300px] h-[300px] z-40 flex items-center justify-center"
+        class="relative w-[300px] h-[300px] z-40 flex items-center justify-center cursor-pointer"
       >
         <img
           id="plant-img"
@@ -274,30 +407,22 @@
           <div id="level-bar" class="progress-fill" style="width: 0%"></div>
         </div>
         <div class="text-xs text-gray-400 mt-1 text-right">
-          <span id="current-points">0</span> /
-          <span id="next-level-req">100</span> SP
+          <span id="next-level-req">100</span> SP Hedef
         </div>
       </header>
 
-      <div
-        class="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-8 text-center relative overflow-hidden group"
-      >
-        <div
-          class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-600"
-        ></div>
-        <div class="text-sm font-bold text-slate-500 mb-1">
-          TOPLAM TOHUM PUANI (SP)
+      <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="text-xs text-slate-400 font-bold">SANİYE BAŞINA</div>
+          <div class="text-xl font-black text-slate-700">
+            +<span id="sps-display">0.0</span>
+          </div>
         </div>
-        <div
-          id="main-score"
-          class="text-5xl font-black text-slate-800 tracking-tight"
-        >
-          0
-        </div>
-        <div
-          class="text-xs font-bold text-emerald-600 mt-2 bg-emerald-100 inline-block px-3 py-1 rounded-full"
-        >
-          +<span id="sps-display">0.0</span> / saniye
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="text-xs text-slate-400 font-bold">TOPLAM TIK</div>
+          <div class="text-xl font-black text-slate-700" id="total-clicks">
+            0
+          </div>
         </div>
       </div>
 
@@ -429,6 +554,12 @@
           height: auto;
           min-height: 50vh;
         }
+        #plant-score-wrapper {
+          top: 15%;
+        }
+        .big-score-text {
+          font-size: 3rem;
+        }
       }
     </style>
 
@@ -448,7 +579,6 @@
         <h2 class="text-3xl font-black text-slate-800 mb-6 border-b pb-4">
           DOĞA ANSİKLOPEDİSİ
         </h2>
-
         <div class="space-y-6 text-slate-600">
           <div>
             <h3 class="font-bold text-lg text-emerald-600 mb-2">
@@ -456,51 +586,19 @@
             </h3>
             <p class="text-sm">
               Bitkinize tıklayarak veya <b>Güneş Işığı</b> satın alarak SP
-              (Tohum Puanı) kazanırsınız. <b>Gübre</b> satın alırsanız, siz
-              tıklamasanız bile bitkiniz büyümeye devam eder.
+              (Tohum Puanı) kazanırsınız. <b>Gübre</b> ile otomatik üretim
+              başlar.
             </p>
           </div>
-
           <div class="grid grid-cols-2 gap-4">
             <div class="bg-blue-50 p-4 rounded-lg">
               <h4 class="font-bold text-blue-700">🌧️ Hava Durumu</h4>
-              <p class="text-xs mt-1">
-                Ara sıra yağmur yağar. Yağmurlu havada bitki coşar ve
-                <b>x2 Güç</b> ile üretim yapar.
-              </p>
+              <p class="text-xs mt-1">Yağmurda <b>x2 Güç</b>.</p>
             </div>
             <div class="bg-purple-50 p-4 rounded-lg">
               <h4 class="font-bold text-purple-700">🍂 Mevsimler</h4>
-              <ul class="text-xs mt-1 list-disc list-inside">
-                <li><b>İlkbahar:</b> Otomatik üretim (Gübre) artar.</li>
-                <li><b>Yaz:</b> Tıklama (Güneş) gücü artar.</li>
-                <li><b>Sonbahar:</b> Altın Tohum şansı artar.</li>
-                <li><b>Kış:</b> Üretim yavaşlar ama Tık gücü patlar.</li>
-              </ul>
+              <p class="text-xs mt-1">Her mevsimin farklı bir bonusu vardır.</p>
             </div>
-          </div>
-
-          <div>
-            <h3 class="font-bold text-lg text-yellow-600 mb-2">
-              🌌 Evrensel Döngü (Endgame)
-            </h3>
-            <p class="text-sm mb-2">
-              <b>15. Seviye (Evrenin Nefesi)</b> sınırına ulaştığınızda oyun
-              bitmez. Bir üst <b>BOYUTA (Dimension)</b> geçersiniz.
-            </p>
-            <ul
-              class="text-sm list-disc list-inside bg-yellow-50 p-4 rounded-lg border border-yellow-100"
-            >
-              <li>Her Boyut atlayışında oyun <b>x10 daha zorlaşır</b>.</li>
-              <li>
-                Ancak "Prestij" yaparak kazandığınız çarpanlarla bu zorluğu
-                aşabilirsiniz.
-              </li>
-              <li>
-                <b>Prestij:</b> Her şeyi sıfırlar ama kalıcı %50 güç bonusu
-                verir. Tıkanınca kullanın!
-              </li>
-            </ul>
           </div>
         </div>
       </div>
@@ -559,7 +657,7 @@
         BAŞLA
       </button>
       <div class="absolute bottom-8 text-slate-500 text-xs font-mono">
-        v2.0 - Clean UI Build
+        v2.1 - Animation Update
       </div>
     </div>
 
@@ -684,25 +782,20 @@
         startGame() {
           if (this.gameStarted) return;
           this.gameStarted = true;
-
           document.getElementById("start-screen").classList.add("hidden");
           document.getElementById("start-screen").style.opacity = 0;
           setTimeout(
             () => document.getElementById("start-screen").remove(),
             600
           );
-
           audioManager.init();
           audioManager.resume();
-
           this.checkOfflineEarnings();
-
           setInterval(() => this.weatherLoop(), 15000);
           setInterval(() => this.toggleNightMode(), 180000);
           setInterval(() => this.changeSeason(), 120000);
           this.scheduleGoldenSeed();
           this.scheduleBee();
-
           requestAnimationFrame(() => this.loop());
           this.showToast(
             "BAHÇENE HOŞ GELDİN",
@@ -711,19 +804,14 @@
           );
         },
 
-        // --- TEMEL MEKANİKLER ---
         handleClick(e, isAuto = false) {
           let m = this.data.prestigeMultiplier;
           const s = this.seasons[this.data.seasonIndex];
-
-          // Mevsim Etkileri
           if (s === "summer") m *= 1.5;
-          if (s === "winter") m *= 3.0; // Kışın tıklama çok güçlü
-
-          // Çevresel Etkiler
-          if (this.isNight) m *= 0.5; // Gece tıklama düşer
-          if (Date.now() < this.data.boostEndTime) m *= 2; // Ladybug Boost
-          if (this.isRaining) m *= 2; // Yağmur
+          if (s === "winter") m *= 3.0;
+          if (this.isNight) m *= 0.5;
+          if (Date.now() < this.data.boostEndTime) m *= 2;
+          if (this.isRaining) m *= 2;
 
           let gain = this.data.clickPower * m;
           this.data.points += gain;
@@ -732,53 +820,53 @@
           if (!isAuto) {
             audioManager.playPop();
             this.createFloatingText(e, `+${Math.floor(gain)}`);
+            // ANIMASYON TRIGGER
+            this.triggerScoreAnim();
+            const plant = document.getElementById("plant-img");
+            plant.classList.add("plant-click-anim");
+            setTimeout(() => plant.classList.remove("plant-click-anim"), 100);
           }
           this.checkGrowth();
           this.updateUI();
         },
 
+        triggerScoreAnim() {
+          const el = document.getElementById("big-plant-score");
+          el.classList.remove("score-pop");
+          void el.offsetWidth; // Trigger reflow
+          el.classList.add("score-pop");
+        },
+
         loop() {
           if (!this.gameStarted) return;
           const now = Date.now();
-
-          // Auto Tap Mantığı
           if (this.data.autoPower > 0) {
             let m = this.data.prestigeMultiplier;
             const s = this.seasons[this.data.seasonIndex];
-
-            if (s === "spring") m *= 1.5; // İlkbaharda auto hızlı
-            if (s === "winter") m *= 0.2; // Kışın durma noktasına gelir
-
-            if (this.isNight) m *= 3.0; // Gece bitkiler kendi kendine büyür (Auto x3)
+            if (s === "spring") m *= 1.5;
+            if (s === "winter") m *= 0.2;
+            if (this.isNight) m *= 3.0;
             if (now < this.data.boostEndTime) m *= 2;
             if (this.isRaining) m *= 2;
-
             this.data.points += (this.data.autoPower * m) / 60;
           }
-
           if (this.data.clickCount % 10 === 0 || Math.random() < 0.1)
             this.updateUI();
-          if (Math.floor(now / 1000) % 5 === 0) this.save(); // 5 saniyede bir kaydet
+          if (Math.floor(now / 1000) % 5 === 0) this.save();
           requestAnimationFrame(() => this.loop());
         },
 
-        // --- YÜKSELTMELER (SAĞ PANEL) ---
         buyUpgrade(t) {
           const u = this.data.upgrades[t];
           let cost = 0;
-
           if (t === "boost") {
-            // Boost (Ladybug) için farklı mantık: Süre ekler, fiyat artmaz (sabit kalabilir veya artabilir)
-            cost = u.b; // Sabit fiyat 500
-            if (Date.now() < this.data.boostEndTime) return; // Zaten aktifse alma
+            cost = u.b;
+            if (Date.now() < this.data.boostEndTime) return;
           } else {
-            // Exponential Fiyat: Base * 1.5^Count
             cost = Math.floor(u.b * Math.pow(1.5, u.c));
           }
-
           if (this.data.points >= cost) {
             this.data.points -= cost;
-
             if (t === "auto") {
               this.data.autoPower += 0.5;
               u.c++;
@@ -786,7 +874,7 @@
               this.data.clickPower += 1;
               u.c++;
             } else if (t === "boost") {
-              this.data.boostEndTime = Date.now() + 60000; // 60 saniye
+              this.data.boostEndTime = Date.now() + 60000;
               this.showToast(
                 "UĞUR BÖCEKLERİ!",
                 "Üretim hızı 60sn boyunca iki katına çıktı!",
@@ -805,21 +893,17 @@
           }
         },
 
-        // --- UI GÜNCELLEME ---
         updateUI() {
-          // Skorlar
-          document.getElementById("main-score").innerText = Math.floor(
-            this.data.points
-          ).toLocaleString();
-          document.getElementById("current-points").innerText = Math.floor(
+          // BİTKİ ÜSTÜNDEKİ SKOR
+          document.getElementById("big-plant-score").innerText = Math.floor(
             this.data.points
           ).toLocaleString();
 
-          // Level Bar Hesabı
+          document.getElementById("total-clicks").innerText =
+            this.data.clickCount.toLocaleString();
           const currentLimit = this.getCurrentStageLimit();
           document.getElementById("next-level-req").innerText =
             currentLimit.toLocaleString();
-
           let prevLimit = 0;
           if (this.data.stage > 0) {
             const basePrev = this.stages[this.data.stage - 1].limit;
@@ -836,7 +920,6 @@
           );
           document.getElementById("level-bar").style.width = progress + "%";
 
-          // SPS (Saniye Başına Puan) Tahmini
           let m = this.data.prestigeMultiplier;
           const s = this.seasons[this.data.seasonIndex];
           if (s === "spring") m *= 1.5;
@@ -849,9 +932,7 @@
             this.data.autoPower * m
           ).toFixed(1);
 
-          // Kart Fiyatları ve Level Yazıları
           const up = this.data.upgrades;
-
           document.getElementById("lvl-click").innerText =
             "Lvl " + (up.click.c + 1);
           document.getElementById("cost-click").innerText =
@@ -861,7 +942,6 @@
           document.getElementById("btn-sun").disabled =
             this.data.points <
             Math.floor(up.click.b * Math.pow(1.5, up.click.c));
-
           document.getElementById("lvl-auto").innerText = "Lvl " + up.auto.c;
           document.getElementById("cost-auto").innerText =
             Math.floor(up.auto.b * Math.pow(1.5, up.auto.c)).toLocaleString() +
@@ -885,15 +965,12 @@
             boostTimer.classList.replace("text-green-600", "text-red-600");
             boostTimer.classList.replace("bg-green-100", "bg-red-100");
           }
-
-          // Header Info
           document.getElementById("prestige-display").innerText =
             this.data.prestigeMultiplier.toFixed(1);
           document.getElementById("dim-display").innerText =
             this.data.dimension;
         },
 
-        // --- BİTKİ BÜYÜME VE PRESTİJ ---
         getCurrentStageLimit() {
           const baseLimit = this.stages[this.data.stage].limit;
           const multiplier = Math.pow(10, this.data.dimension - 1);
@@ -904,7 +981,6 @@
           const currentLimit = this.getCurrentStageLimit();
           if (this.data.points >= currentLimit) {
             if (this.data.stage >= this.stages.length - 1) {
-              // Dimension Jump
               this.data.dimension++;
               this.data.stage = 0;
               this.applyCosmetics();
@@ -918,7 +994,6 @@
                 .getElementById("btn-prestige")
                 .classList.remove("hidden");
             } else {
-              // Normal Level Up
               this.data.stage++;
               this.renderPlant();
               audioManager.playDing();
@@ -943,7 +1018,6 @@
             click: { c: 0, b: 50 },
             boost: { c: 0, b: 500 },
           };
-
           this.renderPlant();
           this.updateUI();
           this.save();
@@ -951,7 +1025,6 @@
           this.showToast("YENİDEN DOĞUŞ", "Çok daha güçlü döndün!", "success");
         },
 
-        // --- YARDIMCI FONKSİYONLAR ---
         checkOfflineEarnings() {
           if (this.data.autoPower > 0 && this.data.lastSaveTime) {
             const seconds = (Date.now() - this.data.lastSaveTime) / 1000;
@@ -1010,7 +1083,6 @@
           const s = this.seasons[this.data.seasonIndex];
           const garden = document.getElementById("garden-panel");
           garden.className = `w-full lg:w-1/2 h-full relative flex items-center justify-center select-none season-${s}`;
-
           document.getElementById("season-text").innerText =
             this.seasonNames[this.data.seasonIndex];
           const icon =
@@ -1022,7 +1094,6 @@
               ? "🍂"
               : "❄️";
           document.getElementById("season-icon").innerText = icon;
-
           const l = document.getElementById("season-layer");
           l.innerHTML = "";
           if (s === "spring") this.createParticles(l, "petal", "🌸", 20);
@@ -1040,21 +1111,14 @@
             l.appendChild(d);
           }
         },
-
-        toggleShop() {
-          /* Kaldırıldı ama eski kod hatası olmasın diye boş */
-        },
-        toggleAchievements() {
-          /* Kaldırıldı */
-        },
-
+        toggleShop() {},
+        toggleAchievements() {},
         toggleSettings() {
           document.getElementById("settings-modal").classList.toggle("hidden");
         },
         toggleInfo() {
           document.getElementById("info-modal").classList.toggle("hidden");
         },
-
         renderPlant() {
           document.getElementById("plant-img").src =
             this.stages[this.data.stage].img;
@@ -1064,11 +1128,10 @@
         createFloatingText(e, t) {
           const el = document.createElement("div");
           el.innerText = t;
-          el.className = "floating-text text-2xl";
+          el.className = "floating-text";
           const rect = document
             .getElementById("click-area")
             .getBoundingClientRect();
-          // Rastgele pozisyon (Bitkinin üzerinde)
           const x =
             (e.clientX || rect.left + rect.width / 2) +
             (Math.random() * 40 - 20);
@@ -1078,7 +1141,6 @@
           document.body.appendChild(el);
           setTimeout(() => el.remove(), 1000);
         },
-
         save() {
           this.data.lastSaveTime = Date.now();
           localStorage.setItem(this.saveKey, JSON.stringify(this.data));
@@ -1098,7 +1160,6 @@
             location.reload();
           }
         },
-
         applyCosmetics() {
           const b = document.body;
           b.classList.remove(
@@ -1111,7 +1172,6 @@
           );
           b.classList.add(`dim-${Math.min(6, this.data.dimension)}`);
         },
-
         weatherLoop() {
           if (Math.random() < 0.3) {
             this.isRaining = true;
@@ -1134,7 +1194,6 @@
             document.getElementById("rain-layer").innerHTML = "";
           }
         },
-
         toggleNightMode() {
           this.isNight = !this.isNight;
           if (this.isNight) {
@@ -1148,11 +1207,9 @@
             document.body.classList.remove("night-mode");
             this.showToast("☀️ GÜNAYDIN", "Fotosentez başladı!", "info");
           }
-          this.weatherLoop(); // Hava durumu yazısını güncelle
+          this.weatherLoop();
           this.updateUI();
         },
-
-        // Ekstra Eventler (Arı & Altın Tohum)
         scheduleBee() {
           setTimeout(() => {
             this.spawnBee();
@@ -1182,8 +1239,8 @@
             this.showToast("ARI YAKALADIN", `+${r} SP`, "success");
           };
           document.getElementById("bee-container").appendChild(b);
-          setTimeout(() => (b.style.left = "110%"), 100); // Uçuşu başlat
-          setTimeout(() => b.remove(), 10000); // Temizle
+          setTimeout(() => (b.style.left = "110%"), 100);
+          setTimeout(() => b.remove(), 10000);
         },
         scheduleGoldenSeed() {
           setTimeout(() => {
@@ -1212,7 +1269,6 @@
           this.updateUI();
         },
       };
-
       window.onload = () => game.init();
     </script>
   </body>
