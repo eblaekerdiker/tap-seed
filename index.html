@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - Glass Tycoon</title>
+    <title>Tap Seed - Visual Update</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -15,42 +15,96 @@
     <style>
       /* --- GENEL AYARLAR --- */
       :root {
-        --primary: #1e293b;
+        --primary: #3f2e22; /* Ahşap rengine uygun koyu kahve */
         --accent: #16a34a;
       }
       body {
         font-family: "Inter", sans-serif;
         overflow: hidden;
         color: var(--primary);
-        /* Arka planı body'ye taşıdık */
         background-image: url("bac.png");
         background-size: cover;
         background-position: center;
-        transition: filter 1s;
+        transition: filter 1s, background-color 1s;
       }
 
-      /* --- CAM KART EFEKTİ (YENİ) --- */
-      .glass-card {
-        background-color: rgba(255, 255, 255, 0.7); /* %70 şeffaf beyaz */
-        backdrop-filter: blur(12px); /* Buzlu cam efekti */
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        border-radius: 16px;
-        transition: all 0.2s ease-in-out;
+      /* --- UI GÖRSEL SINIFLARI (YENİ) --- */
+
+      /* Ahşap Tabela Arka Planı (Genel Butonlar için) */
+      .wood-btn {
+        background-image: url("tabela.jpg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        transition: transform 0.1s;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-      .glass-card:hover:not(:disabled) {
-        transform: translateY(-3px);
-        background-color: rgba(255, 255, 255, 0.85);
-        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
-        border-color: var(--accent);
+      .wood-btn:hover:not(:disabled) {
+        transform: scale(1.02);
+        filter: brightness(1.1);
       }
-      .glass-card:disabled {
-        opacity: 0.6;
+      .wood-btn:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      .wood-btn:disabled {
+        filter: grayscale(1) brightness(0.7);
         cursor: not-allowed;
-        filter: grayscale(1);
       }
 
-      /* Mevsim/Atmosfer Efektleri */
+      /* Geniş Tabela (Header ve Modallar için) */
+      .wood-panel {
+        background-image: url("tabela-genis.jpg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        padding: 2rem; /* Görselin kenar payları için */
+        color: #fffde7; /* Açık sarımsı yazı */
+        text-shadow: 0 2px 2px rgba(0, 0, 0, 0.8);
+      }
+
+      /* Yazı Arka Planı (Okunabilirlik için) */
+      .text-bg {
+        background-image: url("yazi-background.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 12px;
+        color: #3f2e22; /* Koyu kahve yazı */
+        text-shadow: none;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+
+      /* Kapat Butonu (Çarpı) */
+      .close-btn-img {
+        width: 40px;
+        height: 40px;
+        background-image: url("çarpı.jpg");
+        background-size: contain;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        transition: transform 0.2s;
+        border-radius: 10px; /* Hafif yumuşatma */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        z-index: 50;
+      }
+      .close-btn-img:hover {
+        transform: scale(1.1) rotate(90deg);
+      }
+
+      /* --- CAM KART EFEKTİ (Küçük istatistik kutuları için) --- */
+      .glass-container {
+        background-color: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(8px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* --- DİĞER EFEKTLER --- */
       .dim-1 {
         filter: none;
       }
@@ -70,17 +124,13 @@
         filter: contrast(4) grayscale(1);
       }
 
-      .particle {
-        position: absolute;
-        pointer-events: none;
-        z-index: 10;
-      }
       .rain-drop {
         position: absolute;
         background: #a0c4ff;
         width: 2px;
         height: 15px;
         animation: rainFall 0.7s linear infinite;
+        z-index: 10;
       }
       @keyframes rainFall {
         to {
@@ -88,7 +138,6 @@
         }
       }
 
-      /* --- Bitki & Skor Animasyonları --- */
       @keyframes sway {
         0%,
         100% {
@@ -119,7 +168,6 @@
         text-align: center;
         pointer-events: none;
         width: 100%;
-        /* Mobilde biraz daha yukarı alalım */
       }
       @media (max-width: 1024px) {
         #plant-score-wrapper {
@@ -131,7 +179,7 @@
         font-size: 4rem;
         font-weight: 900;
         color: white;
-        text-shadow: 0 4px 0 #166534, 0 0 20px rgba(255, 255, 255, 0.5),
+        text-shadow: 0 4px 0 #3f2e22, 0 0 20px rgba(255, 255, 255, 0.5),
           0 10px 20px rgba(0, 0, 0, 0.5);
         line-height: 1;
         letter-spacing: -2px;
@@ -141,7 +189,7 @@
       .sp-label {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #dcfce7;
+        color: #fef08a; /* Sarımsı */
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
         display: block;
         margin-top: -5px;
@@ -171,7 +219,6 @@
         }
       }
 
-      /* Floating Text */
       .floating-text {
         position: absolute;
         font-weight: 900;
@@ -196,14 +243,13 @@
         }
       }
 
-      /* Progress Bar Style Override for Glass */
       .progress-container {
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
-      /* Modal & Toast */
       .modal-bg {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(4px);
       }
       .toast-notification {
@@ -211,13 +257,14 @@
         top: 20px;
         right: 20px;
         z-index: 9999;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(8px);
+        background: url("yazi-background.png");
+        background-size: cover;
         padding: 16px;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        border-left: 5px solid #333;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        border-left: none;
         animation: slideIn 0.3s forwards;
+        color: #3f2e22;
       }
       @keyframes slideIn {
         from {
@@ -236,7 +283,45 @@
         }
       }
 
-      /* Responsive Düzen */
+      @keyframes beeFly {
+        from {
+          left: -100px;
+          transform: translateY(0);
+        }
+        to {
+          left: 110vw;
+          transform: translateY(-20px);
+        }
+      }
+      .bee-moving {
+        position: fixed;
+        z-index: 9999;
+        font-size: 3rem;
+        cursor: pointer !important;
+        animation: beeFly 15s linear forwards;
+        filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
+        transition: transform 0.1s;
+        pointer-events: auto !important;
+      }
+      .bee-moving:active {
+        transform: scale(0.8);
+      }
+
+      /* ALTIN TOHUM (YILDIZ) */
+      #golden-seed-img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 15px gold);
+        animation: spin-slow 10s linear infinite;
+        cursor: pointer;
+      }
+      @keyframes spin-slow {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
       @media (max-width: 1024px) {
         body {
           flex-direction: column;
@@ -264,14 +349,6 @@
       id="rain-layer"
       class="absolute inset-0 pointer-events-none z-10"
     ></div>
-    <div
-      id="season-layer"
-      class="absolute inset-0 pointer-events-none z-20"
-    ></div>
-    <div
-      id="bee-container"
-      class="absolute inset-0 pointer-events-none z-30"
-    ></div>
 
     <section
       id="left-zone"
@@ -281,9 +358,14 @@
       <div
         id="golden-seed"
         onclick="game.catchGoldenSeed(); event.stopPropagation();"
-        class="hidden absolute text-5xl cursor-pointer z-50 hover:scale-110 transition"
+        class="hidden absolute z-50 hover:scale-110 transition"
       >
-        🌟
+        <img
+          id="golden-seed-img"
+          src="yıldız.jpg"
+          style="border-radius: 50%"
+          alt="Bonus"
+        />
       </div>
 
       <div id="plant-score-wrapper">
@@ -303,7 +385,7 @@
       </div>
 
       <div
-        class="absolute bottom-8 glass-card px-6 py-3 font-bold text-sm z-40 flex items-center gap-2 text-slate-700"
+        class="absolute bottom-8 glass-container bg-white/80 px-6 py-3 font-bold text-sm z-40 flex items-center gap-2 text-slate-800 shadow-lg"
       >
         <span id="season-icon" class="text-2xl">🌸</span>
         <span id="season-text">İLKBAHAR</span>
@@ -319,69 +401,67 @@
       <div
         class="pointer-events-auto w-full max-w-md mx-auto flex flex-col gap-6 h-full lg:h-auto justify-center"
       >
-        <header class="glass-card p-6">
-          <div class="flex justify-between items-end mb-2">
+        <header class="wood-panel rounded-xl shadow-2xl relative">
+          <div class="flex justify-between items-end mb-4 px-2">
             <div>
               <h2
-                class="text-xs font-extrabold text-slate-500 tracking-widest uppercase mb-1"
+                class="text-xs font-bold opacity-70 tracking-widest uppercase mb-1"
               >
                 Mevcut Seviye
               </h2>
               <h1
                 id="level-name"
-                class="text-3xl font-black text-slate-800 leading-none"
+                class="text-3xl font-black leading-none text-white drop-shadow-md"
               >
                 TOHUM
               </h1>
             </div>
-            <div class="text-right">
-              <div
-                class="text-xs font-bold text-slate-500 bg-slate-200/50 px-2 py-1 rounded-full inline-block mb-1"
-              >
-                BOYUT <span id="dim-display">1</span>
+            <div class="text-right flex flex-col items-end gap-1">
+              <div class="text-bg text-xs rounded shadow-sm">
+                BOYUT <span id="dim-display" class="ml-1">1</span>
               </div>
-              <div
-                class="text-xs font-bold text-yellow-700 bg-yellow-100/50 px-2 py-1 rounded-full"
-              >
+              <div class="text-bg text-xs rounded shadow-sm text-yellow-700">
                 PRESTİJ x<span id="prestige-display">1.0</span>
               </div>
             </div>
           </div>
+
           <div
-            class="progress-container h-3 rounded-full overflow-hidden relative"
+            class="progress-container h-4 rounded-full overflow-hidden relative mx-2"
           >
             <div
               id="level-bar"
-              class="h-full bg-gradient-to-r from-green-400 to-emerald-600 transition-all duration-300"
+              class="h-full bg-gradient-to-r from-green-400 to-yellow-300 transition-all duration-300"
               style="width: 0%"
             ></div>
           </div>
-          <div
-            class="text-xs font-bold text-slate-500 mt-2 text-right flex justify-between"
-          >
-            <span>İlerleme</span>
-            <span><span id="next-level-req">100</span> SP Hedef</span>
+          <div class="text-xs font-bold opacity-80 mt-1 text-right px-2">
+            <span id="next-level-req">100</span> SP Hedef
           </div>
         </header>
 
         <div class="grid grid-cols-2 gap-4">
-          <div class="glass-card p-4 flex flex-col items-center justify-center">
+          <div
+            class="glass-container p-4 flex flex-col items-center justify-center shadow-md"
+          >
             <div
-              class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1"
+              class="text-xs text-slate-800 font-bold uppercase tracking-wider mb-1"
             >
               SANİYE BAŞINA
             </div>
-            <div class="text-2xl font-black text-emerald-600">
+            <div class="text-2xl font-black text-emerald-800">
               +<span id="sps-display">0.0</span>
             </div>
           </div>
-          <div class="glass-card p-4 flex flex-col items-center justify-center">
+          <div
+            class="glass-container p-4 flex flex-col items-center justify-center shadow-md"
+          >
             <div
-              class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1"
+              class="text-xs text-slate-800 font-bold uppercase tracking-wider mb-1"
             >
               TOPLAM TIK
             </div>
-            <div class="text-2xl font-black text-slate-700" id="total-clicks">
+            <div class="text-2xl font-black text-slate-800" id="total-clicks">
               0
             </div>
           </div>
@@ -391,35 +471,27 @@
           <button
             id="btn-sun"
             onclick="game.buyUpgrade('click')"
-            class="glass-card p-4 text-left group flex flex-col"
+            class="wood-btn p-5 text-left group flex flex-col relative h-32"
           >
-            <div class="flex justify-between items-start w-full mb-3">
-              <div
-                class="p-3 bg-orange-100/80 rounded-2xl text-3xl group-hover:scale-110 transition shadow-sm"
-              >
-                ☀️
+            <div class="absolute inset-4 flex flex-col justify-between">
+              <div class="flex justify-between items-start w-full">
+                <div class="text-2xl filter drop-shadow-md">☀️</div>
+                <div class="text-bg text-[10px] rounded" id="lvl-click">
+                  Lvl 1
+                </div>
               </div>
-              <div
-                class="text-xs font-bold bg-slate-200/60 px-3 py-1 rounded-full text-slate-600"
-                id="lvl-click"
-              >
-                Lvl 1
-              </div>
-            </div>
-            <div class="mt-auto">
-              <div class="font-black text-slate-800 text-xl mb-1">
-                Güneş Işığı
-              </div>
-              <div
-                class="text-xs font-medium text-slate-500 mb-3 leading-tight"
-              >
-                Tıklama gücünü kalıcı olarak artırır.
-              </div>
-              <div
-                class="font-black text-lg text-orange-600 bg-orange-50/50 p-2 rounded-lg text-center"
-                id="cost-click"
-              >
-                50 SP
+              <div>
+                <div
+                  class="font-black text-[#5d4037] text-lg leading-tight mb-1"
+                >
+                  Güneş Işığı
+                </div>
+                <div
+                  class="text-bg text-sm inline-block rounded min-w-[60px] text-center"
+                  id="cost-click"
+                >
+                  50 SP
+                </div>
               </div>
             </div>
           </button>
@@ -427,35 +499,27 @@
           <button
             id="btn-fert"
             onclick="game.buyUpgrade('auto')"
-            class="glass-card p-4 text-left group flex flex-col"
+            class="wood-btn p-5 text-left group flex flex-col relative h-32"
           >
-            <div class="flex justify-between items-start w-full mb-3">
-              <div
-                class="p-3 bg-green-100/80 rounded-2xl text-3xl group-hover:scale-110 transition shadow-sm"
-              >
-                💩
+            <div class="absolute inset-4 flex flex-col justify-between">
+              <div class="flex justify-between items-start w-full">
+                <div class="text-2xl filter drop-shadow-md">💩</div>
+                <div class="text-bg text-[10px] rounded" id="lvl-auto">
+                  Lvl 0
+                </div>
               </div>
-              <div
-                class="text-xs font-bold bg-slate-200/60 px-3 py-1 rounded-full text-slate-600"
-                id="lvl-auto"
-              >
-                Lvl 0
-              </div>
-            </div>
-            <div class="mt-auto">
-              <div class="font-black text-slate-800 text-xl mb-1">
-                Doğal Gübre
-              </div>
-              <div
-                class="text-xs font-medium text-slate-500 mb-3 leading-tight"
-              >
-                Otomatik üretim sağlar (SPS).
-              </div>
-              <div
-                class="font-black text-lg text-green-600 bg-green-50/50 p-2 rounded-lg text-center"
-                id="cost-auto"
-              >
-                15 SP
+              <div>
+                <div
+                  class="font-black text-[#5d4037] text-lg leading-tight mb-1"
+                >
+                  Doğal Gübre
+                </div>
+                <div
+                  class="text-bg text-sm inline-block rounded min-w-[60px] text-center"
+                  id="cost-auto"
+                >
+                  15 SP
+                </div>
               </div>
             </div>
           </button>
@@ -463,37 +527,37 @@
           <button
             id="btn-ladybug"
             onclick="game.buyUpgrade('boost')"
-            class="glass-card p-4 text-left group col-span-2 flex items-center justify-between relative overflow-hidden"
+            class="wood-btn col-span-2 p-5 text-left group flex flex-col relative h-24"
           >
             <div
-              class="absolute inset-0 bg-red-50/30 z-0 pointer-events-none"
-            ></div>
-            <div class="flex items-center gap-4 z-10">
-              <div
-                class="p-3 bg-red-100/80 rounded-2xl text-4xl group-hover:rotate-12 transition shadow-sm"
-              >
-                🐞
-              </div>
-              <div>
-                <div class="font-black text-slate-800 text-xl">
-                  Uğur Böceği Sürüsü
-                </div>
+              class="absolute inset-x-6 inset-y-4 flex items-center justify-between"
+            >
+              <div class="flex items-center gap-3">
                 <div
-                  class="text-xs font-medium text-slate-500 leading-tight mt-1"
+                  class="text-4xl filter drop-shadow-md group-hover:rotate-12 transition"
                 >
-                  60 Saniye boyunca tüm üretimi <b>2'ye katlar.</b>
+                  🐞
+                </div>
+                <div>
+                  <div class="font-black text-[#5d4037] text-xl">
+                    Uğur Böceği
+                  </div>
+                  <div class="text-xs font-bold text-[#5d4037] opacity-80">
+                    Üretim x2 (60sn)
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="z-10 flex flex-col items-end gap-2">
-              <div
-                class="text-xs font-bold bg-red-100 text-red-600 px-3 py-1 rounded-full"
-                id="timer-boost"
-              >
-                HAZIR
-              </div>
-              <div class="font-black text-lg text-red-600" id="cost-boost">
-                500 SP
+              <div class="flex flex-col items-end gap-1">
+                <div
+                  id="boost-status-container"
+                  class="flex items-center justify-center w-8 h-8"
+                ></div>
+                <div
+                  class="text-bg text-sm inline-block rounded min-w-[70px] text-center"
+                  id="cost-boost"
+                >
+                  500 SP
+                </div>
               </div>
             </div>
           </button>
@@ -502,22 +566,27 @@
         <div class="grid grid-cols-3 gap-3 mt-2">
           <button
             onclick="game.toggleInfo()"
-            class="glass-card py-3 font-bold text-sm text-slate-700 hover:bg-white/60 transition flex items-center justify-center gap-2"
+            class="glass-container bg-white/70 py-3 font-bold text-sm text-slate-800 hover:bg-white transition"
           >
             📘 BİLGİ
           </button>
           <button
             onclick="game.toggleSettings()"
-            class="glass-card py-3 font-bold text-sm text-slate-700 hover:bg-white/60 transition flex items-center justify-center gap-2"
+            class="glass-container bg-white/70 py-3 font-bold text-sm text-slate-800 hover:bg-white transition"
           >
             ⚙️ AYARLAR
           </button>
           <button
             id="btn-prestige"
             onclick="game.prestige()"
-            class="hidden glass-card py-3 font-bold text-sm bg-gradient-to-r from-yellow-400/80 to-orange-500/80 text-white hover:from-yellow-500 hover:to-orange-600 transition animate-pulse flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
+            class="hidden wood-btn py-3 font-bold text-sm text-white flex items-center justify-center gap-2"
+            style="
+              background-image: url('tabela-genis.jpg');
+              color: gold;
+              text-shadow: 0 2px 2px black;
+            "
           >
-            👑 PRESTİJ
+            <img src="kupa.png" class="w-5 h-5 object-contain" /> PRESTİJ
           </button>
         </div>
       </div>
@@ -528,45 +597,38 @@
       class="hidden fixed inset-0 modal-bg z-[100] flex items-center justify-center p-4"
     >
       <div
-        class="glass-card bg-white/90 p-8 w-full max-w-2xl max-h-[80vh] overflow-y-auto relative text-left"
+        class="wood-panel rounded-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto relative text-left shadow-2xl border-4 border-[#3f2e22]"
       >
-        <button
+        <div
           onclick="game.toggleInfo()"
-          class="absolute top-4 right-4 text-2xl font-bold text-gray-400 hover:text-red-500"
-        >
-          &times;
-        </button>
+          class="absolute top-4 right-4 close-btn-img"
+        ></div>
         <h2
-          class="text-3xl font-black text-slate-800 mb-6 border-b border-slate-200 pb-4"
+          class="text-3xl font-black text-white mb-6 border-b border-white/30 pb-4"
         >
-          DOĞA ANSİKLOPEDİSİ
+          DOĞA REHBERİ
         </h2>
-        <div class="space-y-6 text-slate-600">
+        <div class="space-y-6 text-[#fefce8] font-medium">
           <div>
-            <h3 class="font-bold text-lg text-emerald-600 mb-2">
-              🌱 Temel Mekanikler
+            <h3 class="font-bold text-lg text-yellow-300 mb-2">
+              🌱 Nasıl Oynanır?
             </h3>
-            <p class="text-sm">
-              Sol taraftaki bitkiye tıklayarak SP kazanırsın. Sağdaki paneli
-              kullanarak <b>Güneş Işığı</b> (Tık Gücü) ve <b>Gübre</b> (Otomatik
-              Üretim) geliştirmeleri alabilirsin.
+            <p class="text-sm opacity-90">
+              Bitkiye tıkla, puan topla. Sağdaki ahşap panellerden geliştirmeler
+              satın al. "Gübre" sen yokken bile çalışır!
             </p>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100">
-              <h4 class="font-bold text-blue-700">🌧️ Hava Durumu</h4>
+            <div class="bg-black/20 p-4 rounded-lg">
+              <h4 class="font-bold text-blue-300">🌧️ Hava Durumu</h4>
               <p class="text-xs mt-1">
-                Rastgele yağmur yağar. Yağmurlu havada üretim
-                <b>x2 katlanır</b>.
+                Yağmur yağarsa şanslısın! Üretim 2 katına çıkar.
               </p>
             </div>
-            <div
-              class="bg-purple-50/50 p-4 rounded-lg border border-purple-100"
-            >
-              <h4 class="font-bold text-purple-700">🍂 Mevsimler</h4>
+            <div class="bg-black/20 p-4 rounded-lg">
+              <h4 class="font-bold text-orange-300">🍂 Mevsimler</h4>
               <p class="text-xs mt-1">
-                Her 2 dakikada bir değişir. İlkbahar (Auto++), Yaz (Tık++),
-                Sonbahar (Altın++), Kış (Tık+++, Auto--).
+                Sürekli değişir ve oyuna farklı bonuslar verir.
               </p>
             </div>
           </div>
@@ -578,34 +640,42 @@
       id="settings-modal"
       class="hidden fixed inset-0 modal-bg z-[100] flex items-center justify-center"
     >
-      <div class="glass-card bg-white/90 p-6 w-80 relative text-center">
-        <h3 class="font-bold text-xl mb-4 text-slate-800">AYARLAR</h3>
-        <div class="flex flex-col gap-3">
+      <div
+        class="wood-panel rounded-xl w-80 relative text-center shadow-2xl border-4 border-[#3f2e22]"
+      >
+        <div
+          onclick="game.toggleSettings()"
+          class="absolute top-2 right-2 close-btn-img"
+          style="width: 30px; height: 30px"
+        ></div>
+        <h3 class="font-bold text-xl mb-6 text-white">AYARLAR</h3>
+        <div class="flex flex-col gap-4 items-center">
           <button
             onclick="audioManager.toggle()"
             id="btn-mute-set"
-            class="p-3 bg-slate-200/50 rounded-xl hover:bg-slate-300/50 font-bold transition"
+            class="w-16 h-16 rounded-full shadow-lg transition hover:scale-110"
+            style="background: transparent; border: none"
           >
-            SES: AÇIK
+            <img
+              id="sound-icon-img"
+              src="ses-ac.jpg"
+              class="w-full h-full object-contain rounded-full"
+            />
           </button>
+          <div class="text-xs text-white opacity-70">Ses Durumu</div>
+
           <button
             onclick="game.toggleNightMode()"
-            class="p-3 bg-slate-800/90 text-white rounded-xl hover:bg-black font-bold transition"
+            class="p-3 bg-slate-800/80 text-white rounded-xl hover:bg-black font-bold transition border border-white/20 w-full"
           >
             GECE / GÜNDÜZ
           </button>
-          <hr class="my-2 border-slate-200" />
+          <hr class="my-2 w-full border-white/20" />
           <button
             onclick="game.resetSave()"
-            class="p-3 bg-red-50/50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100/50 font-bold transition"
+            class="p-3 bg-red-600/80 text-white border border-red-400 rounded-xl hover:bg-red-700 font-bold transition w-full"
           >
-            ⚠️ SIFIRLA VE ÇIK
-          </button>
-          <button
-            onclick="game.toggleSettings()"
-            class="mt-2 text-gray-500 text-sm hover:text-gray-700"
-          >
-            Kapat
+            SIFIRLA
           </button>
         </div>
       </div>
@@ -613,32 +683,35 @@
 
     <div
       id="start-screen"
-      class="fixed inset-0 bg-slate-900/60 backdrop-blur-xl z-[9999] flex flex-col items-center justify-center text-white transition-opacity duration-500"
+      class="fixed inset-0 bg-slate-900 z-[9999] flex flex-col items-center justify-center text-white transition-opacity duration-500"
+      style="background-image: url('bac.png'); background-size: cover"
     >
-      <div class="text-7xl mb-6 animate-bounce">🌱</div>
-      <h1 class="text-6xl font-black mb-2 tracking-tighter drop-shadow-lg">
-        TAP SEED
-      </h1>
-      <div
-        class="text-yellow-400 font-bold tracking-[0.3em] text-sm mb-12 bg-yellow-400/10 px-4 py-2 rounded-full border border-yellow-400/30"
-      >
-        GLASS TYCOON EDITION
-      </div>
-      <button
-        onclick="game.startGame()"
-        class="glass-card px-10 py-5 bg-emerald-500/80 hover:bg-emerald-600/90 text-white rounded-full font-black text-2xl shadow-xl shadow-emerald-500/30 transition transform hover:scale-105 border-0"
-      >
-        BAŞLA
-      </button>
-      <div class="absolute bottom-8 text-white/50 text-xs font-mono">
-        v3.0 - Glassmorphism UI
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+      <div class="relative z-10 flex flex-col items-center">
+        <img
+          src="logo- tap seed.jpg"
+          class="w-64 md:w-96 object-contain mb-8 drop-shadow-2xl animate-pulse"
+        />
+        <button
+          onclick="game.startGame()"
+          class="wood-btn px-12 py-6 text-2xl font-black text-white rounded-full tracking-wider hover:scale-110 transition"
+          style="
+            background-image: url('tabela.jpg');
+            color: #3f2e22;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+          "
+        >
+          OYUNA BAŞLA
+        </button>
+        <div class="mt-8 text-white/50 text-xs font-mono">
+          v4.0 - Visual Overhaul
+        </div>
       </div>
     </div>
 
     <div id="toast-container"></div>
 
     <script>
-      // --- SES MOTORU (Aynı) ---
       const audioManager = {
         ctx: null,
         enabled: true,
@@ -693,15 +766,15 @@
         },
         toggle() {
           this.enabled = !this.enabled;
-          document.getElementById("btn-mute-set").innerText = this.enabled
-            ? "SES: AÇIK"
-            : "SES: KAPALI";
+          // Resim değiştirme mantığı
+          document.getElementById("sound-icon-img").src = this.enabled
+            ? "ses-ac.jpg"
+            : "ses-kapa.jpg";
         },
       };
 
-      // --- OYUN MOTORU ---
       const game = {
-        saveKey: "tapSeed_Glass_v3",
+        saveKey: "tapSeed_Visual_v4",
         data: {
           points: 0,
           clickCount: 0,
@@ -855,6 +928,7 @@
             );
           }
         },
+
         updateUI() {
           document.getElementById("big-plant-score").innerText = Math.floor(
             this.data.points
@@ -879,6 +953,7 @@
             )
           );
           document.getElementById("level-bar").style.width = progress + "%";
+
           let m = this.data.prestigeMultiplier;
           const s = this.seasons[this.data.seasonIndex];
           if (s === "spring") m *= 1.5;
@@ -890,6 +965,7 @@
           document.getElementById("sps-display").innerText = (
             this.data.autoPower * m
           ).toFixed(1);
+
           const up = this.data.upgrades;
           document.getElementById("lvl-click").innerText =
             "Lvl " + (up.click.c + 1);
@@ -906,27 +982,30 @@
             " SP";
           document.getElementById("btn-fert").disabled =
             this.data.points < Math.floor(up.auto.b * Math.pow(1.5, up.auto.c));
+
+          // BOOST LOGIC & TİK İKONU
           const boostBtn = document.getElementById("btn-ladybug");
-          const boostTimer = document.getElementById("timer-boost");
+          const statusContainer = document.getElementById(
+            "boost-status-container"
+          );
+
           if (Date.now() < this.data.boostEndTime) {
             boostBtn.disabled = true;
             const timeLeft = Math.ceil(
               (this.data.boostEndTime - Date.now()) / 1000
             );
-            boostTimer.innerText = timeLeft + "sn";
-            boostTimer.classList.replace("text-red-600", "text-green-600");
-            boostTimer.classList.replace("bg-red-100", "bg-green-100");
+            statusContainer.innerHTML = `<span class="text-green-700 font-bold text-lg">${timeLeft}s</span>`;
           } else {
             boostBtn.disabled = this.data.points < 500;
-            boostTimer.innerText = "HAZIR";
-            boostTimer.classList.replace("text-green-600", "text-red-600");
-            boostTimer.classList.replace("bg-green-100", "bg-red-100");
+            // HAZIR İKONU (TİK)
+            statusContainer.innerHTML = `<img src="tik.jpg" class="w-full h-full object-contain rounded-full shadow-sm">`;
           }
           document.getElementById("prestige-display").innerText =
             this.data.prestigeMultiplier.toFixed(1);
           document.getElementById("dim-display").innerText =
             this.data.dimension;
         },
+
         getCurrentStageLimit() {
           const baseLimit = this.stages[this.data.stage].limit;
           const multiplier = Math.pow(10, this.data.dimension - 1);
@@ -1007,14 +1086,7 @@
           const c = document.getElementById("toast-container");
           const t = document.createElement("div");
           t.className = `toast-notification ${type}`;
-          let borderCol =
-            type === "success"
-              ? "#22c55e"
-              : type === "error"
-              ? "#ef4444"
-              : "#3b82f6";
-          t.style.borderLeftColor = borderCol;
-          t.innerHTML = `<div><div class="font-bold text-slate-800">${title}</div><div class="text-xs text-slate-500 mt-1">${msg}</div></div>`;
+          t.innerHTML = `<div><div class="font-bold">${title}</div><div class="text-xs opacity-80 mt-1">${msg}</div></div>`;
           c.appendChild(t);
           setTimeout(() => {
             t.classList.add("hide");
@@ -1044,22 +1116,6 @@
               ? "🍂"
               : "❄️";
           document.getElementById("season-icon").innerText = icon;
-          const l = document.getElementById("season-layer");
-          l.innerHTML = "";
-          if (s === "spring") this.createParticles(l, "petal", "🌸", 20);
-          if (s === "winter") this.createParticles(l, "snowflake", "❄️", 30);
-          if (s === "autumn") this.createParticles(l, "fall-leaf", "🍂", 15);
-        },
-        createParticles(l, c, h, n) {
-          for (let i = 0; i < n; i++) {
-            const d = document.createElement("div");
-            d.className = `particle ${c}`;
-            d.innerText = h;
-            d.style.left = Math.random() * 100 + "%";
-            d.style.animationDuration = 3 + Math.random() * 5 + "s";
-            d.style.animationDelay = Math.random() * 5 + "s";
-            l.appendChild(d);
-          }
         },
         toggleShop() {},
         toggleAchievements() {},
@@ -1170,11 +1226,8 @@
           if (!this.gameStarted) return;
           const b = document.createElement("div");
           b.innerHTML = "🐝";
-          b.className =
-            "absolute text-4xl cursor-pointer z-50 animate-bounce transition hover:scale-125";
+          b.className = "bee-moving";
           b.style.top = 10 + Math.random() * 50 + "%";
-          b.style.left = "-50px";
-          b.style.transition = "left 10s linear";
           b.onclick = (e) => {
             e.stopPropagation();
             b.remove();
@@ -1188,9 +1241,8 @@
             audioManager.playDing();
             this.showToast("ARI YAKALADIN", `+${r} SP`, "success");
           };
-          document.getElementById("bee-container").appendChild(b);
-          setTimeout(() => (b.style.left = "110%"), 100);
-          setTimeout(() => b.remove(), 10000);
+          document.body.appendChild(b);
+          setTimeout(() => b.remove(), 15000);
         },
         scheduleGoldenSeed() {
           setTimeout(() => {
