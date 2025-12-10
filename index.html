@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - Tycoon Edition (Animated)</title>
+    <title>Tap Seed - Glass Tycoon</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -21,18 +21,33 @@
       body {
         font-family: "Inter", sans-serif;
         overflow: hidden;
-        background-color: #f8fafc;
         color: var(--primary);
-      }
-
-      /* --- SOL PANEL (BAHÇE) --- */
-      #garden-panel {
+        /* Arka planı body'ye taşıdık */
         background-image: url("bac.png");
         background-size: cover;
         background-position: center;
-        position: relative;
-        overflow: hidden;
         transition: filter 1s;
+      }
+
+      /* --- CAM KART EFEKTİ (YENİ) --- */
+      .glass-card {
+        background-color: rgba(255, 255, 255, 0.7); /* %70 şeffaf beyaz */
+        backdrop-filter: blur(12px); /* Buzlu cam efekti */
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        border-radius: 16px;
+        transition: all 0.2s ease-in-out;
+      }
+      .glass-card:hover:not(:disabled) {
+        transform: translateY(-3px);
+        background-color: rgba(255, 255, 255, 0.85);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
+        border-color: var(--accent);
+      }
+      .glass-card:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        filter: grayscale(1);
       }
 
       /* Mevsim/Atmosfer Efektleri */
@@ -73,9 +88,7 @@
         }
       }
 
-      /* --- YENİ: Bitki & Skor Animasyonları --- */
-
-      /* Bitki Salınımı */
+      /* --- Bitki & Skor Animasyonları --- */
       @keyframes sway {
         0%,
         100% {
@@ -93,38 +106,38 @@
         transform-origin: bottom center;
         transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
-
-      /* Tıklama Efekti (Squash) */
       .plant-click-anim {
         transform: scale(0.95, 0.95) !important;
       }
 
-      /* YENİ: Bitki Üzerindeki Skor Konumu */
       #plant-score-wrapper {
         position: absolute;
-        top: 20%; /* Bitkinin biraz üstünde */
+        top: 15%;
         left: 50%;
         transform: translateX(-50%);
         z-index: 60;
         text-align: center;
-        pointer-events: none; /* Tıklamayı engellememesi için */
+        pointer-events: none;
         width: 100%;
+        /* Mobilde biraz daha yukarı alalım */
+      }
+      @media (max-width: 1024px) {
+        #plant-score-wrapper {
+          top: 10%;
+        }
       }
 
-      /* Skor Metni Stili */
       .big-score-text {
         font-size: 4rem;
         font-weight: 900;
         color: white;
-        text-shadow: 0 4px 0 #166534,
-          /* 3D effect */ 0 0 20px rgba(255, 255, 255, 0.5),
-          /* Glow */ 0 10px 20px rgba(0, 0, 0, 0.5); /* Drop Shadow */
+        text-shadow: 0 4px 0 #166534, 0 0 20px rgba(255, 255, 255, 0.5),
+          0 10px 20px rgba(0, 0, 0, 0.5);
         line-height: 1;
         letter-spacing: -2px;
         transition: transform 0.1s;
         animation: float-gentle 3s ease-in-out infinite;
       }
-
       .sp-label {
         font-size: 1.5rem;
         font-weight: 700;
@@ -133,8 +146,6 @@
         display: block;
         margin-top: -5px;
       }
-
-      /* Skor Artış Animasyonu (Pop) */
       .score-pop {
         animation: scorePopAnim 0.15s ease-out forwards;
       }
@@ -145,13 +156,11 @@
         50% {
           transform: scale(1.2);
           color: #facc15;
-        } /* Sarı parlar */
+        }
         100% {
           transform: scale(1);
         }
       }
-
-      /* Hafif Süzülme (Idle) */
       @keyframes float-gentle {
         0%,
         100% {
@@ -162,7 +171,7 @@
         }
       }
 
-      /* Floating Text (Tıklayınca çıkan küçük sayılar) */
+      /* Floating Text */
       .floating-text {
         position: absolute;
         font-weight: 900;
@@ -187,72 +196,25 @@
         }
       }
 
-      /* --- SAĞ PANEL (DASHBOARD) --- */
-      #dashboard-panel {
-        background-color: #ffffff;
-        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.05);
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-      }
-
-      /* Kart Tasarımları */
-      .action-card {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 1.5rem;
-        transition: all 0.2s;
-        cursor: pointer;
-        background: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-      }
-      .action-card:hover:not(:disabled) {
-        transform: translateY(-2px);
-        border-color: var(--accent);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
-      .action-card:active:not(:disabled) {
-        transform: translateY(0);
-      }
-      .action-card:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        filter: grayscale(1);
-      }
-
-      /* Progress Bar */
+      /* Progress Bar Style Override for Glass */
       .progress-container {
-        width: 100%;
-        height: 8px;
-        background: #e2e8f0;
-        border-radius: 99px;
-        overflow: hidden;
-        margin-top: 4px;
-      }
-      .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #22c55e, #16a34a);
-        transition: width 0.3s ease-out;
+        background: rgba(0, 0, 0, 0.1);
       }
 
-      /* Modal */
+      /* Modal & Toast */
       .modal-bg {
         background-color: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(4px);
       }
-
-      /* Toast */
       .toast-notification {
         position: fixed;
         top: 20px;
         right: 20px;
         z-index: 9999;
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
         padding: 16px;
-        border-radius: 8px;
+        border-radius: 12px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         border-left: 5px solid #333;
         animation: slideIn 0.3s forwards;
@@ -274,72 +236,48 @@
         }
       }
 
-      /* --- GİRİŞ EKRANI CSS --- */
-      #start-screen {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(10px);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 0.5s;
-      }
-      #start-screen.hidden {
-        opacity: 0;
-        pointer-events: none;
-      }
-      .title-anim {
-        font-size: 3rem;
-        font-weight: 900;
-        color: white;
-        text-shadow: 0 0 20px #f59e0b;
-        animation: pulse-title 3s infinite;
-        text-align: center;
-      }
-      @keyframes pulse-title {
-        0%,
-        100% {
-          transform: scale(1);
+      /* Responsive Düzen */
+      @media (max-width: 1024px) {
+        body {
+          flex-direction: column;
+          overflow-y: auto;
         }
-        50% {
-          transform: scale(1.05);
+        #left-zone {
+          height: 50vh;
+          width: 100%;
         }
-      }
-      .start-btn {
-        background: linear-gradient(to right, #f59e0b, #d97706);
-        color: white;
-        font-size: 1.5rem;
-        font-weight: bold;
-        padding: 1rem 3rem;
-        border-radius: 50px;
-        border: 4px solid white;
-        box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
-        margin-top: 2rem;
-        transition: transform 0.2s;
-      }
-      .start-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+        #right-zone {
+          width: 100%;
+          height: auto;
+          min-height: 50vh;
+          padding-top: 0;
+        }
+        .big-score-text {
+          font-size: 3rem;
+        }
       }
     </style>
   </head>
-  <body class="flex h-screen w-full">
+
+  <body class="flex h-screen w-full relative">
+    <div
+      id="rain-layer"
+      class="absolute inset-0 pointer-events-none z-10"
+    ></div>
+    <div
+      id="season-layer"
+      class="absolute inset-0 pointer-events-none z-20"
+    ></div>
+    <div
+      id="bee-container"
+      class="absolute inset-0 pointer-events-none z-30"
+    ></div>
+
     <section
-      id="garden-panel"
-      class="w-full lg:w-1/2 h-full relative flex items-center justify-center select-none"
+      id="left-zone"
+      class="w-full lg:w-1/2 h-full relative flex items-center justify-center select-none z-40 p-4"
       onclick="game.handleClick(event)"
     >
-      <div
-        id="rain-layer"
-        class="absolute inset-0 pointer-events-none z-10"
-      ></div>
-      <div
-        id="season-layer"
-        class="absolute inset-0 pointer-events-none z-20"
-      ></div>
       <div
         id="golden-seed"
         onclick="game.catchGoldenSeed(); event.stopPropagation();"
@@ -347,10 +285,6 @@
       >
         🌟
       </div>
-      <div
-        id="bee-container"
-        class="absolute inset-0 pointer-events-none z-30"
-      ></div>
 
       <div id="plant-score-wrapper">
         <div id="big-plant-score" class="big-score-text">0</div>
@@ -359,216 +293,242 @@
 
       <div
         id="click-area"
-        class="relative w-[300px] h-[300px] z-40 flex items-center justify-center cursor-pointer"
+        class="relative w-[300px] h-[300px] z-40 flex items-center justify-center cursor-pointer group"
       >
         <img
           id="plant-img"
           src="level1.png"
-          class="plant-idle w-full h-full object-contain drop-shadow-2xl"
+          class="plant-idle w-full h-full object-contain drop-shadow-2xl group-hover:scale-105 transition-transform"
         />
       </div>
 
       <div
-        class="absolute bottom-8 bg-white/80 backdrop-blur px-4 py-2 rounded-full font-bold text-sm shadow-lg z-40 flex items-center gap-2"
+        class="absolute bottom-8 glass-card px-6 py-3 font-bold text-sm z-40 flex items-center gap-2 text-slate-700"
       >
-        <span id="season-icon">🌸</span>
+        <span id="season-icon" class="text-2xl">🌸</span>
         <span id="season-text">İLKBAHAR</span>
-        <span class="text-gray-400">|</span>
+        <span class="text-gray-400 mx-2">|</span>
         <span id="weather-text" class="text-blue-600">Güneşli</span>
       </div>
     </section>
 
     <section
-      id="dashboard-panel"
-      class="hidden lg:flex w-1/2 h-full p-8 lg:p-12 relative"
+      id="right-zone"
+      class="w-full lg:w-1/2 h-full p-4 lg:p-12 relative z-40 flex flex-col justify-center pointer-events-none"
     >
-      <header class="mb-8">
-        <div class="flex justify-between items-end mb-2">
-          <div>
-            <h2
-              class="text-sm font-bold text-gray-400 tracking-widest uppercase"
-            >
-              Mevcut Seviye
-            </h2>
-            <h1 id="level-name" class="text-3xl font-black text-slate-800">
-              TOHUM
-            </h1>
-          </div>
-          <div class="text-right">
-            <div class="text-xs font-bold text-gray-400">
-              BOYUT <span id="dim-display">1</span>
+      <div
+        class="pointer-events-auto w-full max-w-md mx-auto flex flex-col gap-6 h-full lg:h-auto justify-center"
+      >
+        <header class="glass-card p-6">
+          <div class="flex justify-between items-end mb-2">
+            <div>
+              <h2
+                class="text-xs font-extrabold text-slate-500 tracking-widest uppercase mb-1"
+              >
+                Mevcut Seviye
+              </h2>
+              <h1
+                id="level-name"
+                class="text-3xl font-black text-slate-800 leading-none"
+              >
+                TOHUM
+              </h1>
             </div>
-            <div class="text-xs font-bold text-yellow-600">
-              PRESTİJ x<span id="prestige-display">1.0</span>
-            </div>
-          </div>
-        </div>
-        <div class="progress-container">
-          <div id="level-bar" class="progress-fill" style="width: 0%"></div>
-        </div>
-        <div class="text-xs text-gray-400 mt-1 text-right">
-          <span id="next-level-req">100</span> SP Hedef
-        </div>
-      </header>
-
-      <div class="grid grid-cols-2 gap-4 mb-8">
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <div class="text-xs text-slate-400 font-bold">SANİYE BAŞINA</div>
-          <div class="text-xl font-black text-slate-700">
-            +<span id="sps-display">0.0</span>
-          </div>
-        </div>
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <div class="text-xs text-slate-400 font-bold">TOPLAM TIK</div>
-          <div class="text-xl font-black text-slate-700" id="total-clicks">
-            0
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 mb-auto">
-        <button
-          id="btn-sun"
-          onclick="game.buyUpgrade('click')"
-          class="action-card hover:bg-orange-50 group"
-        >
-          <div class="flex justify-between items-start w-full">
-            <div
-              class="p-3 bg-orange-100 rounded-lg text-2xl group-hover:scale-110 transition"
-            >
-              ☀️
-            </div>
-            <div
-              class="text-xs font-bold bg-slate-100 px-2 py-1 rounded text-slate-500"
-              id="lvl-click"
-            >
-              Lvl 1
-            </div>
-          </div>
-          <div class="mt-4 text-left">
-            <div class="font-bold text-slate-800 text-lg">Güneş Işığı</div>
-            <div class="text-xs text-slate-500 mb-2">
-              Tıklama gücünü artırır.
-            </div>
-            <div class="font-black text-orange-600" id="cost-click">50 SP</div>
-          </div>
-        </button>
-
-        <button
-          id="btn-fert"
-          onclick="game.buyUpgrade('auto')"
-          class="action-card hover:bg-green-50 group"
-        >
-          <div class="flex justify-between items-start w-full">
-            <div
-              class="p-3 bg-green-100 rounded-lg text-2xl group-hover:scale-110 transition"
-            >
-              💩
-            </div>
-            <div
-              class="text-xs font-bold bg-slate-100 px-2 py-1 rounded text-slate-500"
-              id="lvl-auto"
-            >
-              Lvl 0
-            </div>
-          </div>
-          <div class="mt-4 text-left">
-            <div class="font-bold text-slate-800 text-lg">Doğal Gübre</div>
-            <div class="text-xs text-slate-500 mb-2">
-              Otomatik üretim sağlar.
-            </div>
-            <div class="font-black text-green-600" id="cost-auto">15 SP</div>
-          </div>
-        </button>
-
-        <button
-          id="btn-ladybug"
-          onclick="game.buyUpgrade('boost')"
-          class="action-card hover:bg-red-50 group col-span-2"
-        >
-          <div class="flex justify-between items-start w-full">
-            <div
-              class="p-3 bg-red-100 rounded-lg text-2xl group-hover:scale-110 transition"
-            >
-              🐞
-            </div>
-            <div
-              class="text-xs font-bold bg-red-100 text-red-600 px-2 py-1 rounded"
-              id="timer-boost"
-            >
-              HAZIR
-            </div>
-          </div>
-          <div class="flex justify-between items-end mt-2">
-            <div class="text-left">
-              <div class="font-bold text-slate-800 text-lg">
-                Uğur Böceği Sürüsü
+            <div class="text-right">
+              <div
+                class="text-xs font-bold text-slate-500 bg-slate-200/50 px-2 py-1 rounded-full inline-block mb-1"
+              >
+                BOYUT <span id="dim-display">1</span>
               </div>
-              <div class="text-xs text-slate-500">
-                60 Saniye boyunca üretimi 2'ye katlar.
+              <div
+                class="text-xs font-bold text-yellow-700 bg-yellow-100/50 px-2 py-1 rounded-full"
+              >
+                PRESTİJ x<span id="prestige-display">1.0</span>
               </div>
             </div>
-            <div class="font-black text-red-600 text-xl" id="cost-boost">
-              500 SP
+          </div>
+          <div
+            class="progress-container h-3 rounded-full overflow-hidden relative"
+          >
+            <div
+              id="level-bar"
+              class="h-full bg-gradient-to-r from-green-400 to-emerald-600 transition-all duration-300"
+              style="width: 0%"
+            ></div>
+          </div>
+          <div
+            class="text-xs font-bold text-slate-500 mt-2 text-right flex justify-between"
+          >
+            <span>İlerleme</span>
+            <span><span id="next-level-req">100</span> SP Hedef</span>
+          </div>
+        </header>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="glass-card p-4 flex flex-col items-center justify-center">
+            <div
+              class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1"
+            >
+              SANİYE BAŞINA
+            </div>
+            <div class="text-2xl font-black text-emerald-600">
+              +<span id="sps-display">0.0</span>
             </div>
           </div>
-        </button>
-      </div>
+          <div class="glass-card p-4 flex flex-col items-center justify-center">
+            <div
+              class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1"
+            >
+              TOPLAM TIK
+            </div>
+            <div class="text-2xl font-black text-slate-700" id="total-clicks">
+              0
+            </div>
+          </div>
+        </div>
 
-      <div class="grid grid-cols-3 gap-2 mt-6">
-        <button
-          onclick="game.toggleInfo()"
-          class="py-3 font-bold text-sm bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600 transition"
-        >
-          📘 BİLGİ
-        </button>
-        <button
-          onclick="game.toggleSettings()"
-          class="py-3 font-bold text-sm bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600 transition"
-        >
-          ⚙️ AYARLAR
-        </button>
-        <button
-          id="btn-prestige"
-          onclick="game.prestige()"
-          class="hidden py-3 font-bold text-sm bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg shadow-md hover:scale-105 transition animate-pulse"
-        >
-          👑 PRESTİJ
-        </button>
+        <div class="grid grid-cols-2 gap-4 flex-1 lg:flex-none">
+          <button
+            id="btn-sun"
+            onclick="game.buyUpgrade('click')"
+            class="glass-card p-4 text-left group flex flex-col"
+          >
+            <div class="flex justify-between items-start w-full mb-3">
+              <div
+                class="p-3 bg-orange-100/80 rounded-2xl text-3xl group-hover:scale-110 transition shadow-sm"
+              >
+                ☀️
+              </div>
+              <div
+                class="text-xs font-bold bg-slate-200/60 px-3 py-1 rounded-full text-slate-600"
+                id="lvl-click"
+              >
+                Lvl 1
+              </div>
+            </div>
+            <div class="mt-auto">
+              <div class="font-black text-slate-800 text-xl mb-1">
+                Güneş Işığı
+              </div>
+              <div
+                class="text-xs font-medium text-slate-500 mb-3 leading-tight"
+              >
+                Tıklama gücünü kalıcı olarak artırır.
+              </div>
+              <div
+                class="font-black text-lg text-orange-600 bg-orange-50/50 p-2 rounded-lg text-center"
+                id="cost-click"
+              >
+                50 SP
+              </div>
+            </div>
+          </button>
+
+          <button
+            id="btn-fert"
+            onclick="game.buyUpgrade('auto')"
+            class="glass-card p-4 text-left group flex flex-col"
+          >
+            <div class="flex justify-between items-start w-full mb-3">
+              <div
+                class="p-3 bg-green-100/80 rounded-2xl text-3xl group-hover:scale-110 transition shadow-sm"
+              >
+                💩
+              </div>
+              <div
+                class="text-xs font-bold bg-slate-200/60 px-3 py-1 rounded-full text-slate-600"
+                id="lvl-auto"
+              >
+                Lvl 0
+              </div>
+            </div>
+            <div class="mt-auto">
+              <div class="font-black text-slate-800 text-xl mb-1">
+                Doğal Gübre
+              </div>
+              <div
+                class="text-xs font-medium text-slate-500 mb-3 leading-tight"
+              >
+                Otomatik üretim sağlar (SPS).
+              </div>
+              <div
+                class="font-black text-lg text-green-600 bg-green-50/50 p-2 rounded-lg text-center"
+                id="cost-auto"
+              >
+                15 SP
+              </div>
+            </div>
+          </button>
+
+          <button
+            id="btn-ladybug"
+            onclick="game.buyUpgrade('boost')"
+            class="glass-card p-4 text-left group col-span-2 flex items-center justify-between relative overflow-hidden"
+          >
+            <div
+              class="absolute inset-0 bg-red-50/30 z-0 pointer-events-none"
+            ></div>
+            <div class="flex items-center gap-4 z-10">
+              <div
+                class="p-3 bg-red-100/80 rounded-2xl text-4xl group-hover:rotate-12 transition shadow-sm"
+              >
+                🐞
+              </div>
+              <div>
+                <div class="font-black text-slate-800 text-xl">
+                  Uğur Böceği Sürüsü
+                </div>
+                <div
+                  class="text-xs font-medium text-slate-500 leading-tight mt-1"
+                >
+                  60 Saniye boyunca tüm üretimi <b>2'ye katlar.</b>
+                </div>
+              </div>
+            </div>
+            <div class="z-10 flex flex-col items-end gap-2">
+              <div
+                class="text-xs font-bold bg-red-100 text-red-600 px-3 py-1 rounded-full"
+                id="timer-boost"
+              >
+                HAZIR
+              </div>
+              <div class="font-black text-lg text-red-600" id="cost-boost">
+                500 SP
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mt-2">
+          <button
+            onclick="game.toggleInfo()"
+            class="glass-card py-3 font-bold text-sm text-slate-700 hover:bg-white/60 transition flex items-center justify-center gap-2"
+          >
+            📘 BİLGİ
+          </button>
+          <button
+            onclick="game.toggleSettings()"
+            class="glass-card py-3 font-bold text-sm text-slate-700 hover:bg-white/60 transition flex items-center justify-center gap-2"
+          >
+            ⚙️ AYARLAR
+          </button>
+          <button
+            id="btn-prestige"
+            onclick="game.prestige()"
+            class="hidden glass-card py-3 font-bold text-sm bg-gradient-to-r from-yellow-400/80 to-orange-500/80 text-white hover:from-yellow-500 hover:to-orange-600 transition animate-pulse flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
+          >
+            👑 PRESTİJ
+          </button>
+        </div>
       </div>
     </section>
-
-    <style>
-      @media (max-width: 1024px) {
-        body {
-          flex-direction: column;
-          overflow-y: auto;
-        }
-        #garden-panel {
-          height: 50vh;
-          width: 100%;
-        }
-        #dashboard-panel {
-          display: flex;
-          width: 100%;
-          height: auto;
-          min-height: 50vh;
-        }
-        #plant-score-wrapper {
-          top: 15%;
-        }
-        .big-score-text {
-          font-size: 3rem;
-        }
-      }
-    </style>
 
     <div
       id="info-modal"
       class="hidden fixed inset-0 modal-bg z-[100] flex items-center justify-center p-4"
     >
       <div
-        class="bg-white p-8 rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto shadow-2xl relative"
+        class="glass-card bg-white/90 p-8 w-full max-w-2xl max-h-[80vh] overflow-y-auto relative text-left"
       >
         <button
           onclick="game.toggleInfo()"
@@ -576,7 +536,9 @@
         >
           &times;
         </button>
-        <h2 class="text-3xl font-black text-slate-800 mb-6 border-b pb-4">
+        <h2
+          class="text-3xl font-black text-slate-800 mb-6 border-b border-slate-200 pb-4"
+        >
           DOĞA ANSİKLOPEDİSİ
         </h2>
         <div class="space-y-6 text-slate-600">
@@ -585,19 +547,27 @@
               🌱 Temel Mekanikler
             </h3>
             <p class="text-sm">
-              Bitkinize tıklayarak veya <b>Güneş Işığı</b> satın alarak SP
-              (Tohum Puanı) kazanırsınız. <b>Gübre</b> ile otomatik üretim
-              başlar.
+              Sol taraftaki bitkiye tıklayarak SP kazanırsın. Sağdaki paneli
+              kullanarak <b>Güneş Işığı</b> (Tık Gücü) ve <b>Gübre</b> (Otomatik
+              Üretim) geliştirmeleri alabilirsin.
             </p>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div class="bg-blue-50 p-4 rounded-lg">
+            <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100">
               <h4 class="font-bold text-blue-700">🌧️ Hava Durumu</h4>
-              <p class="text-xs mt-1">Yağmurda <b>x2 Güç</b>.</p>
+              <p class="text-xs mt-1">
+                Rastgele yağmur yağar. Yağmurlu havada üretim
+                <b>x2 katlanır</b>.
+              </p>
             </div>
-            <div class="bg-purple-50 p-4 rounded-lg">
+            <div
+              class="bg-purple-50/50 p-4 rounded-lg border border-purple-100"
+            >
               <h4 class="font-bold text-purple-700">🍂 Mevsimler</h4>
-              <p class="text-xs mt-1">Her mevsimin farklı bir bonusu vardır.</p>
+              <p class="text-xs mt-1">
+                Her 2 dakikada bir değişir. İlkbahar (Auto++), Yaz (Tık++),
+                Sonbahar (Altın++), Kış (Tık+++, Auto--).
+              </p>
             </div>
           </div>
         </div>
@@ -608,32 +578,32 @@
       id="settings-modal"
       class="hidden fixed inset-0 modal-bg z-[100] flex items-center justify-center"
     >
-      <div class="bg-white p-6 rounded-xl w-80 shadow-2xl relative text-center">
-        <h3 class="font-bold text-xl mb-4">AYARLAR</h3>
+      <div class="glass-card bg-white/90 p-6 w-80 relative text-center">
+        <h3 class="font-bold text-xl mb-4 text-slate-800">AYARLAR</h3>
         <div class="flex flex-col gap-3">
           <button
             onclick="audioManager.toggle()"
             id="btn-mute-set"
-            class="p-3 bg-slate-100 rounded hover:bg-slate-200 font-bold"
+            class="p-3 bg-slate-200/50 rounded-xl hover:bg-slate-300/50 font-bold transition"
           >
             SES: AÇIK
           </button>
           <button
             onclick="game.toggleNightMode()"
-            class="p-3 bg-slate-800 text-white rounded hover:bg-black font-bold"
+            class="p-3 bg-slate-800/90 text-white rounded-xl hover:bg-black font-bold transition"
           >
             GECE / GÜNDÜZ
           </button>
-          <hr class="my-2" />
+          <hr class="my-2 border-slate-200" />
           <button
             onclick="game.resetSave()"
-            class="p-3 bg-red-50 text-red-600 border border-red-200 rounded hover:bg-red-100 font-bold"
+            class="p-3 bg-red-50/50 text-red-600 border border-red-200 rounded-xl hover:bg-red-100/50 font-bold transition"
           >
             ⚠️ SIFIRLA VE ÇIK
           </button>
           <button
             onclick="game.toggleSettings()"
-            class="mt-2 text-gray-400 text-sm hover:text-gray-600"
+            class="mt-2 text-gray-500 text-sm hover:text-gray-700"
           >
             Kapat
           </button>
@@ -643,28 +613,32 @@
 
     <div
       id="start-screen"
-      class="fixed inset-0 bg-slate-900 z-[9999] flex flex-col items-center justify-center text-white transition-opacity duration-500"
+      class="fixed inset-0 bg-slate-900/60 backdrop-blur-xl z-[9999] flex flex-col items-center justify-center text-white transition-opacity duration-500"
     >
-      <div class="text-6xl mb-4">🌱</div>
-      <h1 class="text-5xl font-black mb-2 tracking-tighter">TAP SEED</h1>
-      <div class="text-yellow-400 font-bold tracking-widest text-sm mb-8">
-        TYCOON EDITION
+      <div class="text-7xl mb-6 animate-bounce">🌱</div>
+      <h1 class="text-6xl font-black mb-2 tracking-tighter drop-shadow-lg">
+        TAP SEED
+      </h1>
+      <div
+        class="text-yellow-400 font-bold tracking-[0.3em] text-sm mb-12 bg-yellow-400/10 px-4 py-2 rounded-full border border-yellow-400/30"
+      >
+        GLASS TYCOON EDITION
       </div>
       <button
         onclick="game.startGame()"
-        class="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 rounded-full font-bold text-xl shadow-lg shadow-emerald-500/50 transition transform hover:scale-105"
+        class="glass-card px-10 py-5 bg-emerald-500/80 hover:bg-emerald-600/90 text-white rounded-full font-black text-2xl shadow-xl shadow-emerald-500/30 transition transform hover:scale-105 border-0"
       >
         BAŞLA
       </button>
-      <div class="absolute bottom-8 text-slate-500 text-xs font-mono">
-        v2.1 - Animation Update
+      <div class="absolute bottom-8 text-white/50 text-xs font-mono">
+        v3.0 - Glassmorphism UI
       </div>
     </div>
 
     <div id="toast-container"></div>
 
     <script>
-      // --- SES MOTORU ---
+      // --- SES MOTORU (Aynı) ---
       const audioManager = {
         ctx: null,
         enabled: true,
@@ -727,7 +701,7 @@
 
       // --- OYUN MOTORU ---
       const game = {
-        saveKey: "tapSeed_Tycoon_v2",
+        saveKey: "tapSeed_Glass_v3",
         data: {
           points: 0,
           clickCount: 0,
@@ -745,7 +719,6 @@
           },
           seasonIndex: 0,
         },
-
         stages: [
           { name: "TOHUM", limit: 500, img: "level1.png" },
           { name: "MİNİK FİLİZ", limit: 3000, img: "level2.png" },
@@ -763,10 +736,8 @@
           { name: "YILDIZ TOHUMU", limit: 500000000000, img: "level14.png" },
           { name: "EVRENİN NEFESİ", limit: 2000000000000, img: "level15.png" },
         ],
-
         seasons: ["spring", "summer", "autumn", "winter"],
         seasonNames: ["🌸 İLKBAHAR", "☀️ YAZ", "🍂 SONBAHAR", "❄️ KIŞ"],
-
         isRaining: false,
         isNight: false,
         goldenTimeout: null,
@@ -778,7 +749,6 @@
           this.renderPlant();
           this.updateSeasonUI();
         },
-
         startGame() {
           if (this.gameStarted) return;
           this.gameStarted = true;
@@ -803,7 +773,6 @@
             "success"
           );
         },
-
         handleClick(e, isAuto = false) {
           let m = this.data.prestigeMultiplier;
           const s = this.seasons[this.data.seasonIndex];
@@ -812,15 +781,12 @@
           if (this.isNight) m *= 0.5;
           if (Date.now() < this.data.boostEndTime) m *= 2;
           if (this.isRaining) m *= 2;
-
           let gain = this.data.clickPower * m;
           this.data.points += gain;
           if (!isAuto) this.data.clickCount++;
-
           if (!isAuto) {
             audioManager.playPop();
             this.createFloatingText(e, `+${Math.floor(gain)}`);
-            // ANIMASYON TRIGGER
             this.triggerScoreAnim();
             const plant = document.getElementById("plant-img");
             plant.classList.add("plant-click-anim");
@@ -829,14 +795,12 @@
           this.checkGrowth();
           this.updateUI();
         },
-
         triggerScoreAnim() {
           const el = document.getElementById("big-plant-score");
           el.classList.remove("score-pop");
-          void el.offsetWidth; // Trigger reflow
+          void el.offsetWidth;
           el.classList.add("score-pop");
         },
-
         loop() {
           if (!this.gameStarted) return;
           const now = Date.now();
@@ -855,7 +819,6 @@
           if (Math.floor(now / 1000) % 5 === 0) this.save();
           requestAnimationFrame(() => this.loop());
         },
-
         buyUpgrade(t) {
           const u = this.data.upgrades[t];
           let cost = 0;
@@ -892,13 +855,10 @@
             );
           }
         },
-
         updateUI() {
-          // BİTKİ ÜSTÜNDEKİ SKOR
           document.getElementById("big-plant-score").innerText = Math.floor(
             this.data.points
           ).toLocaleString();
-
           document.getElementById("total-clicks").innerText =
             this.data.clickCount.toLocaleString();
           const currentLimit = this.getCurrentStageLimit();
@@ -919,7 +879,6 @@
             )
           );
           document.getElementById("level-bar").style.width = progress + "%";
-
           let m = this.data.prestigeMultiplier;
           const s = this.seasons[this.data.seasonIndex];
           if (s === "spring") m *= 1.5;
@@ -931,7 +890,6 @@
           document.getElementById("sps-display").innerText = (
             this.data.autoPower * m
           ).toFixed(1);
-
           const up = this.data.upgrades;
           document.getElementById("lvl-click").innerText =
             "Lvl " + (up.click.c + 1);
@@ -948,7 +906,6 @@
             " SP";
           document.getElementById("btn-fert").disabled =
             this.data.points < Math.floor(up.auto.b * Math.pow(1.5, up.auto.c));
-
           const boostBtn = document.getElementById("btn-ladybug");
           const boostTimer = document.getElementById("timer-boost");
           if (Date.now() < this.data.boostEndTime) {
@@ -970,13 +927,11 @@
           document.getElementById("dim-display").innerText =
             this.data.dimension;
         },
-
         getCurrentStageLimit() {
           const baseLimit = this.stages[this.data.stage].limit;
           const multiplier = Math.pow(10, this.data.dimension - 1);
           return baseLimit * multiplier;
         },
-
         checkGrowth() {
           const currentLimit = this.getCurrentStageLimit();
           if (this.data.points >= currentLimit) {
@@ -1000,7 +955,6 @@
             }
           }
         },
-
         prestige() {
           if (
             !confirm(
@@ -1024,7 +978,6 @@
           document.getElementById("btn-prestige").classList.add("hidden");
           this.showToast("YENİDEN DOĞUŞ", "Çok daha güçlü döndün!", "success");
         },
-
         checkOfflineEarnings() {
           if (this.data.autoPower > 0 && this.data.lastSaveTime) {
             const seconds = (Date.now() - this.data.lastSaveTime) / 1000;
@@ -1050,7 +1003,6 @@
           }
           this.data.lastSaveTime = Date.now();
         },
-
         showToast(title, msg, type = "info") {
           const c = document.getElementById("toast-container");
           const t = document.createElement("div");
@@ -1069,7 +1021,6 @@
             setTimeout(() => t.remove(), 300);
           }, 3000);
         },
-
         changeSeason() {
           this.data.seasonIndex = (this.data.seasonIndex + 1) % 4;
           this.updateSeasonUI();
@@ -1081,8 +1032,7 @@
         },
         updateSeasonUI() {
           const s = this.seasons[this.data.seasonIndex];
-          const garden = document.getElementById("garden-panel");
-          garden.className = `w-full lg:w-1/2 h-full relative flex items-center justify-center select-none season-${s}`;
+          document.body.className = `flex h-screen w-full relative season-${s}`;
           document.getElementById("season-text").innerText =
             this.seasonNames[this.data.seasonIndex];
           const icon =
