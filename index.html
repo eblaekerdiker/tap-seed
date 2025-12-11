@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - v7 Final</title>
+    <title>Tap Seed - v7.1 Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -44,7 +44,6 @@
         transform: scale(0.9);
       }
 
-      /* Logo (Yanıp sönme yok) */
       .game-logo {
         position: absolute;
         top: 20px;
@@ -55,7 +54,6 @@
         object-fit: contain;
       }
 
-      /* Market Kutuları (Daraltıldı, 7 Tane sığsın diye) */
       .shop-item-btn {
         background-color: rgba(255, 255, 255, 0.9);
         border: 2px solid rgba(255, 255, 255, 0.5);
@@ -68,8 +66,8 @@
         transition: all 0.1s;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         width: 100%;
-        height: 65px; /* Daha kompakt */
-        flex-shrink: 0; /* Küçülmeyi engelle */
+        height: 65px;
+        flex-shrink: 0;
       }
       .shop-item-btn:hover:not(:disabled) {
         transform: translateX(-5px);
@@ -86,7 +84,6 @@
         background-color: rgba(200, 200, 200, 0.5);
       }
 
-      /* Seviye Paneli */
       .level-panel {
         background-color: rgba(0, 0, 0, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.2);
@@ -100,7 +97,6 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
       }
 
-      /* --- EFEKTLER --- */
       .rain-drop {
         position: absolute;
         background: #a0c4ff;
@@ -132,8 +128,9 @@
         transform-origin: bottom center;
         transition: transform 0.1s;
       }
-      .plant-click-anim {
-        transform: scale(0.95) !important;
+      /* Javascript ile kontrol edilecek */
+      .plant-pressed {
+        transform: scale(0.9) !important;
       }
 
       #plant-score-wrapper {
@@ -193,7 +190,7 @@
         animation: floatUp 0.8s cubic-bezier(0, 0.9, 0.57, 1) forwards;
         color: #fff;
         text-shadow: 0 2px 0 #000;
-        z-index: 70; /* Floating text yıldızdan yukarıda kalsın */
+        z-index: 70;
         font-size: 2rem;
       }
       @keyframes floatUp {
@@ -247,7 +244,6 @@
         border: 1px solid rgba(255, 215, 0, 0.5);
       }
 
-      /* GİRİŞ INPUTU */
       .name-input {
         background: rgba(255, 255, 255, 0.9);
         border: 2px solid #3f2e22;
@@ -266,14 +262,13 @@
         color: #888;
       }
 
-      /* Yıldız Ayarı: Z-Index düşürüldü, Object Fit Contain */
       #golden-seed {
-        z-index: 35; /* UI'ın altında kalsın */
+        z-index: 35;
       }
       #golden-seed-img {
         width: 80px;
         height: 80px;
-        object-fit: contain; /* Basık görünmeyi engeller */
+        object-fit: contain;
         filter: drop-shadow(0 0 15px gold);
         animation: spin-slow 10s linear infinite;
         cursor: pointer;
@@ -705,7 +700,6 @@
           src="logo- tap seed.png"
           class="w-64 md:w-80 object-contain mb-6 drop-shadow-2xl"
         />
-
         <input
           type="text"
           id="username-input"
@@ -713,7 +707,6 @@
           placeholder="İsmini Yaz..."
           maxlength="12"
         />
-
         <button
           onclick="game.startGame()"
           class="px-16 py-5 text-xl font-black text-[#3f2e22] bg-white rounded-full tracking-wider hover:scale-105 transition shadow-xl border-4 border-[#3f2e22]"
@@ -721,7 +714,7 @@
           OYUNA BAŞLA
         </button>
         <div class="mt-8 text-white/50 text-xs font-mono">
-          v7.0 - Final Edition
+          v7.1 - Ultimate Fixed
         </div>
       </div>
     </div>
@@ -729,16 +722,21 @@
     <div id="toast-container" class="fixed top-24 right-5 z-[90]"></div>
 
     <script>
-      /* --- SPACE TUŞU SERİ TIKLAMA (40ms = 25 Tık/Saniye) --- */
+      /* --- SPACE TUŞU DÜZELTME: Interval ve Görsel --- */
       let spaceInterval = null;
 
       window.addEventListener("keydown", (e) => {
         if (e.code === "Space" && !e.repeat && game.gameStarted) {
           game.handleClick(null); // İlk tık
+          // Görsel basılma efekti
+          const plant = document.getElementById("plant-img");
+          plant.classList.add("plant-pressed");
+
           if (!spaceInterval) {
+            // Saniyede 100 Tık (10ms)
             spaceInterval = setInterval(() => {
               game.handleClick(null);
-            }, 40); // Çok seri
+            }, 10);
           }
         }
       });
@@ -747,9 +745,9 @@
         if (e.code === "Space") {
           clearInterval(spaceInterval);
           spaceInterval = null;
-          document
-            .getElementById("plant-img")
-            .classList.remove("plant-click-anim");
+          // Görsel efekti kaldır
+          const plant = document.getElementById("plant-img");
+          plant.classList.remove("plant-pressed");
         }
       });
 
@@ -816,7 +814,7 @@
       const game = {
         saveKey: "tapSeed_v7",
         data: {
-          username: "", // İsim verisi
+          username: "",
           points: 0,
           clickCount: 0,
           clickPower: 1,
@@ -826,7 +824,6 @@
           dimension: 1,
           boostEndTime: 0,
           lastSaveTime: Date.now(),
-          // Yeni itemler eklendi
           upgrades: {
             click: { c: 0, b: 50 },
             water: { c: 0, b: 100 },
@@ -838,6 +835,9 @@
           },
           unlockedAchievements: [],
         },
+        // Auto Click Düzeltme: Delta Time için son zaman kaydı
+        lastFrameTime: 0,
+
         achievements: [
           {
             id: 1,
@@ -912,6 +912,8 @@
           this.save();
 
           this.gameStarted = true;
+          this.lastFrameTime = Date.now(); // Loop başlamadan zamanı al
+
           document.getElementById("start-screen").classList.add("hidden");
           setTimeout(
             () => document.getElementById("start-screen").remove(),
@@ -941,9 +943,7 @@
             audioManager.playPop();
             if (e) this.createFloatingText(e, `+${Math.floor(gain)}`);
             this.triggerScoreAnim();
-            const plant = document.getElementById("plant-img");
-            plant.classList.add("plant-click-anim");
-            setTimeout(() => plant.classList.remove("plant-click-anim"), 100);
+            // Space ile çakışmaması için burada animasyonu elle eklemiyoruz, CSS ile çözüyoruz
           }
           this.checkGrowth();
           this.checkAchievements();
@@ -957,16 +957,26 @@
         },
         loop() {
           if (!this.gameStarted) return;
+
+          // OTO CLİCK DÜZELTME: Delta Time Kullanımı
           const now = Date.now();
+          const dt = (now - this.lastFrameTime) / 1000; // Saniye cinsinden geçen süre
+          this.lastFrameTime = now;
+
           if (this.data.autoPower > 0) {
             let m = this.data.prestigeMultiplier;
             if (this.isNight) m *= 3.0;
             if (now < this.data.boostEndTime) m *= 2;
             if (this.isRaining) m *= 2;
-            this.data.points += (this.data.autoPower * m) / 60;
+
+            // Saniye başına üretimi (SPS) geçen süreyle (dt) çarpıyoruz
+            // Böylece oyun donarsa veya FPS düşerse bile matematik doğru kalır.
+            this.data.points += this.data.autoPower * m * dt;
           }
-          if (this.data.clickCount % 10 === 0 || Math.random() < 0.1)
-            this.updateUI();
+
+          // UI Update her frame yapılmasın, yorar (opsiyonel) ama burada akıcı görünsün diye yapıyoruz
+          this.updateUI();
+
           if (Math.floor(now / 1000) % 5 === 0) {
             this.save();
             this.checkAchievements();
@@ -997,7 +1007,6 @@
           }
           if (this.data.points >= cost) {
             this.data.points -= cost;
-            // Upgrade Logic
             if (t === "auto") {
               this.data.autoPower += 0.5;
               u.c++;
@@ -1007,20 +1016,16 @@
             } else if (t === "water") {
               this.data.clickPower += 2;
               u.c++;
-            } // Yeni
-            else if (t === "shears") {
+            } else if (t === "shears") {
               this.data.autoPower += 2.0;
               u.c++;
-            } // Yeni
-            else if (t === "gloves") {
+            } else if (t === "gloves") {
               this.data.clickPower += 10;
               u.c++;
-            } // Yeni
-            else if (t === "med") {
+            } else if (t === "med") {
               this.data.autoPower += 25;
               u.c++;
-            } // Yeni
-            else if (t === "boost") {
+            } else if (t === "boost") {
               this.data.boostEndTime = Date.now() + 60000;
               this.showToast("UĞUR BÖCEKLERİ!", "Hız x2 (60sn)", "success");
             }
@@ -1070,12 +1075,11 @@
 
           const up = this.data.upgrades;
 
-          // Helper to update button
-          const updateBtn = (id, type, name, suffix) => {
+          const updateBtn = (id, type) => {
             const u = up[type];
-            document.getElementById("lvl-" + type).innerText = "Lvl " + u.c;
+            document.getElementById("lvl-" + id).innerText = "Lvl " + u.c;
             const cost = Math.floor(u.b * Math.pow(1.5, u.c));
-            document.getElementById("cost-" + type).innerText =
+            document.getElementById("cost-" + id).innerText =
               cost.toLocaleString() + " SP";
             document.getElementById("btn-" + id).disabled =
               this.data.points < cost;
@@ -1143,7 +1147,6 @@
           this.data.stage = 0;
           this.data.clickPower = 1;
           this.data.autoPower = 0;
-          // Upgrade sıfırla ama çeşitleri koru
           this.data.upgrades = {
             click: { c: 0, b: 50 },
             water: { c: 0, b: 100 },
