@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - v6 Clean</title>
+    <title>Tap Seed - v7 Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -29,14 +29,13 @@
 
       /* --- UI NESNELERİ --- */
 
-      /* Üst Köşe İkonları (Düzeltildi: Basıklık gitti) */
       .top-icon-btn {
         width: 50px;
         height: 50px;
         transition: transform 0.2s;
         cursor: pointer;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
-        object-fit: contain; /* Görüntü oranını korur */
+        object-fit: contain;
       }
       .top-icon-btn:hover {
         transform: scale(1.1) rotate(10deg);
@@ -45,41 +44,46 @@
         transform: scale(0.9);
       }
 
-      /* Logo (Küçültüldü) */
+      /* Logo (Yanıp sönme yok) */
       .game-logo {
         position: absolute;
         top: 20px;
         left: 20px;
-        width: 120px; /* Daha küçük */
+        width: 120px;
         z-index: 60;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
         object-fit: contain;
       }
 
-      /* Market Kutuları (Daraltıldı) */
+      /* Market Kutuları (Daraltıldı, 7 Tane sığsın diye) */
       .shop-item-btn {
-        background-color: rgba(255, 255, 255, 0.85);
+        background-color: rgba(255, 255, 255, 0.9);
         border: 2px solid rgba(255, 255, 255, 0.5);
         border-radius: 10px;
-        padding: 0.5rem 1rem; /* Daha az boşluk */
-        color: #000;
+        padding: 0.5rem 1rem;
+        color: #1a1a1a;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        transition: all 0.2s;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.1s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         width: 100%;
-        height: 70px; /* Yükseklik düşürüldü (Eskisi 100px idi) */
+        height: 65px; /* Daha kompakt */
+        flex-shrink: 0; /* Küçülmeyi engelle */
       }
       .shop-item-btn:hover:not(:disabled) {
         transform: translateX(-5px);
-        background-color: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        background-color: white;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      }
+      .shop-item-btn:active:not(:disabled) {
+        transform: scale(0.98);
       }
       .shop-item-btn:disabled {
         opacity: 0.6;
         filter: grayscale(1);
         cursor: not-allowed;
+        background-color: rgba(200, 200, 200, 0.5);
       }
 
       /* Seviye Paneli */
@@ -189,7 +193,7 @@
         animation: floatUp 0.8s cubic-bezier(0, 0.9, 0.57, 1) forwards;
         color: #fff;
         text-shadow: 0 2px 0 #000;
-        z-index: 70;
+        z-index: 70; /* Floating text yıldızdan yukarıda kalsın */
         font-size: 2rem;
       }
       @keyframes floatUp {
@@ -243,7 +247,43 @@
         border: 1px solid rgba(255, 215, 0, 0.5);
       }
 
-      /* Responsive */
+      /* GİRİŞ INPUTU */
+      .name-input {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #3f2e22;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 1.2rem;
+        color: #3f2e22;
+        font-weight: bold;
+        text-align: center;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+        width: 250px;
+      }
+      .name-input::placeholder {
+        color: #888;
+      }
+
+      /* Yıldız Ayarı: Z-Index düşürüldü, Object Fit Contain */
+      #golden-seed {
+        z-index: 35; /* UI'ın altında kalsın */
+      }
+      #golden-seed-img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain; /* Basık görünmeyi engeller */
+        filter: drop-shadow(0 0 15px gold);
+        animation: spin-slow 10s linear infinite;
+        cursor: pointer;
+      }
+      @keyframes spin-slow {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
       @media (max-width: 1024px) {
         body {
           flex-direction: column;
@@ -313,14 +353,9 @@
       <div
         id="golden-seed"
         onclick="game.catchGoldenSeed(); event.stopPropagation();"
-        class="hidden absolute z-50 hover:scale-110 transition"
+        class="hidden absolute hover:scale-110 transition"
       >
-        <img
-          id="golden-seed-img"
-          src="yıldız.png"
-          class="w-20 h-20 drop-shadow-lg animate-spin"
-          alt="Bonus"
-        />
+        <img id="golden-seed-img" src="yıldız.png" alt="Bonus" />
       </div>
 
       <div id="plant-score-wrapper">
@@ -379,10 +414,10 @@
 
     <section
       id="right-zone"
-      class="w-full lg:w-2/5 h-full p-4 lg:p-8 relative z-40 flex flex-col pointer-events-none bg-black/20 backdrop-blur-sm"
+      class="w-full lg:w-2/5 h-full p-4 lg:p-6 relative z-40 flex flex-col pointer-events-none bg-black/20 backdrop-blur-sm"
     >
       <div
-        class="pointer-events-auto w-full h-full flex flex-col gap-4 overflow-y-auto pt-16 lg:pt-4"
+        class="pointer-events-auto w-full h-full flex flex-col gap-3 overflow-y-auto pt-16 lg:pt-4"
       >
         <div class="grid grid-cols-2 gap-3 shrink-0">
           <div class="glass-stat flex flex-col items-center">
@@ -402,7 +437,7 @@
         </div>
 
         <h3
-          class="text-white font-black text-xl mt-2 drop-shadow-md shrink-0 border-b border-white/20 pb-2"
+          class="text-white font-black text-xl mt-2 drop-shadow-md shrink-0 border-b border-white/20 pb-1"
         >
           MARKET
         </h3>
@@ -414,21 +449,37 @@
             class="shop-item-btn group"
           >
             <div class="flex items-center gap-3">
-              <div
-                class="text-3xl filter drop-shadow-md group-hover:scale-110 transition"
-              >
-                ☀️
-              </div>
+              <div class="text-2xl filter drop-shadow">☀️</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-md">Güneş Işığı</div>
-                <div class="text-[10px] text-gray-600 font-bold" id="lvl-click">
-                  Seviye 1
+                <div class="font-black text-sm">Güneş Işığı</div>
+                <div class="text-[10px] text-gray-500 font-bold" id="lvl-click">
+                  Lvl 1
                 </div>
               </div>
             </div>
             <div class="text-right leading-tight">
-              <div class="font-black text-md" id="cost-click">50 SP</div>
-              <div class="text-[10px] text-gray-500 font-bold">+1 Tık</div>
+              <div class="font-black text-sm" id="cost-click">50 SP</div>
+              <div class="text-[10px] text-gray-600 font-bold">+1 Tık</div>
+            </div>
+          </button>
+
+          <button
+            id="btn-water"
+            onclick="game.buyUpgrade('water')"
+            class="shop-item-btn group"
+          >
+            <div class="flex items-center gap-3">
+              <div class="text-2xl filter drop-shadow">💧</div>
+              <div class="text-left leading-tight">
+                <div class="font-black text-sm">Can Suyu</div>
+                <div class="text-[10px] text-gray-500 font-bold" id="lvl-water">
+                  Lvl 0
+                </div>
+              </div>
+            </div>
+            <div class="text-right leading-tight">
+              <div class="font-black text-sm" id="cost-water">100 SP</div>
+              <div class="text-[10px] text-gray-600 font-bold">+2 Tık</div>
             </div>
           </button>
 
@@ -438,21 +489,83 @@
             class="shop-item-btn group"
           >
             <div class="flex items-center gap-3">
-              <div
-                class="text-3xl filter drop-shadow-md group-hover:scale-110 transition"
-              >
-                💩
-              </div>
+              <div class="text-2xl filter drop-shadow">💩</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-md">Doğal Gübre</div>
-                <div class="text-[10px] text-gray-600 font-bold" id="lvl-auto">
-                  Seviye 0
+                <div class="font-black text-sm">Doğal Gübre</div>
+                <div class="text-[10px] text-gray-500 font-bold" id="lvl-auto">
+                  Lvl 0
                 </div>
               </div>
             </div>
             <div class="text-right leading-tight">
-              <div class="font-black text-md" id="cost-auto">15 SP</div>
-              <div class="text-[10px] text-gray-500 font-bold">+0.5 Oto</div>
+              <div class="font-black text-sm" id="cost-auto">15 SP</div>
+              <div class="text-[10px] text-gray-600 font-bold">+0.5 Oto</div>
+            </div>
+          </button>
+
+          <button
+            id="btn-shears"
+            onclick="game.buyUpgrade('shears')"
+            class="shop-item-btn group"
+          >
+            <div class="flex items-center gap-3">
+              <div class="text-2xl filter drop-shadow">✂️</div>
+              <div class="text-left leading-tight">
+                <div class="font-black text-sm">Budama</div>
+                <div
+                  class="text-[10px] text-gray-500 font-bold"
+                  id="lvl-shears"
+                >
+                  Lvl 0
+                </div>
+              </div>
+            </div>
+            <div class="text-right leading-tight">
+              <div class="font-black text-sm" id="cost-shears">250 SP</div>
+              <div class="text-[10px] text-gray-600 font-bold">+2.0 Oto</div>
+            </div>
+          </button>
+
+          <button
+            id="btn-gloves"
+            onclick="game.buyUpgrade('gloves')"
+            class="shop-item-btn group"
+          >
+            <div class="flex items-center gap-3">
+              <div class="text-2xl filter drop-shadow">🧤</div>
+              <div class="text-left leading-tight">
+                <div class="font-black text-sm">Eldiven</div>
+                <div
+                  class="text-[10px] text-gray-500 font-bold"
+                  id="lvl-gloves"
+                >
+                  Lvl 0
+                </div>
+              </div>
+            </div>
+            <div class="text-right leading-tight">
+              <div class="font-black text-sm" id="cost-gloves">1000 SP</div>
+              <div class="text-[10px] text-gray-600 font-bold">+10 Tık</div>
+            </div>
+          </button>
+
+          <button
+            id="btn-med"
+            onclick="game.buyUpgrade('med')"
+            class="shop-item-btn group"
+          >
+            <div class="flex items-center gap-3">
+              <div class="text-2xl filter drop-shadow">🧪</div>
+              <div class="text-left leading-tight">
+                <div class="font-black text-sm">Vitamin</div>
+                <div class="text-[10px] text-gray-500 font-bold" id="lvl-med">
+                  Lvl 0
+                </div>
+              </div>
+            </div>
+            <div class="text-right leading-tight">
+              <div class="font-black text-sm" id="cost-med">5000 SP</div>
+              <div class="text-[10px] text-gray-600 font-bold">+25 Oto</div>
             </div>
           </button>
 
@@ -463,12 +576,12 @@
           >
             <div class="flex items-center gap-3">
               <div
-                class="text-3xl filter drop-shadow-md group-hover:rotate-12 transition"
+                class="text-2xl filter drop-shadow group-hover:rotate-12 transition"
               >
                 🐞
               </div>
               <div class="text-left leading-tight">
-                <div class="font-black text-md">Uğur Böceği</div>
+                <div class="font-black text-sm">Uğur Böceği</div>
                 <div class="text-[10px] text-red-600 font-bold">
                   Hız x2 (60sn)
                 </div>
@@ -479,7 +592,7 @@
                 id="boost-status-container"
                 class="h-5 flex items-center"
               ></div>
-              <div class="font-black text-md" id="cost-boost">500 SP</div>
+              <div class="font-black text-sm" id="cost-boost">500 SP</div>
             </div>
           </button>
 
@@ -491,7 +604,7 @@
             <div class="flex items-center gap-3">
               <img src="kupa.png" class="w-8 h-8 object-contain" />
               <div class="text-left leading-tight">
-                <div class="font-black text-md text-yellow-800">PRESTİJ</div>
+                <div class="font-black text-sm text-yellow-800">PRESTİJ</div>
                 <div class="text-[10px] text-yellow-700 font-bold">
                   Boyut Atla
                 </div>
@@ -590,16 +703,25 @@
       <div class="relative z-10 flex flex-col items-center">
         <img
           src="logo- tap seed.png"
-          class="w-64 md:w-80 object-contain mb-8 drop-shadow-2xl animate-pulse"
+          class="w-64 md:w-80 object-contain mb-6 drop-shadow-2xl"
         />
+
+        <input
+          type="text"
+          id="username-input"
+          class="name-input"
+          placeholder="İsmini Yaz..."
+          maxlength="12"
+        />
+
         <button
           onclick="game.startGame()"
-          class="px-16 py-6 text-2xl font-black text-[#3f2e22] bg-white rounded-full tracking-wider hover:scale-105 transition shadow-xl border-4 border-[#3f2e22]"
+          class="px-16 py-5 text-xl font-black text-[#3f2e22] bg-white rounded-full tracking-wider hover:scale-105 transition shadow-xl border-4 border-[#3f2e22]"
         >
           OYUNA BAŞLA
         </button>
         <div class="mt-8 text-white/50 text-xs font-mono">
-          v6.0 - No Seasons
+          v7.0 - Final Edition
         </div>
       </div>
     </div>
@@ -607,17 +729,16 @@
     <div id="toast-container" class="fixed top-24 right-5 z-[90]"></div>
 
     <script>
-      /* --- SPACE TUŞU SERİ TIKLAMA (Hızlandırıldı: 50ms) --- */
+      /* --- SPACE TUŞU SERİ TIKLAMA (40ms = 25 Tık/Saniye) --- */
       let spaceInterval = null;
 
       window.addEventListener("keydown", (e) => {
         if (e.code === "Space" && !e.repeat && game.gameStarted) {
-          game.handleClick(null); // Anında tık
+          game.handleClick(null); // İlk tık
           if (!spaceInterval) {
-            // 50 milisaniyede bir tıklar (saniyede 20 tık)
             spaceInterval = setInterval(() => {
               game.handleClick(null);
-            }, 50);
+            }, 40); // Çok seri
           }
         }
       });
@@ -693,8 +814,9 @@
       };
 
       const game = {
-        saveKey: "tapSeed_v6",
+        saveKey: "tapSeed_v7",
         data: {
+          username: "", // İsim verisi
           points: 0,
           clickCount: 0,
           clickPower: 1,
@@ -704,9 +826,14 @@
           dimension: 1,
           boostEndTime: 0,
           lastSaveTime: Date.now(),
+          // Yeni itemler eklendi
           upgrades: {
-            auto: { c: 0, b: 15 },
             click: { c: 0, b: 50 },
+            water: { c: 0, b: 100 },
+            auto: { c: 0, b: 15 },
+            shears: { c: 0, b: 250 },
+            gloves: { c: 0, b: 1000 },
+            med: { c: 0, b: 5000 },
             boost: { c: 0, b: 500 },
           },
           unlockedAchievements: [],
@@ -760,24 +887,37 @@
           { name: "YILDIZ TOHUMU", limit: 500000000000, img: "level14.png" },
           { name: "EVRENİN NEFESİ", limit: 2000000000000, img: "level15.png" },
         ],
-        // Mevsimler silindi
         isRaining: false,
         isNight: false,
         gameStarted: false,
 
         init() {
           this.load();
+          if (this.data.username) {
+            document.getElementById("username-input").value =
+              this.data.username;
+          }
           this.updateUI();
           this.renderPlant();
         },
         startGame() {
           if (this.gameStarted) return;
+          const input = document.getElementById("username-input");
+          const name = input.value.trim();
+          if (!name) {
+            alert("Lütfen bir isim gir!");
+            return;
+          }
+          this.data.username = name;
+          this.save();
+
           this.gameStarted = true;
           document.getElementById("start-screen").classList.add("hidden");
           setTimeout(
             () => document.getElementById("start-screen").remove(),
             600
           );
+
           audioManager.init();
           audioManager.resume();
           this.checkOfflineEarnings();
@@ -786,6 +926,7 @@
           this.scheduleGoldenSeed();
           this.scheduleBee();
           requestAnimationFrame(() => this.loop());
+          this.showToast(`Hoş Geldin ${name}`, "İyi eğlenceler!", "success");
         },
         handleClick(e, isAuto = false) {
           let m = this.data.prestigeMultiplier;
@@ -856,13 +997,30 @@
           }
           if (this.data.points >= cost) {
             this.data.points -= cost;
+            // Upgrade Logic
             if (t === "auto") {
               this.data.autoPower += 0.5;
               u.c++;
             } else if (t === "click") {
               this.data.clickPower += 1;
               u.c++;
-            } else if (t === "boost") {
+            } else if (t === "water") {
+              this.data.clickPower += 2;
+              u.c++;
+            } // Yeni
+            else if (t === "shears") {
+              this.data.autoPower += 2.0;
+              u.c++;
+            } // Yeni
+            else if (t === "gloves") {
+              this.data.clickPower += 10;
+              u.c++;
+            } // Yeni
+            else if (t === "med") {
+              this.data.autoPower += 25;
+              u.c++;
+            } // Yeni
+            else if (t === "boost") {
               this.data.boostEndTime = Date.now() + 60000;
               this.showToast("UĞUR BÖCEKLERİ!", "Hız x2 (60sn)", "success");
             }
@@ -911,22 +1069,24 @@
           ).toFixed(1);
 
           const up = this.data.upgrades;
-          document.getElementById("lvl-click").innerText =
-            "Seviye " + (up.click.c + 1);
-          document.getElementById("cost-click").innerText =
-            Math.floor(
-              up.click.b * Math.pow(1.5, up.click.c)
-            ).toLocaleString() + " SP";
-          document.getElementById("btn-sun").disabled =
-            this.data.points <
-            Math.floor(up.click.b * Math.pow(1.5, up.click.c));
 
-          document.getElementById("lvl-auto").innerText = "Seviye " + up.auto.c;
-          document.getElementById("cost-auto").innerText =
-            Math.floor(up.auto.b * Math.pow(1.5, up.auto.c)).toLocaleString() +
-            " SP";
-          document.getElementById("btn-fert").disabled =
-            this.data.points < Math.floor(up.auto.b * Math.pow(1.5, up.auto.c));
+          // Helper to update button
+          const updateBtn = (id, type, name, suffix) => {
+            const u = up[type];
+            document.getElementById("lvl-" + type).innerText = "Lvl " + u.c;
+            const cost = Math.floor(u.b * Math.pow(1.5, u.c));
+            document.getElementById("cost-" + type).innerText =
+              cost.toLocaleString() + " SP";
+            document.getElementById("btn-" + id).disabled =
+              this.data.points < cost;
+          };
+
+          updateBtn("sun", "click");
+          updateBtn("water", "water");
+          updateBtn("fert", "auto");
+          updateBtn("shears", "shears");
+          updateBtn("gloves", "gloves");
+          updateBtn("med", "med");
 
           const boostBtn = document.getElementById("btn-ladybug");
           const statusContainer = document.getElementById(
@@ -983,9 +1143,14 @@
           this.data.stage = 0;
           this.data.clickPower = 1;
           this.data.autoPower = 0;
+          // Upgrade sıfırla ama çeşitleri koru
           this.data.upgrades = {
-            auto: { c: 0, b: 15 },
             click: { c: 0, b: 50 },
+            water: { c: 0, b: 100 },
+            auto: { c: 0, b: 15 },
+            shears: { c: 0, b: 250 },
+            gloves: { c: 0, b: 1000 },
+            med: { c: 0, b: 5000 },
             boost: { c: 0, b: 500 },
           };
           this.renderPlant();
@@ -1100,6 +1265,16 @@
             if (this.data.dimension === undefined) this.data.dimension = 1;
             if (!this.data.unlockedAchievements)
               this.data.unlockedAchievements = [];
+
+            // Eğer eski versiyonda bu upgrade'ler yoksa ekle
+            if (!this.data.upgrades.water)
+              this.data.upgrades.water = { c: 0, b: 100 };
+            if (!this.data.upgrades.shears)
+              this.data.upgrades.shears = { c: 0, b: 250 };
+            if (!this.data.upgrades.gloves)
+              this.data.upgrades.gloves = { c: 0, b: 1000 };
+            if (!this.data.upgrades.med)
+              this.data.upgrades.med = { c: 0, b: 5000 };
           }
         },
         resetSave() {
