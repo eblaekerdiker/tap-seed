@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - v5 Ultimate</title>
+    <title>Tap Seed - v6 Clean</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -29,13 +29,14 @@
 
       /* --- UI NESNELERİ --- */
 
-      /* Üst Köşe İkonları (Ayarlar ve Başarımlar) */
+      /* Üst Köşe İkonları (Düzeltildi: Basıklık gitti) */
       .top-icon-btn {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         transition: transform 0.2s;
         cursor: pointer;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+        object-fit: contain; /* Görüntü oranını korur */
       }
       .top-icon-btn:hover {
         transform: scale(1.1) rotate(10deg);
@@ -44,30 +45,31 @@
         transform: scale(0.9);
       }
 
-      /* Logo */
+      /* Logo (Küçültüldü) */
       .game-logo {
         position: absolute;
         top: 20px;
         left: 20px;
-        width: 180px;
+        width: 120px; /* Daha küçük */
         z-index: 60;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+        object-fit: contain;
       }
 
-      /* Market Kutuları (Beyaz, Şeffaf, Siyah Yazı) */
+      /* Market Kutuları (Daraltıldı) */
       .shop-item-btn {
-        background-color: rgba(255, 255, 255, 0.85); /* Beyaz hafif şeffaf */
+        background-color: rgba(255, 255, 255, 0.85);
         border: 2px solid rgba(255, 255, 255, 0.5);
-        border-radius: 12px;
-        padding: 1rem;
-        color: #000; /* Siyah yazı */
+        border-radius: 10px;
+        padding: 0.5rem 1rem; /* Daha az boşluk */
+        color: #000;
         display: flex;
         align-items: center;
         justify-content: space-between;
         transition: all 0.2s;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         width: 100%;
-        height: 100px; /* Sabit yükseklik */
+        height: 70px; /* Yükseklik düşürüldü (Eskisi 100px idi) */
       }
       .shop-item-btn:hover:not(:disabled) {
         transform: translateX(-5px);
@@ -80,21 +82,21 @@
         cursor: not-allowed;
       }
 
-      /* Seviye Paneli (Sol Tarafa Taşınan) */
+      /* Seviye Paneli */
       .level-panel {
         background-color: rgba(0, 0, 0, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(4px);
         border-radius: 16px;
-        padding: 1rem;
+        padding: 0.8rem;
         width: 100%;
         max-width: 400px;
-        margin-top: 1rem;
+        margin-top: 0.5rem;
         text-align: center;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
       }
 
-      /* --- DİĞER EFEKTLER --- */
+      /* --- EFEKTLER --- */
       .rain-drop {
         position: absolute;
         background: #a0c4ff;
@@ -132,7 +134,7 @@
 
       #plant-score-wrapper {
         position: absolute;
-        top: 15%; /* Logo olduğu için biraz aşağı */
+        top: 15%;
         left: 50%;
         transform: translateX(-50%);
         z-index: 60;
@@ -222,7 +224,6 @@
         padding: 0.5rem;
       }
 
-      /* Başarım Listesi Stili */
       .achievement-item {
         background: rgba(255, 255, 255, 0.1);
         border-radius: 8px;
@@ -252,7 +253,7 @@
           height: auto;
           min-height: 60vh;
           width: 100%;
-          padding-top: 80px;
+          padding-top: 60px;
         }
         #right-zone {
           width: 100%;
@@ -260,15 +261,10 @@
           min-height: 50vh;
         }
         .game-logo {
-          width: 120px;
-        }
-        .top-icon-btn {
-          width: 45px;
-          height: 45px;
+          width: 90px;
         }
       }
 
-      /* Close Button */
       .close-btn {
         position: absolute;
         top: 10px;
@@ -295,7 +291,7 @@
 
     <img src="logo- tap seed.png" class="game-logo" alt="Tap Seed Logo" />
 
-    <div class="absolute top-5 right-5 z-[80] flex gap-4">
+    <div class="absolute top-5 right-5 z-[80] flex gap-3">
       <img
         src="basarimlar.png"
         onclick="game.toggleAchievements()"
@@ -335,7 +331,7 @@
       <div
         id="click-area"
         onclick="game.handleClick(event)"
-        class="relative w-[400px] h-[400px] z-40 flex items-center justify-center cursor-pointer group mt-10"
+        class="relative w-[400px] h-[400px] z-40 flex items-center justify-center cursor-pointer group mt-8"
       >
         <img
           id="plant-img"
@@ -350,7 +346,7 @@
             <h2
               class="text-[10px] font-bold opacity-70 tracking-widest uppercase mb-1 text-yellow-100 text-left"
             >
-              MEVCUT SEVİYE
+              SEVİYE
             </h2>
             <h1
               id="level-name"
@@ -370,7 +366,7 @@
           </div>
         </div>
         <div
-          class="progress-container h-4 rounded-full overflow-hidden relative w-full"
+          class="progress-container h-3 rounded-full overflow-hidden relative w-full"
         >
           <div
             id="level-bar"
@@ -379,15 +375,6 @@
           ></div>
         </div>
       </div>
-
-      <div
-        class="mt-4 bg-white/90 px-6 py-2 rounded-full font-bold text-sm z-40 flex items-center gap-2 text-slate-900 shadow-lg"
-      >
-        <span id="season-icon" class="text-xl">🌸</span>
-        <span id="season-text">İLKBAHAR</span>
-        <span class="text-gray-400 mx-2">|</span>
-        <span id="weather-text" class="text-blue-600">Güneşli</span>
-      </div>
     </section>
 
     <section
@@ -395,7 +382,7 @@
       class="w-full lg:w-2/5 h-full p-4 lg:p-8 relative z-40 flex flex-col pointer-events-none bg-black/20 backdrop-blur-sm"
     >
       <div
-        class="pointer-events-auto w-full h-full flex flex-col gap-4 overflow-y-auto pt-12 lg:pt-4"
+        class="pointer-events-auto w-full h-full flex flex-col gap-4 overflow-y-auto pt-16 lg:pt-4"
       >
         <div class="grid grid-cols-2 gap-3 shrink-0">
           <div class="glass-stat flex flex-col items-center">
@@ -414,32 +401,34 @@
           </div>
         </div>
 
-        <h3 class="text-white font-black text-xl mt-2 drop-shadow-md shrink-0">
+        <h3
+          class="text-white font-black text-xl mt-2 drop-shadow-md shrink-0 border-b border-white/20 pb-2"
+        >
           MARKET
         </h3>
 
-        <div class="flex flex-col gap-3 pb-20">
+        <div class="flex flex-col gap-2 pb-20">
           <button
             id="btn-sun"
             onclick="game.buyUpgrade('click')"
             class="shop-item-btn group"
           >
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
               <div
-                class="text-4xl filter drop-shadow-md group-hover:scale-110 transition"
+                class="text-3xl filter drop-shadow-md group-hover:scale-110 transition"
               >
                 ☀️
               </div>
-              <div class="text-left">
-                <div class="font-black text-lg">Güneş Işığı</div>
-                <div class="text-xs text-gray-600 font-bold" id="lvl-click">
+              <div class="text-left leading-tight">
+                <div class="font-black text-md">Güneş Işığı</div>
+                <div class="text-[10px] text-gray-600 font-bold" id="lvl-click">
                   Seviye 1
                 </div>
               </div>
             </div>
-            <div class="text-right">
-              <div class="font-black text-lg" id="cost-click">50 SP</div>
-              <div class="text-[10px] text-gray-500 font-bold">+1 Tık Gücü</div>
+            <div class="text-right leading-tight">
+              <div class="font-black text-md" id="cost-click">50 SP</div>
+              <div class="text-[10px] text-gray-500 font-bold">+1 Tık</div>
             </div>
           </button>
 
@@ -448,22 +437,22 @@
             onclick="game.buyUpgrade('auto')"
             class="shop-item-btn group"
           >
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
               <div
-                class="text-4xl filter drop-shadow-md group-hover:scale-110 transition"
+                class="text-3xl filter drop-shadow-md group-hover:scale-110 transition"
               >
                 💩
               </div>
-              <div class="text-left">
-                <div class="font-black text-lg">Doğal Gübre</div>
-                <div class="text-xs text-gray-600 font-bold" id="lvl-auto">
+              <div class="text-left leading-tight">
+                <div class="font-black text-md">Doğal Gübre</div>
+                <div class="text-[10px] text-gray-600 font-bold" id="lvl-auto">
                   Seviye 0
                 </div>
               </div>
             </div>
-            <div class="text-right">
-              <div class="font-black text-lg" id="cost-auto">15 SP</div>
-              <div class="text-[10px] text-gray-500 font-bold">+0.5/sn Oto</div>
+            <div class="text-right leading-tight">
+              <div class="font-black text-md" id="cost-auto">15 SP</div>
+              <div class="text-[10px] text-gray-500 font-bold">+0.5 Oto</div>
             </div>
           </button>
 
@@ -472,25 +461,25 @@
             onclick="game.buyUpgrade('boost')"
             class="shop-item-btn group"
           >
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
               <div
-                class="text-4xl filter drop-shadow-md group-hover:rotate-12 transition"
+                class="text-3xl filter drop-shadow-md group-hover:rotate-12 transition"
               >
                 🐞
               </div>
-              <div class="text-left">
-                <div class="font-black text-lg">Uğur Böceği</div>
-                <div class="text-xs text-red-600 font-bold">
-                  Üretim x2 (60sn)
+              <div class="text-left leading-tight">
+                <div class="font-black text-md">Uğur Böceği</div>
+                <div class="text-[10px] text-red-600 font-bold">
+                  Hız x2 (60sn)
                 </div>
               </div>
             </div>
-            <div class="flex flex-col items-end">
+            <div class="flex flex-col items-end leading-tight">
               <div
                 id="boost-status-container"
-                class="h-6 flex items-center"
+                class="h-5 flex items-center"
               ></div>
-              <div class="font-black text-lg" id="cost-boost">500 SP</div>
+              <div class="font-black text-md" id="cost-boost">500 SP</div>
             </div>
           </button>
 
@@ -499,16 +488,16 @@
             onclick="game.prestige()"
             class="hidden shop-item-btn !bg-gradient-to-r from-yellow-100 to-yellow-200 !border-yellow-400"
           >
-            <div class="flex items-center gap-4">
-              <img src="kupa.png" class="w-10 h-10 object-contain" />
-              <div class="text-left">
-                <div class="font-black text-lg text-yellow-800">PRESTİJ</div>
-                <div class="text-xs text-yellow-700 font-bold">
-                  Boyut Atla & Sıfırla
+            <div class="flex items-center gap-3">
+              <img src="kupa.png" class="w-8 h-8 object-contain" />
+              <div class="text-left leading-tight">
+                <div class="font-black text-md text-yellow-800">PRESTİJ</div>
+                <div class="text-[10px] text-yellow-700 font-bold">
+                  Boyut Atla
                 </div>
               </div>
             </div>
-            <div class="text-right font-black text-yellow-900 text-sm">
+            <div class="text-right font-black text-yellow-900 text-xs">
               %50 GÜÇ
             </div>
           </button>
@@ -586,7 +575,7 @@
         <div onclick="game.toggleInfo()" class="close-btn">X</div>
         <h2 class="font-bold text-xl mb-4">REHBER</h2>
         <p class="text-sm opacity-80">
-          Toprağa tıkla, tohumları büyüt. Space tuşuna basılı tutarak hızlı
+          Toprağa tıkla, tohumları büyüt. Space tuşuna basılı tutarak seri
           tıklayabilirsin!
         </p>
       </div>
@@ -601,7 +590,7 @@
       <div class="relative z-10 flex flex-col items-center">
         <img
           src="logo- tap seed.png"
-          class="w-72 md:w-96 object-contain mb-8 drop-shadow-2xl animate-pulse"
+          class="w-64 md:w-80 object-contain mb-8 drop-shadow-2xl animate-pulse"
         />
         <button
           onclick="game.startGame()"
@@ -610,7 +599,7 @@
           OYUNA BAŞLA
         </button>
         <div class="mt-8 text-white/50 text-xs font-mono">
-          v5.0 - Ultimate Edition
+          v6.0 - No Seasons
         </div>
       </div>
     </div>
@@ -618,29 +607,25 @@
     <div id="toast-container" class="fixed top-24 right-5 z-[90]"></div>
 
     <script>
-      /* --- 1. SPACE TUŞU MANTIĞI --- */
+      /* --- SPACE TUŞU SERİ TIKLAMA (Hızlandırıldı: 50ms) --- */
       let spaceInterval = null;
-      let isSpaceDown = false;
 
       window.addEventListener("keydown", (e) => {
         if (e.code === "Space" && !e.repeat && game.gameStarted) {
-          isSpaceDown = true;
-          game.handleClick(null); // İlk basışta tıkla
-          // Basılı tutunca seri tıkla (100ms)
+          game.handleClick(null); // Anında tık
           if (!spaceInterval) {
+            // 50 milisaniyede bir tıklar (saniyede 20 tık)
             spaceInterval = setInterval(() => {
               game.handleClick(null);
-            }, 100);
+            }, 50);
           }
         }
       });
 
       window.addEventListener("keyup", (e) => {
         if (e.code === "Space") {
-          isSpaceDown = false;
           clearInterval(spaceInterval);
           spaceInterval = null;
-          // Görsel efekti temizle
           document
             .getElementById("plant-img")
             .classList.remove("plant-click-anim");
@@ -708,7 +693,7 @@
       };
 
       const game = {
-        saveKey: "tapSeed_v5",
+        saveKey: "tapSeed_v6",
         data: {
           points: 0,
           clickCount: 0,
@@ -724,8 +709,6 @@
             click: { c: 0, b: 50 },
             boost: { c: 0, b: 500 },
           },
-          seasonIndex: 0,
-          // 6. Başarım Verisi
           unlockedAchievements: [],
         },
         achievements: [
@@ -777,8 +760,7 @@
           { name: "YILDIZ TOHUMU", limit: 500000000000, img: "level14.png" },
           { name: "EVRENİN NEFESİ", limit: 2000000000000, img: "level15.png" },
         ],
-        seasons: ["spring", "summer", "autumn", "winter"],
-        seasonNames: ["🌸 İLKBAHAR", "☀️ YAZ", "🍂 SONBAHAR", "❄️ KIŞ"],
+        // Mevsimler silindi
         isRaining: false,
         isNight: false,
         gameStarted: false,
@@ -787,7 +769,6 @@
           this.load();
           this.updateUI();
           this.renderPlant();
-          this.updateSeasonUI();
         },
         startGame() {
           if (this.gameStarted) return;
@@ -802,16 +783,12 @@
           this.checkOfflineEarnings();
           setInterval(() => this.weatherLoop(), 15000);
           setInterval(() => this.toggleNightMode(), 180000);
-          setInterval(() => this.changeSeason(), 120000);
           this.scheduleGoldenSeed();
           this.scheduleBee();
           requestAnimationFrame(() => this.loop());
         },
         handleClick(e, isAuto = false) {
           let m = this.data.prestigeMultiplier;
-          const s = this.seasons[this.data.seasonIndex];
-          if (s === "summer") m *= 1.5;
-          if (s === "winter") m *= 3.0;
           if (this.isNight) m *= 0.5;
           if (Date.now() < this.data.boostEndTime) m *= 2;
           if (this.isRaining) m *= 2;
@@ -828,7 +805,7 @@
             setTimeout(() => plant.classList.remove("plant-click-anim"), 100);
           }
           this.checkGrowth();
-          this.checkAchievements(); // Başarım kontrolü
+          this.checkAchievements();
           this.updateUI();
         },
         triggerScoreAnim() {
@@ -842,9 +819,6 @@
           const now = Date.now();
           if (this.data.autoPower > 0) {
             let m = this.data.prestigeMultiplier;
-            const s = this.seasons[this.data.seasonIndex];
-            if (s === "spring") m *= 1.5;
-            if (s === "winter") m *= 0.2;
             if (this.isNight) m *= 3.0;
             if (now < this.data.boostEndTime) m *= 2;
             if (this.isRaining) m *= 2;
@@ -927,9 +901,6 @@
           document.getElementById("level-bar").style.width = progress + "%";
 
           let m = this.data.prestigeMultiplier;
-          const s = this.seasons[this.data.seasonIndex];
-          if (s === "spring") m *= 1.5;
-          if (s === "winter") m *= 0.2;
           if (this.isNight) m *= 3.0;
           else m *= 1.0;
           if (Date.now() < this.data.boostEndTime) m *= 2;
@@ -1056,30 +1027,6 @@
           c.appendChild(t);
           setTimeout(() => t.remove(), 3000);
         },
-        changeSeason() {
-          this.data.seasonIndex = (this.data.seasonIndex + 1) % 4;
-          this.updateSeasonUI();
-          this.showToast(
-            "MEVSİM",
-            this.seasonNames[this.data.seasonIndex],
-            "info"
-          );
-        },
-        updateSeasonUI() {
-          const s = this.seasons[this.data.seasonIndex];
-          document.body.className = `flex h-screen w-full relative season-${s}`;
-          document.getElementById("season-text").innerText =
-            this.seasonNames[this.data.seasonIndex];
-          const icon =
-            s === "spring"
-              ? "🌸"
-              : s === "summer"
-              ? "☀️"
-              : s === "autumn"
-              ? "🍂"
-              : "❄️";
-          document.getElementById("season-icon").innerText = icon;
-        },
         toggleSettings() {
           document.getElementById("settings-modal").classList.toggle("hidden");
         },
@@ -1087,7 +1034,6 @@
           document.getElementById("info-modal").classList.toggle("hidden");
         },
 
-        // BAŞARIM MODALI AÇ KAPA VE RENDELE
         toggleAchievements() {
           const el = document.getElementById("achievements-modal");
           el.classList.toggle("hidden");
@@ -1120,7 +1066,6 @@
             });
           }
         },
-
         renderPlant() {
           document.getElementById("plant-img").src =
             this.stages[this.data.stage].img;
@@ -1152,7 +1097,6 @@
           if (s) {
             const p = JSON.parse(s);
             this.data = { ...this.data, ...p };
-            if (this.data.seasonIndex === undefined) this.data.seasonIndex = 0;
             if (this.data.dimension === undefined) this.data.dimension = 1;
             if (!this.data.unlockedAchievements)
               this.data.unlockedAchievements = [];
@@ -1167,7 +1111,6 @@
         weatherLoop() {
           if (Math.random() < 0.3) {
             this.isRaining = true;
-            document.getElementById("weather-text").innerText = "Yağmurlu (x2)";
             const l = document.getElementById("rain-layer");
             l.innerHTML = "";
             for (let i = 0; i < 50; i++) {
@@ -1180,9 +1123,6 @@
             }
           } else {
             this.isRaining = false;
-            document.getElementById("weather-text").innerText = this.isNight
-              ? "Açık Gece"
-              : "Güneşli";
             document.getElementById("rain-layer").innerHTML = "";
           }
         },
@@ -1243,10 +1183,7 @@
         catchGoldenSeed() {
           const e = document.getElementById("golden-seed");
           e.classList.add("hidden");
-          const s = this.seasons[this.data.seasonIndex];
-          const b =
-            Math.max(100, Math.floor(this.data.points * 0.3)) *
-            (s === "autumn" ? 2 : 1);
+          const b = Math.max(100, Math.floor(this.data.points * 0.3));
           this.data.points += b;
           audioManager.playDing();
           this.showToast("ALTIN TOHUM", `+${b} SP!`, "success");
