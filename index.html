@@ -32,7 +32,7 @@
 
       /* Ahşap Tabela Arka Planı (Genel Butonlar için) */
       .wood-btn {
-        background-image: url("tabela.jpg");
+        background-image: url("tabela.png");
         background-size: 100% 100%;
         background-repeat: no-repeat;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -56,7 +56,7 @@
 
       /* Geniş Tabela (Header ve Modallar için) */
       .wood-panel {
-        background-image: url("tabela-genis.jpg");
+        background-image: url("tabela-genis.png");
         background-size: 100% 100%;
         background-repeat: no-repeat;
         padding: 2rem; /* Görselin kenar payları için */
@@ -83,7 +83,7 @@
       .close-btn-img {
         width: 40px;
         height: 40px;
-        background-image: url("çarpı.jpg");
+        background-image: url("çarpı.png");
         background-size: contain;
         background-repeat: no-repeat;
         cursor: pointer;
@@ -362,7 +362,7 @@
       >
         <img
           id="golden-seed-img"
-          src="yıldız.jpg"
+          src="yıldız.png"
           style="border-radius: 50%"
           alt="Bonus"
         />
@@ -581,7 +581,7 @@
             onclick="game.prestige()"
             class="hidden wood-btn py-3 font-bold text-sm text-white flex items-center justify-center gap-2"
             style="
-              background-image: url('tabela-genis.jpg');
+              background-image: url('tabela-genis.png');
               color: gold;
               text-shadow: 0 2px 2px black;
             "
@@ -658,7 +658,7 @@
           >
             <img
               id="sound-icon-img"
-              src="ses-ac.jpg"
+              src="ses-ac.png"
               class="w-full h-full object-contain rounded-full"
             />
           </button>
@@ -689,14 +689,14 @@
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
       <div class="relative z-10 flex flex-col items-center">
         <img
-          src="logo- tap seed.jpg"
+          src="logo- tap seed.png"
           class="w-64 md:w-96 object-contain mb-8 drop-shadow-2xl animate-pulse"
         />
         <button
           onclick="game.startGame()"
           class="wood-btn px-12 py-6 text-2xl font-black text-white rounded-full tracking-wider hover:scale-110 transition"
           style="
-            background-image: url('tabela.jpg');
+            background-image: url('tabela.png');
             color: #3f2e22;
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
           "
@@ -768,8 +768,8 @@
           this.enabled = !this.enabled;
           // Resim değiştirme mantığı
           document.getElementById("sound-icon-img").src = this.enabled
-            ? "ses-ac.jpg"
-            : "ses-kapa.jpg";
+            ? "ses-ac.png"
+            : "ses-kapa.png";
         },
       };
 
@@ -998,7 +998,7 @@
           } else {
             boostBtn.disabled = this.data.points < 500;
             // HAZIR İKONU (TİK)
-            statusContainer.innerHTML = `<img src="tik.jpg" class="w-full h-full object-contain rounded-full shadow-sm">`;
+            statusContainer.innerHTML = `<img src="tik.png" class="w-full h-full object-contain rounded-full shadow-sm">`;
           }
           document.getElementById("prestige-display").innerText =
             this.data.prestigeMultiplier.toFixed(1);
