@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - v7.2 Fixed</title>
+    <title>Tap Seed - v11.0 Balanced</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -28,10 +28,9 @@
       }
 
       /* --- UI NESNELERİ --- */
-
       .top-icon-btn {
-        width: 50px;
-        height: 50px;
+        width: 150px; /* ESKİSİ 50px İDİ, BÜYÜTTÜM */
+        height: 150px; /* ESKİSİ 50px İDİ, BÜYÜTTÜM */
         transition: transform 0.2s;
         cursor: pointer;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
@@ -47,8 +46,8 @@
       .game-logo {
         position: absolute;
         top: 20px;
-        left: 20px;
-        width: 120px;
+        left: 1px;
+        width: 90px;
         z-index: 60;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
         object-fit: contain;
@@ -127,8 +126,8 @@
         animation: sway 5s ease-in-out infinite;
         transform-origin: bottom center;
         transition: transform 0.1s;
+        margin-top: 90px;
       }
-      /* Javascript ile kontrol edilecek */
       .plant-pressed {
         transform: scale(0.9) !important;
       }
@@ -315,6 +314,31 @@
         cursor: pointer;
         font-weight: bold;
       }
+
+      .bee-moving {
+        position: absolute;
+        font-size: 3rem;
+        z-index: 55;
+        cursor: pointer;
+        animation: beeFly 15s linear forwards;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.5));
+      }
+      @keyframes beeFly {
+        0% {
+          left: -100px;
+          transform: translateY(0) scaleX(1);
+        }
+        25% {
+          transform: translateY(-50px) scaleX(1);
+        }
+        50% {
+          transform: translateY(50px) scaleX(1);
+        }
+        100% {
+          left: 110%;
+          transform: translateY(0) scaleX(1);
+        }
+      }
     </style>
   </head>
 
@@ -326,18 +350,20 @@
 
     <img src="logo- tap seed.png" class="game-logo" alt="Tap Seed Logo" />
 
-    <div class="absolute top-5 right-5 z-[80] flex gap-3">
+    <div class="absolute -top-8 right-5 z-[80] flex w-50 h-50">
       <img
         src="basarimlar.png"
         onclick="game.toggleAchievements()"
         class="top-icon-btn"
         title="Başarımlar"
+        style="z-index: 2"
       />
       <img
         src="cark.png"
         onclick="game.toggleSettings()"
-        class="top-icon-btn"
+        class="top-icon-btn -ml-8"
         title="Ayarlar"
+        style="z-index: 1"
       />
     </div>
 
@@ -412,7 +438,7 @@
       class="w-full lg:w-2/5 h-full p-4 lg:p-6 relative z-40 flex flex-col pointer-events-none bg-black/20 backdrop-blur-sm"
     >
       <div
-        class="pointer-events-auto w-full h-full flex flex-col gap-3 overflow-y-auto pt-16 lg:pt-4"
+        class="pointer-events-auto w-full h-full flex flex-col gap-3 overflow-y-auto mt-10 pt-16 lg:pt-4"
       >
         <div class="grid grid-cols-2 gap-3 shrink-0">
           <div class="glass-stat flex flex-col items-center">
@@ -439,7 +465,7 @@
 
         <div class="flex flex-col gap-2 pb-20">
           <button
-            id="btn-sun"
+            id="btn-click"
             onclick="game.buyUpgrade('click')"
             class="shop-item-btn group"
           >
@@ -479,7 +505,7 @@
           </button>
 
           <button
-            id="btn-fert"
+            id="btn-auto"
             onclick="game.buyUpgrade('auto')"
             class="shop-item-btn group"
           >
@@ -494,7 +520,7 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-auto">15 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+0.5 Oto</div>
+              <div class="text-[10px] text-gray-600 font-bold">+1.0 Oto</div>
             </div>
           </button>
 
@@ -517,7 +543,7 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-shears">250 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+2.0 Oto</div>
+              <div class="text-[10px] text-gray-600 font-bold">+5.0 Oto</div>
             </div>
           </button>
 
@@ -560,7 +586,7 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-med">5000 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+25 Oto</div>
+              <div class="text-[10px] text-gray-600 font-bold">+25.0 Oto</div>
             </div>
           </button>
 
@@ -713,25 +739,25 @@
         >
           OYUNA BAŞLA
         </button>
-        <div class="mt-8 text-white/50 text-xs font-mono">v7.2 - Auto Fix</div>
+        <div class="mt-8 text-white/50 text-xs font-mono">
+          v11.0 - Balanced (1 by 1)
+        </div>
       </div>
     </div>
 
     <div id="toast-container" class="fixed top-24 right-5 z-[90]"></div>
 
     <script>
-      /* --- SPACE TUŞU DÜZELTME: Interval ve Görsel --- */
+      /* --- SPACE TUŞU VE EVENTS --- */
       let spaceInterval = null;
 
       window.addEventListener("keydown", (e) => {
         if (e.code === "Space" && !e.repeat && game.gameStarted) {
-          game.handleClick(null); // İlk tık
-          // Görsel basılma efekti
+          game.handleClick(null);
           const plant = document.getElementById("plant-img");
-          plant.classList.add("plant-pressed");
+          if (plant) plant.classList.add("plant-pressed");
 
           if (!spaceInterval) {
-            // Saniyede 100 Tık (10ms)
             spaceInterval = setInterval(() => {
               game.handleClick(null);
             }, 10);
@@ -743,9 +769,8 @@
         if (e.code === "Space") {
           clearInterval(spaceInterval);
           spaceInterval = null;
-          // Görsel efekti kaldır
           const plant = document.getElementById("plant-img");
-          plant.classList.remove("plant-pressed");
+          if (plant) plant.classList.remove("plant-pressed");
         }
       });
 
@@ -810,7 +835,8 @@
       };
 
       const game = {
-        saveKey: "tapSeed_v7",
+        // YENİ KAYIT: Dengeli (Balanced)
+        saveKey: "tapSeed_v11_Balanced",
         data: {
           username: "",
           points: 0,
@@ -833,8 +859,9 @@
           },
           unlockedAchievements: [],
         },
-        // Auto Click Düzeltme: Delta Time için son zaman kaydı
         lastFrameTime: 0,
+        _accAuto: 0,
+        _autoClickAnimTime: 0,
 
         achievements: [
           {
@@ -891,12 +918,33 @@
 
         init() {
           this.load();
+          this.recalculateStats();
+
           if (this.data.username) {
             document.getElementById("username-input").value =
               this.data.username;
           }
           this.updateUI();
           this.renderPlant();
+        },
+        recalculateStats() {
+          this.data.clickPower = 1;
+          this.data.autoPower = 0;
+
+          if (this.data.upgrades.click)
+            this.data.clickPower += this.data.upgrades.click.c * 1;
+          if (this.data.upgrades.water)
+            this.data.clickPower += this.data.upgrades.water.c * 2;
+          if (this.data.upgrades.gloves)
+            this.data.clickPower += this.data.upgrades.gloves.c * 10;
+
+          // DENGELENMİŞ DEĞERLER (1-5-25)
+          if (this.data.upgrades.auto)
+            this.data.autoPower += this.data.upgrades.auto.c * 1.0;
+          if (this.data.upgrades.shears)
+            this.data.autoPower += this.data.upgrades.shears.c * 5.0;
+          if (this.data.upgrades.med)
+            this.data.autoPower += this.data.upgrades.med.c * 25.0;
         },
         startGame() {
           if (this.gameStarted) return;
@@ -910,7 +958,7 @@
           this.save();
 
           this.gameStarted = true;
-          this.lastFrameTime = Date.now(); // Loop başlamadan zamanı al
+          this.lastFrameTime = Date.now();
 
           document.getElementById("start-screen").classList.add("hidden");
           setTimeout(
@@ -923,10 +971,21 @@
           this.checkOfflineEarnings();
           setInterval(() => this.weatherLoop(), 15000);
           setInterval(() => this.toggleNightMode(), 180000);
+
+          // YEDEK SAYAÇ
+          setInterval(() => {
+            if (this.gameStarted && this.data.autoPower > 0) {
+              const gain = this.data.autoPower * 0.1;
+              this.data.points += gain;
+              this.updateUI();
+              this.checkGrowth();
+            }
+          }, 100);
+
           this.scheduleGoldenSeed();
           this.scheduleBee();
           requestAnimationFrame(() => this.loop());
-          this.showToast(`Hoş Geldin ${name}`, "İyi eğlenceler!", "success");
+          this.showToast(`Hoş Geldin ${name}`, "Bol şans!", "success");
         },
         handleClick(e, isAuto = false) {
           let m = this.data.prestigeMultiplier;
@@ -935,14 +994,24 @@
           if (this.isRaining) m *= 2;
           let gain = this.data.clickPower * m;
           this.data.points += gain;
-          if (!isAuto) this.data.clickCount++;
+          this.data.clickCount++;
 
           if (!isAuto) {
             audioManager.playPop();
-            if (e) this.createFloatingText(e, `+${Math.floor(gain)}`);
+            const clickArea = document.getElementById("click-area");
+            let animEvent = e;
+            if (!animEvent && clickArea) {
+              const rect = clickArea.getBoundingClientRect();
+              animEvent = {
+                clientX: rect.left + rect.width / 2 + (Math.random() * 40 - 20),
+                clientY: rect.top + rect.height / 2 + (Math.random() * 40 - 20),
+              };
+            }
+            if (animEvent)
+              this.createFloatingText(animEvent, `+${Math.floor(gain)}`);
             this.triggerScoreAnim();
-            // Space ile çakışmaması için burada animasyonu elle eklemiyoruz, CSS ile çözüyoruz
           }
+
           this.checkGrowth();
           this.checkAchievements();
           this.updateUI();
@@ -956,10 +1025,11 @@
         loop() {
           if (!this.gameStarted) return;
 
-          // OTO CLİCK DÜZELTME: Delta Time Kullanımı
           const now = Date.now();
-          const dt = (now - this.lastFrameTime) / 1000; // Saniye cinsinden geçen süre
+          const dt = (now - this.lastFrameTime) / 1000;
           this.lastFrameTime = now;
+
+          if (typeof this._accAuto === "undefined") this._accAuto = 0;
 
           if (this.data.autoPower > 0) {
             let m = this.data.prestigeMultiplier;
@@ -967,12 +1037,46 @@
             if (now < this.data.boostEndTime) m *= 2;
             if (this.isRaining) m *= 2;
 
-            // Saniye başına üretimi (SPS) geçen süreyle (dt) çarpıyoruz
-            // Böylece oyun donarsa veya FPS düşerse bile matematik doğru kalır.
-            this.data.points += this.data.autoPower * m * dt;
-          }
+            const autoGain = this.data.autoPower * m * dt;
+            this.data.points += autoGain;
+            this._accAuto += autoGain;
 
-          // UI Update her frame yapılmasın, yorar (opsiyonel) ama burada akıcı görünsün diye yapıyoruz
+            if (!this._autoClickAnimTime) this._autoClickAnimTime = 0;
+            this._autoClickAnimTime += dt;
+
+            // Görsel Tıklama
+            if (this._autoClickAnimTime >= 0.1) {
+              this._autoClickAnimTime = 0;
+              this.data.clickCount++;
+
+              const plant = document.getElementById("plant-img");
+              if (plant) {
+                plant.classList.add("plant-pressed");
+                setTimeout(() => plant.classList.remove("plant-pressed"), 50);
+              }
+
+              const clickArea = document.getElementById("click-area");
+              let animEvent = null;
+              if (clickArea) {
+                const rect = clickArea.getBoundingClientRect();
+                animEvent = {
+                  clientX:
+                    rect.left + rect.width / 2 + (Math.random() * 40 - 20),
+                  clientY:
+                    rect.top + rect.height / 2 + (Math.random() * 40 - 20),
+                };
+              }
+              if (animEvent) {
+                let showScore =
+                  this._accAuto < 1
+                    ? this._accAuto.toFixed(1)
+                    : Math.floor(this._accAuto);
+                this.createFloatingText(animEvent, `+${showScore}`);
+              }
+              this._accAuto = 0;
+              this.triggerScoreAnim();
+            }
+          }
           this.updateUI();
 
           if (Math.floor(now / 1000) % 5 === 0) {
@@ -1001,13 +1105,13 @@
             cost = u.b;
             if (Date.now() < this.data.boostEndTime) return;
           } else {
-            // b değeri (Base Price) artık garantili olarak var, load() fonksiyonunda düzelttik
             cost = Math.floor(u.b * Math.pow(1.5, u.c));
           }
           if (this.data.points >= cost) {
             this.data.points -= cost;
+
             if (t === "auto") {
-              this.data.autoPower += 0.5;
+              this.data.autoPower += 1.0; // İSTENEN DEĞER: 1
               u.c++;
             } else if (t === "click") {
               this.data.clickPower += 1;
@@ -1016,13 +1120,13 @@
               this.data.clickPower += 2;
               u.c++;
             } else if (t === "shears") {
-              this.data.autoPower += 2.0;
+              this.data.autoPower += 5.0; // Dengeli
               u.c++;
             } else if (t === "gloves") {
               this.data.clickPower += 10;
               u.c++;
             } else if (t === "med") {
-              this.data.autoPower += 25;
+              this.data.autoPower += 25.0; // Dengeli
               u.c++;
             } else if (t === "boost") {
               this.data.boostEndTime = Date.now() + 60000;
@@ -1073,20 +1177,23 @@
           ).toFixed(1);
 
           const up = this.data.upgrades;
-
           const updateBtn = (id, type) => {
             const u = up[type];
-            document.getElementById("lvl-" + id).innerText = "Lvl " + u.c;
-            const cost = Math.floor(u.b * Math.pow(1.5, u.c));
-            document.getElementById("cost-" + id).innerText =
-              cost.toLocaleString() + " SP";
-            document.getElementById("btn-" + id).disabled =
-              this.data.points < cost;
+            const elLvl = document.getElementById("lvl-" + id);
+            const elCost = document.getElementById("cost-" + id);
+            const elBtn = document.getElementById("btn-" + id);
+
+            if (elLvl && elCost && elBtn) {
+              elLvl.innerText = "Lvl " + u.c;
+              const cost = Math.floor(u.b * Math.pow(1.5, u.c));
+              elCost.innerText = cost.toLocaleString() + " SP";
+              elBtn.disabled = this.data.points < cost;
+            }
           };
 
-          updateBtn("sun", "click");
+          updateBtn("click", "click");
           updateBtn("water", "water");
-          updateBtn("fert", "auto");
+          updateBtn("auto", "auto");
           updateBtn("shears", "shears");
           updateBtn("gloves", "gloves");
           updateBtn("med", "med");
@@ -1200,7 +1307,6 @@
         toggleInfo() {
           document.getElementById("info-modal").classList.toggle("hidden");
         },
-
         toggleAchievements() {
           const el = document.getElementById("achievements-modal");
           el.classList.toggle("hidden");
@@ -1212,24 +1318,15 @@
                 this.data.unlockedAchievements &&
                 this.data.unlockedAchievements.includes(ach.id);
               list.innerHTML += `
-                        <div class="achievement-item ${
-                          isUnlocked ? "unlocked" : ""
-                        }">
-                            <div class="text-2xl">${
-                              isUnlocked ? "🏆" : "🔒"
-                            }</div>
-                            <div>
-                                <div class="font-bold ${
-                                  isUnlocked
-                                    ? "text-yellow-400"
-                                    : "text-gray-400"
-                                }">${ach.title}</div>
-                                <div class="text-xs opacity-70">${
-                                  ach.desc
-                                }</div>
-                            </div>
-                        </div>
-                    `;
+                <div class="achievement-item ${isUnlocked ? "unlocked" : ""}">
+                  <div class="text-2xl">${isUnlocked ? "🏆" : "🔒"}</div>
+                  <div>
+                    <div class="font-bold ${
+                      isUnlocked ? "text-yellow-400" : "text-gray-400"
+                    }">${ach.title}</div>
+                    <div class="text-xs opacity-70">${ach.desc}</div>
+                  </div>
+                </div>`;
             });
           }
         },
@@ -1261,8 +1358,6 @@
         },
         load() {
           const s = localStorage.getItem(this.saveKey);
-
-          // DOĞRU YAPI ŞABLONU (Base Price 'b' değerleri burada)
           const defaultUpgrades = {
             click: { c: 0, b: 50 },
             water: { c: 0, b: 100 },
@@ -1272,36 +1367,24 @@
             med: { c: 0, b: 5000 },
             boost: { c: 0, b: 500 },
           };
-
           if (s) {
             try {
               const p = JSON.parse(s);
-              // Mevcut veriyi al
               this.data = { ...this.data, ...p };
-
-              // KAYIT TAMİRİ (FIX):
               if (!this.data.upgrades) this.data.upgrades = {};
-
-              // Her bir yükseltme türünü kontrol et
               for (const key in defaultUpgrades) {
-                // Eğer kayıt dosyasında bu özellik hiç yoksa veya bozuksa
                 if (
                   !this.data.upgrades[key] ||
                   typeof this.data.upgrades[key] !== "object"
                 ) {
                   this.data.upgrades[key] = { ...defaultUpgrades[key] };
                 } else {
-                  // Kayıt var ama 'b' (base price) değeri eksik olabilir.
-                  // KODDAN ZORLA YAZIYORUZ:
                   this.data.upgrades[key].b = defaultUpgrades[key].b;
-
-                  // 'c' (count) eksikse 0 yap
                   if (typeof this.data.upgrades[key].c === "undefined") {
                     this.data.upgrades[key].c = 0;
                   }
                 }
               }
-              // Boyut değişkeni kontrolü
               if (typeof this.data.dimension === "undefined")
                 this.data.dimension = 1;
             } catch (e) {
