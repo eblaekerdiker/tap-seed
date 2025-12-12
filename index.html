@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - v7.1 Fixed</title>
+    <title>Tap Seed - v7.2 Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -713,9 +713,7 @@
         >
           OYUNA BAŞLA
         </button>
-        <div class="mt-8 text-white/50 text-xs font-mono">
-          v7.1 - Ultimate Fixed
-        </div>
+        <div class="mt-8 text-white/50 text-xs font-mono">v7.2 - Auto Fix</div>
       </div>
     </div>
 
@@ -1003,6 +1001,7 @@
             cost = u.b;
             if (Date.now() < this.data.boostEndTime) return;
           } else {
+            // b değeri (Base Price) artık garantili olarak var, load() fonksiyonunda düzelttik
             cost = Math.floor(u.b * Math.pow(1.5, u.c));
           }
           if (this.data.points >= cost) {
@@ -1262,22 +1261,53 @@
         },
         load() {
           const s = localStorage.getItem(this.saveKey);
-          if (s) {
-            const p = JSON.parse(s);
-            this.data = { ...this.data, ...p };
-            if (this.data.dimension === undefined) this.data.dimension = 1;
-            if (!this.data.unlockedAchievements)
-              this.data.unlockedAchievements = [];
 
-            // Eğer eski versiyonda bu upgrade'ler yoksa ekle
-            if (!this.data.upgrades.water)
-              this.data.upgrades.water = { c: 0, b: 100 };
-            if (!this.data.upgrades.shears)
-              this.data.upgrades.shears = { c: 0, b: 250 };
-            if (!this.data.upgrades.gloves)
-              this.data.upgrades.gloves = { c: 0, b: 1000 };
-            if (!this.data.upgrades.med)
-              this.data.upgrades.med = { c: 0, b: 5000 };
+          // DOĞRU YAPI ŞABLONU (Base Price 'b' değerleri burada)
+          const defaultUpgrades = {
+            click: { c: 0, b: 50 },
+            water: { c: 0, b: 100 },
+            auto: { c: 0, b: 15 },
+            shears: { c: 0, b: 250 },
+            gloves: { c: 0, b: 1000 },
+            med: { c: 0, b: 5000 },
+            boost: { c: 0, b: 500 },
+          };
+
+          if (s) {
+            try {
+              const p = JSON.parse(s);
+              // Mevcut veriyi al
+              this.data = { ...this.data, ...p };
+
+              // KAYIT TAMİRİ (FIX):
+              if (!this.data.upgrades) this.data.upgrades = {};
+
+              // Her bir yükseltme türünü kontrol et
+              for (const key in defaultUpgrades) {
+                // Eğer kayıt dosyasında bu özellik hiç yoksa veya bozuksa
+                if (
+                  !this.data.upgrades[key] ||
+                  typeof this.data.upgrades[key] !== "object"
+                ) {
+                  this.data.upgrades[key] = { ...defaultUpgrades[key] };
+                } else {
+                  // Kayıt var ama 'b' (base price) değeri eksik olabilir.
+                  // KODDAN ZORLA YAZIYORUZ:
+                  this.data.upgrades[key].b = defaultUpgrades[key].b;
+
+                  // 'c' (count) eksikse 0 yap
+                  if (typeof this.data.upgrades[key].c === "undefined") {
+                    this.data.upgrades[key].c = 0;
+                  }
+                }
+              }
+              // Boyut değişkeni kontrolü
+              if (typeof this.data.dimension === "undefined")
+                this.data.dimension = 1;
+            } catch (e) {
+              console.error("Kayıt dosyası bozuk, sıfırlanıyor...", e);
+              localStorage.removeItem(this.saveKey);
+            }
           }
         },
         resetSave() {
