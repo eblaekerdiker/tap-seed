@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Tap Seed - v11.0 Balanced</title>
+    <title>Tap Seed - v12.3 Final Fixes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap"
@@ -21,16 +21,24 @@
         font-family: "Inter", sans-serif;
         overflow: hidden;
         color: white;
-        background-image: url("bac.png");
+        background-image: url("assets/bac.png");
         background-size: cover;
         background-position: center;
-        transition: filter 1s, background-color 1s;
+        transition: filter 2s ease-in-out, background-color 2s ease-in-out;
+      }
+
+      /* --- GECE MODU EFEKTİ --- */
+      body.night-mode {
+        filter: brightness(0.6) contrast(1.1) hue-rotate(-10deg);
+      }
+      body.night-mode .big-score-text {
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
       }
 
       /* --- UI NESNELERİ --- */
       .top-icon-btn {
-        width: 150px; /* ESKİSİ 50px İDİ, BÜYÜTTÜM */
-        height: 150px; /* ESKİSİ 50px İDİ, BÜYÜTTÜM */
+        width: 150px;
+        height: 150px;
         transition: transform 0.2s;
         cursor: pointer;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
@@ -150,6 +158,7 @@
         text-shadow: 0 4px 0 #3f2e22, 0 0 20px rgba(255, 255, 255, 0.5);
         line-height: 1;
         animation: float-gentle 3s ease-in-out infinite;
+        transition: text-shadow 2s;
       }
       .sp-label {
         font-size: 1.5rem;
@@ -262,7 +271,8 @@
       }
 
       #golden-seed {
-        z-index: 35;
+        /* DÜZELTME: Z-Index 100 yapıldı, artık her şeyin üstünde */
+        z-index: 100;
       }
       #golden-seed-img {
         width: 80px;
@@ -317,15 +327,17 @@
 
       .bee-moving {
         position: absolute;
-        font-size: 3rem;
         z-index: 55;
         cursor: pointer;
-        animation: beeFly 15s linear forwards;
+        /* DÜZELTME: Animasyon süresi 20sn yapıldı */
+        animation: beeFly 20s linear forwards;
         filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.5));
       }
+
+      /* DÜZELTME: Arı artık SAĞDAN sola doğru uçuyor */
       @keyframes beeFly {
         0% {
-          left: -100px;
+          left: 110%; /* Sağdan başla */
           transform: translateY(0) scaleX(1);
         }
         25% {
@@ -335,7 +347,7 @@
           transform: translateY(50px) scaleX(1);
         }
         100% {
-          left: 110%;
+          left: -150px; /* Soldan çık */
           transform: translateY(0) scaleX(1);
         }
       }
@@ -348,18 +360,22 @@
       class="absolute inset-0 pointer-events-none z-10"
     ></div>
 
-    <img src="logo- tap seed.png" class="game-logo" alt="Tap Seed Logo" />
+    <img
+      src="assets/logo- tap seed.png"
+      class="game-logo"
+      alt="Tap Seed Logo"
+    />
 
     <div class="absolute -top-8 right-5 z-[80] flex w-50 h-50">
       <img
-        src="basarimlar.png"
+        src="assets/basarimlar.png"
         onclick="game.toggleAchievements()"
         class="top-icon-btn"
         title="Başarımlar"
         style="z-index: 2"
       />
       <img
-        src="cark.png"
+        src="assets/cark.png"
         onclick="game.toggleSettings()"
         class="top-icon-btn -ml-8"
         title="Ayarlar"
@@ -376,12 +392,12 @@
         onclick="game.catchGoldenSeed(); event.stopPropagation();"
         class="hidden absolute hover:scale-110 transition"
       >
-        <img id="golden-seed-img" src="yıldız.png" alt="Bonus" />
+        <img id="golden-seed-img" src="assets/yıldız.png" alt="Bonus" />
       </div>
 
       <div id="plant-score-wrapper">
         <div id="big-plant-score" class="big-score-text">0</div>
-        <span class="sp-label">TOHUM PUANI</span>
+        <span class="sp-label">SP</span>
       </div>
 
       <div
@@ -391,7 +407,7 @@
       >
         <img
           id="plant-img"
-          src="level1.png"
+          src="assets/level1.png"
           class="plant-idle w-full h-full object-contain drop-shadow-2xl group-hover:scale-105 transition-transform"
         />
       </div>
@@ -400,6 +416,7 @@
         <div class="flex justify-between items-end mb-2">
           <div>
             <h2
+              data-i18n="level_label"
               class="text-[10px] font-bold opacity-70 tracking-widest uppercase mb-1 text-yellow-100 text-left"
             >
               SEVİYE
@@ -413,11 +430,12 @@
           </div>
           <div class="text-right">
             <div class="text-[10px] bg-white/20 px-2 py-1 rounded mb-1">
-              Boyut:
+              <span data-i18n="size_label">Boyut:</span>
               <span id="dim-display" class="font-bold text-yellow-300">1</span>
             </div>
             <div class="text-[10px] font-bold opacity-80 text-yellow-100">
-              Hedef: <span id="next-level-req">100</span>
+              <span data-i18n="target_label">Hedef:</span>
+              <span id="next-level-req">100</span>
             </div>
           </div>
         </div>
@@ -442,22 +460,34 @@
       >
         <div class="grid grid-cols-2 gap-3 shrink-0">
           <div class="glass-stat flex flex-col items-center">
-            <div class="text-[10px] text-white/80 font-bold uppercase">
-              Saniye Başına
+            <div
+              data-i18n="total_earnings"
+              class="text-[10px] text-white/80 font-bold uppercase"
+            >
+              Toplam Kazanç
             </div>
-            <div class="text-xl font-black text-lime-300">
-              +<span id="sps-display">0.0</span>
+            <div class="text-xl font-black text-yellow-300" id="lifetime-score">
+              0
             </div>
           </div>
           <div class="glass-stat flex flex-col items-center">
-            <div class="text-[10px] text-white/80 font-bold uppercase">
+            <div
+              data-i18n="total_clicks"
+              class="text-[10px] text-white/80 font-bold uppercase"
+            >
               Toplam Tık
             </div>
             <div class="text-xl font-black text-white" id="total-clicks">0</div>
           </div>
         </div>
+        <div
+          class="text-center text-xs text-lime-300 font-bold bg-black/30 p-1 rounded"
+        >
+          +<span id="sps-display">0.0</span> SP / Saniye
+        </div>
 
         <h3
+          data-i18n="market_title"
           class="text-white font-black text-xl mt-2 drop-shadow-md shrink-0 border-b border-white/20 pb-1"
         >
           MARKET
@@ -472,7 +502,9 @@
             <div class="flex items-center gap-3">
               <div class="text-2xl filter drop-shadow">☀️</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-sm">Güneş Işığı</div>
+                <div class="font-black text-sm" data-i18n="upg_click">
+                  Güneş Işığı
+                </div>
                 <div class="text-[10px] text-gray-500 font-bold" id="lvl-click">
                   Lvl 1
                 </div>
@@ -480,7 +512,12 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-click">50 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+1 Tık</div>
+              <div
+                class="text-[10px] text-gray-600 font-bold"
+                data-i18n="bonus_click"
+              >
+                +1 Tık
+              </div>
             </div>
           </button>
 
@@ -492,7 +529,9 @@
             <div class="flex items-center gap-3">
               <div class="text-2xl filter drop-shadow">💧</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-sm">Can Suyu</div>
+                <div class="font-black text-sm" data-i18n="upg_water">
+                  Can Suyu
+                </div>
                 <div class="text-[10px] text-gray-500 font-bold" id="lvl-water">
                   Lvl 0
                 </div>
@@ -500,7 +539,12 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-water">100 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+2 Tık</div>
+              <div
+                class="text-[10px] text-gray-600 font-bold"
+                data-i18n="bonus_water"
+              >
+                +2 Tık
+              </div>
             </div>
           </button>
 
@@ -512,7 +556,9 @@
             <div class="flex items-center gap-3">
               <div class="text-2xl filter drop-shadow">💩</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-sm">Doğal Gübre</div>
+                <div class="font-black text-sm" data-i18n="upg_auto">
+                  Doğal Gübre
+                </div>
                 <div class="text-[10px] text-gray-500 font-bold" id="lvl-auto">
                   Lvl 0
                 </div>
@@ -520,7 +566,12 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-auto">15 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+1.0 Oto</div>
+              <div
+                class="text-[10px] text-gray-600 font-bold"
+                data-i18n="bonus_auto"
+              >
+                +1.0 Oto
+              </div>
             </div>
           </button>
 
@@ -532,7 +583,9 @@
             <div class="flex items-center gap-3">
               <div class="text-2xl filter drop-shadow">✂️</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-sm">Budama</div>
+                <div class="font-black text-sm" data-i18n="upg_shears">
+                  Budama
+                </div>
                 <div
                   class="text-[10px] text-gray-500 font-bold"
                   id="lvl-shears"
@@ -543,7 +596,12 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-shears">250 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+5.0 Oto</div>
+              <div
+                class="text-[10px] text-gray-600 font-bold"
+                data-i18n="bonus_shears"
+              >
+                +5.0 Oto
+              </div>
             </div>
           </button>
 
@@ -555,7 +613,9 @@
             <div class="flex items-center gap-3">
               <div class="text-2xl filter drop-shadow">🧤</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-sm">Eldiven</div>
+                <div class="font-black text-sm" data-i18n="upg_gloves">
+                  Eldiven
+                </div>
                 <div
                   class="text-[10px] text-gray-500 font-bold"
                   id="lvl-gloves"
@@ -566,7 +626,12 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-gloves">1000 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+10 Tık</div>
+              <div
+                class="text-[10px] text-gray-600 font-bold"
+                data-i18n="bonus_gloves"
+              >
+                +10 Tık
+              </div>
             </div>
           </button>
 
@@ -578,7 +643,9 @@
             <div class="flex items-center gap-3">
               <div class="text-2xl filter drop-shadow">🧪</div>
               <div class="text-left leading-tight">
-                <div class="font-black text-sm">Vitamin</div>
+                <div class="font-black text-sm" data-i18n="upg_med">
+                  Vitamin
+                </div>
                 <div class="text-[10px] text-gray-500 font-bold" id="lvl-med">
                   Lvl 0
                 </div>
@@ -586,7 +653,12 @@
             </div>
             <div class="text-right leading-tight">
               <div class="font-black text-sm" id="cost-med">5000 SP</div>
-              <div class="text-[10px] text-gray-600 font-bold">+25.0 Oto</div>
+              <div
+                class="text-[10px] text-gray-600 font-bold"
+                data-i18n="bonus_med"
+              >
+                +25.0 Oto
+              </div>
             </div>
           </button>
 
@@ -602,8 +674,13 @@
                 🐞
               </div>
               <div class="text-left leading-tight">
-                <div class="font-black text-sm">Uğur Böceği</div>
-                <div class="text-[10px] text-red-600 font-bold">
+                <div class="font-black text-sm" data-i18n="upg_boost">
+                  Uğur Böceği
+                </div>
+                <div
+                  class="text-[10px] text-red-600 font-bold"
+                  data-i18n="bonus_boost"
+                >
                   Hız x2 (60sn)
                 </div>
               </div>
@@ -623,15 +700,26 @@
             class="hidden shop-item-btn !bg-gradient-to-r from-yellow-100 to-yellow-200 !border-yellow-400"
           >
             <div class="flex items-center gap-3">
-              <img src="kupa.png" class="w-8 h-8 object-contain" />
+              <img src="assets/kupa.png" class="w-8 h-8 object-contain" />
               <div class="text-left leading-tight">
-                <div class="font-black text-sm text-yellow-800">PRESTİJ</div>
-                <div class="text-[10px] text-yellow-700 font-bold">
+                <div
+                  class="font-black text-sm text-yellow-800"
+                  data-i18n="prestige_title"
+                >
+                  PRESTİJ
+                </div>
+                <div
+                  class="text-[10px] text-yellow-700 font-bold"
+                  data-i18n="prestige_desc"
+                >
                   Boyut Atla
                 </div>
               </div>
             </div>
-            <div class="text-right font-black text-yellow-900 text-xs">
+            <div
+              class="text-right font-black text-yellow-900 text-xs"
+              data-i18n="prestige_power"
+            >
               %50 GÜÇ
             </div>
           </button>
@@ -647,7 +735,10 @@
         class="bg-[#3f2e22] border-4 border-[#5d4037] rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto relative p-6 text-white shadow-2xl"
       >
         <div onclick="game.toggleAchievements()" class="close-btn">X</div>
-        <h2 class="text-2xl font-black mb-4 text-center text-yellow-400">
+        <h2
+          data-i18n="achievements"
+          class="text-2xl font-black mb-4 text-center text-yellow-400"
+        >
           BAŞARIMLAR
         </h2>
         <div id="achievements-list" class="space-y-2"></div>
@@ -662,28 +753,61 @@
         class="bg-[#3f2e22] border-4 border-[#5d4037] rounded-2xl w-80 relative text-center shadow-2xl p-6"
       >
         <div onclick="game.toggleSettings()" class="close-btn">X</div>
-        <h3 class="font-bold text-xl mb-6 text-white">AYARLAR</h3>
+        <h3 data-i18n="settings" class="font-bold text-xl mb-6 text-white">
+          AYARLAR
+        </h3>
+
         <div class="flex flex-col gap-4 items-center w-full">
+          <div class="flex gap-2 justify-center w-full flex-wrap">
+            <button
+              onclick="setLanguage('tr')"
+              class="px-3 py-2 bg-red-600 rounded text-xs font-bold hover:scale-110 transition shadow text-white"
+            >
+              TR
+            </button>
+            <button
+              onclick="setLanguage('en')"
+              class="px-3 py-2 bg-blue-600 rounded text-xs font-bold hover:scale-110 transition shadow text-white"
+            >
+              EN
+            </button>
+            <button
+              onclick="setLanguage('de')"
+              class="px-3 py-2 bg-yellow-500 rounded text-xs font-bold hover:scale-110 transition shadow text-white"
+            >
+              DE
+            </button>
+            <button
+              onclick="setLanguage('es')"
+              class="px-3 py-2 bg-orange-500 rounded text-xs font-bold hover:scale-110 transition shadow text-white"
+            >
+              ES
+            </button>
+            <button
+              onclick="setLanguage('it')"
+              class="px-3 py-2 bg-green-600 rounded text-xs font-bold hover:scale-110 transition shadow text-white"
+            >
+              IT
+            </button>
+          </div>
+
           <button
             onclick="audioManager.toggle()"
             class="w-16 h-16 rounded-full shadow-lg transition hover:scale-110 bg-white/10 flex items-center justify-center"
           >
             <img
               id="sound-icon-img"
-              src="ses-ac.png"
+              src="assets/ses-ac.png"
               class="w-10 h-10 object-contain"
             />
           </button>
-          <div class="text-xs text-white opacity-70">Ses Durumu</div>
+          <div data-i18n="sound_status" class="text-xs text-white opacity-70">
+            Ses Durumu
+          </div>
 
           <button
-            onclick="game.toggleNightMode()"
-            class="p-3 bg-slate-700 text-white rounded-xl hover:bg-slate-800 font-bold transition w-full"
-          >
-            GECE / GÜNDÜZ
-          </button>
-          <button
             onclick="game.toggleInfo()"
+            data-i18n="how_to_play"
             class="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-bold transition w-full"
           >
             NASIL OYNANIR?
@@ -691,6 +815,7 @@
           <hr class="my-2 w-full border-white/10" />
           <button
             onclick="game.resetSave()"
+            data-i18n="reset"
             class="p-3 bg-red-800/80 text-white border border-red-600 rounded-xl hover:bg-red-900 font-bold transition w-full"
           >
             SIFIRLA
@@ -707,8 +832,8 @@
         class="bg-[#3f2e22] border-4 border-[#5d4037] rounded-2xl w-full max-w-md p-6 text-white relative"
       >
         <div onclick="game.toggleInfo()" class="close-btn">X</div>
-        <h2 class="font-bold text-xl mb-4">REHBER</h2>
-        <p class="text-sm opacity-80">
+        <h2 data-i18n="guide" class="font-bold text-xl mb-4">REHBER</h2>
+        <p data-i18n="guide_text" class="text-sm opacity-80">
           Toprağa tıkla, tohumları büyüt. Space tuşuna basılı tutarak seri
           tıklayabilirsin!
         </p>
@@ -718,57 +843,58 @@
     <div
       id="start-screen"
       class="fixed inset-0 bg-slate-900 z-[9999] flex flex-col items-center justify-center text-white transition-opacity duration-500"
-      style="background-image: url('bac.png'); background-size: cover"
+      style="background-image: url('assets/bac.png'); background-size: cover"
     >
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
       <div class="relative z-10 flex flex-col items-center">
         <img
-          src="logo- tap seed.png"
+          src="assets/logo- tap seed.png"
           class="w-64 md:w-80 object-contain mb-6 drop-shadow-2xl"
         />
         <input
           type="text"
           id="username-input"
           class="name-input"
+          data-i18n="username_placeholder"
           placeholder="İsmini Yaz..."
           maxlength="12"
         />
         <button
           onclick="game.startGame()"
+          data-i18n="start_game"
           class="px-16 py-5 text-xl font-black text-[#3f2e22] bg-white rounded-full tracking-wider hover:scale-105 transition shadow-xl border-4 border-[#3f2e22]"
         >
           OYUNA BAŞLA
         </button>
         <div class="mt-8 text-white/50 text-xs font-mono">
-          v11.0 - Balanced (1 by 1)
+          v12.1 - Bee Update
         </div>
       </div>
     </div>
 
     <div id="toast-container" class="fixed top-24 right-5 z-[90]"></div>
 
+    <script src="lang.js"></script>
+
     <script>
-      /* --- SPACE TUŞU VE EVENTS --- */
-      let spaceInterval = null;
+      /* --- SPACE TUŞU VE EVENTS (GAME LOOP MANTIĞI) --- */
 
+      // Artık Interval kullanmıyoruz, Loop içinde kontrol edeceğiz
       window.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && !e.repeat && game.gameStarted) {
-          game.handleClick(null);
-          const plant = document.getElementById("plant-img");
-          if (plant) plant.classList.add("plant-pressed");
-
-          if (!spaceInterval) {
-            spaceInterval = setInterval(() => {
-              game.handleClick(null);
-            }, 10);
+        if (e.code === "Space" && game.gameStarted) {
+          e.preventDefault(); // Sayfa kaymasını engeller
+          if (!e.repeat) {
+            game.isSpaceDown = true; // Bayrağı kaldır
+            game.handleClick(null); // İlk dokunuşta hemen tıkla
+            const plant = document.getElementById("plant-img");
+            if (plant) plant.classList.add("plant-pressed");
           }
         }
       });
 
       window.addEventListener("keyup", (e) => {
         if (e.code === "Space") {
-          clearInterval(spaceInterval);
-          spaceInterval = null;
+          game.isSpaceDown = false; // Bayrağı indir
           const plant = document.getElementById("plant-img");
           if (plant) plant.classList.remove("plant-pressed");
         }
@@ -791,19 +917,20 @@
             this.resume();
             const o = this.ctx.createOscillator();
             const g = this.ctx.createGain();
+            // Ses frekansını biraz değiştirdim, seri tıklamada kulak tırmalamasın
             o.frequency.setValueAtTime(
-              400 + Math.random() * 100,
+              200 + Math.random() * 50,
               this.ctx.currentTime
             );
             g.gain.setValueAtTime(0.05, this.ctx.currentTime);
             g.gain.exponentialRampToValueAtTime(
               0.001,
-              this.ctx.currentTime + 0.1
+              this.ctx.currentTime + 0.08 // Daha kısa sürede sussun
             );
             o.connect(g);
             g.connect(this.ctx.destination);
             o.start();
-            o.stop(this.ctx.currentTime + 0.1);
+            o.stop(this.ctx.currentTime + 0.08);
           } catch (e) {}
         },
         playDing() {
@@ -829,17 +956,17 @@
         toggle() {
           this.enabled = !this.enabled;
           document.getElementById("sound-icon-img").src = this.enabled
-            ? "ses-ac.png"
-            : "ses-kapa.png";
+            ? "assets/ses-ac.png"
+            : "assets/ses-kapa.png";
         },
       };
 
       const game = {
-        // YENİ KAYIT: Dengeli (Balanced)
-        saveKey: "tapSeed_v11_Balanced",
+        saveKey: "tapSeed_v12_Lifetime",
         data: {
           username: "",
           points: 0,
+          lifetimePoints: 0,
           clickCount: 0,
           clickPower: 1,
           autoPower: 0,
@@ -859,58 +986,63 @@
           },
           unlockedAchievements: [],
         },
+
         lastFrameTime: 0,
         _accAuto: 0,
         _autoClickAnimTime: 0,
 
+        // SPACE İÇİN YENİ DEĞİŞKENLER
+        isSpaceDown: false,
+        spaceTimer: 0,
+
         achievements: [
           {
             id: 1,
-            title: "İlk Adım",
-            desc: "1 kere tıkla",
+            title: "ach_1_title",
+            desc: "ach_1_desc",
             cond: (d) => d.clickCount >= 1,
           },
           {
             id: 2,
-            title: "Çalışkan Çiftçi",
-            desc: "500 kere tıkla",
+            title: "ach_2_title",
+            desc: "ach_2_desc",
             cond: (d) => d.clickCount >= 500,
           },
           {
             id: 3,
-            title: "Otomasyon",
-            desc: "Gübre seviyesi 5 yap",
+            title: "ach_3_title",
+            desc: "ach_3_desc",
             cond: (d) => d.upgrades.auto.c >= 5,
           },
           {
             id: 4,
-            title: "Zengin",
-            desc: "10.000 SP biriktir",
+            title: "ach_4_title",
+            desc: "ach_4_desc",
             cond: (d) => d.points >= 10000,
           },
           {
             id: 5,
-            title: "Boyut Gezgini",
-            desc: "2. Boyuta geç",
+            title: "ach_5_title",
+            desc: "ach_5_desc",
             cond: (d) => d.dimension >= 2,
           },
         ],
         stages: [
-          { name: "TOHUM", limit: 500, img: "level1.png" },
-          { name: "MİNİK FİLİZ", limit: 3000, img: "level2.png" },
-          { name: "YEŞEREN FİDAN", limit: 15000, img: "level3.png" },
-          { name: "GENÇ AĞAÇ", limit: 75000, img: "level4.png" },
-          { name: "GÜÇLÜ GÖVDE", limit: 300000, img: "level5.png" },
-          { name: "ÇİÇEKLİ AĞAÇ", limit: 1000000, img: "level6.png" },
-          { name: "MEYVE VEREN", limit: 5000000, img: "level7.png" },
-          { name: "ORMAN BEKÇİSİ", limit: 25000000, img: "level8.png" },
-          { name: "ULU ÇINAR", limit: 100000000, img: "level9.png" },
-          { name: "KADİM MEŞE", limit: 500000000, img: "level10.png" },
-          { name: "DOĞA RUHU", limit: 2500000000, img: "level11.png" },
-          { name: "HAYAT AĞACI", limit: 10000000000, img: "level12.png" },
-          { name: "GÖKYÜZÜ SÜTUNU", limit: 100000000000, img: "level13.png" },
-          { name: "YILDIZ TOHUMU", limit: 500000000000, img: "level14.png" },
-          { name: "EVRENİN NEFESİ", limit: 2000000000000, img: "level15.png" },
+          { name: "stage_0", limit: 500, img: "assets/level1.png" },
+          { name: "stage_1", limit: 3000, img: "assets/level2.png" },
+          { name: "stage_2", limit: 15000, img: "assets/level3.png" },
+          { name: "stage_3", limit: 75000, img: "assets/level4.png" },
+          { name: "stage_4", limit: 300000, img: "assets/level5.png" },
+          { name: "stage_5", limit: 1000000, img: "assets/level6.png" },
+          { name: "stage_6", limit: 5000000, img: "assets/level7.png" },
+          { name: "stage_7", limit: 25000000, img: "assets/level8.png" },
+          { name: "stage_8", limit: 100000000, img: "assets/level9.png" },
+          { name: "stage_9", limit: 500000000, img: "assets/level10.png" },
+          { name: "stage_10", limit: 2500000000, img: "assets/level11.png" },
+          { name: "stage_11", limit: 10000000000, img: "assets/level12.png" },
+          { name: "stage_12", limit: 100000000000, img: "assets/level13.png" },
+          { name: "stage_13", limit: 500000000000, img: "assets/level14.png" },
+          { name: "stage_14", limit: 2000000000000, img: "assets/level15.png" },
         ],
         isRaining: false,
         isNight: false,
@@ -918,7 +1050,12 @@
 
         init() {
           this.load();
+          if (typeof updateUITexts === "function") updateUITexts();
           this.recalculateStats();
+
+          if (typeof this.data.lifetimePoints === "undefined") {
+            this.data.lifetimePoints = this.data.points;
+          }
 
           if (this.data.username) {
             document.getElementById("username-input").value =
@@ -938,7 +1075,6 @@
           if (this.data.upgrades.gloves)
             this.data.clickPower += this.data.upgrades.gloves.c * 10;
 
-          // DENGELENMİŞ DEĞERLER (1-5-25)
           if (this.data.upgrades.auto)
             this.data.autoPower += this.data.upgrades.auto.c * 1.0;
           if (this.data.upgrades.shears)
@@ -972,11 +1108,12 @@
           setInterval(() => this.weatherLoop(), 15000);
           setInterval(() => this.toggleNightMode(), 180000);
 
-          // YEDEK SAYAÇ
+          // YEDEK SAYAÇ (Auto-Click için)
           setInterval(() => {
             if (this.gameStarted && this.data.autoPower > 0) {
               const gain = this.data.autoPower * 0.1;
               this.data.points += gain;
+              this.data.lifetimePoints += gain;
               this.updateUI();
               this.checkGrowth();
             }
@@ -985,7 +1122,7 @@
           this.scheduleGoldenSeed();
           this.scheduleBee();
           requestAnimationFrame(() => this.loop());
-          this.showToast(`Hoş Geldin ${name}`, "Bol şans!", "success");
+          this.showToast(t("welcome") + " " + name, t("good_luck"), "success");
         },
         handleClick(e, isAuto = false) {
           let m = this.data.prestigeMultiplier;
@@ -993,13 +1130,16 @@
           if (Date.now() < this.data.boostEndTime) m *= 2;
           if (this.isRaining) m *= 2;
           let gain = this.data.clickPower * m;
+
           this.data.points += gain;
+          this.data.lifetimePoints += gain;
           this.data.clickCount++;
 
           if (!isAuto) {
             audioManager.playPop();
             const clickArea = document.getElementById("click-area");
             let animEvent = e;
+            // Space ile basıldıysa veya otoysa rastgele konum
             if (!animEvent && clickArea) {
               const rect = clickArea.getBoundingClientRect();
               animEvent = {
@@ -1029,6 +1169,25 @@
           const dt = (now - this.lastFrameTime) / 1000;
           this.lastFrameTime = now;
 
+          // --- SPACE TUŞU SERİ TIKLAMA KONTROLÜ ---
+          // Eğer Space basılıysa:
+          if (this.isSpaceDown) {
+            this.spaceTimer += dt;
+            // 0.05 saniyede bir tıkla (Saniyede 20 tıklama)
+            if (this.spaceTimer >= 0.05) {
+              this.spaceTimer = 0;
+              this.handleClick(null); // Tıklama fonksiyonunu çağır
+
+              // Görsel efekt: Bitkiyi titret
+              const plant = document.getElementById("plant-img");
+              if (plant) {
+                plant.classList.add("plant-pressed");
+                setTimeout(() => plant.classList.remove("plant-pressed"), 30);
+              }
+            }
+          }
+          // ----------------------------------------
+
           if (typeof this._accAuto === "undefined") this._accAuto = 0;
 
           if (this.data.autoPower > 0) {
@@ -1038,13 +1197,14 @@
             if (this.isRaining) m *= 2;
 
             const autoGain = this.data.autoPower * m * dt;
+
             this.data.points += autoGain;
+            this.data.lifetimePoints += autoGain;
             this._accAuto += autoGain;
 
             if (!this._autoClickAnimTime) this._autoClickAnimTime = 0;
             this._autoClickAnimTime += dt;
 
-            // Görsel Tıklama
             if (this._autoClickAnimTime >= 0.1) {
               this._autoClickAnimTime = 0;
               this.data.clickCount++;
@@ -1092,7 +1252,7 @@
             if (!this.data.unlockedAchievements.includes(ach.id)) {
               if (ach.cond(this.data)) {
                 this.data.unlockedAchievements.push(ach.id);
-                this.showToast("BAŞARIM AÇILDI!", ach.title, "success");
+                this.showToast(t("achievements"), t(ach.title), "success");
                 audioManager.playDing();
               }
             }
@@ -1109,9 +1269,8 @@
           }
           if (this.data.points >= cost) {
             this.data.points -= cost;
-
             if (t === "auto") {
-              this.data.autoPower += 1.0; // İSTENEN DEĞER: 1
+              this.data.autoPower += 1.0;
               u.c++;
             } else if (t === "click") {
               this.data.clickPower += 1;
@@ -1120,28 +1279,31 @@
               this.data.clickPower += 2;
               u.c++;
             } else if (t === "shears") {
-              this.data.autoPower += 5.0; // Dengeli
+              this.data.autoPower += 5.0;
               u.c++;
             } else if (t === "gloves") {
               this.data.clickPower += 10;
               u.c++;
             } else if (t === "med") {
-              this.data.autoPower += 25.0; // Dengeli
+              this.data.autoPower += 25.0;
               u.c++;
             } else if (t === "boost") {
               this.data.boostEndTime = Date.now() + 60000;
-              this.showToast("UĞUR BÖCEKLERİ!", "Hız x2 (60sn)", "success");
+              this.showToast(t("upg_boost"), t("bonus_boost"), "success");
             }
             this.updateUI();
             this.save();
             audioManager.playDing();
           } else {
-            this.showToast("Yetersiz SP", "Puan biriktir.", "error");
+            this.showToast(t("insufficient_sp"), t("collect_points"), "error");
           }
         },
         updateUI() {
           document.getElementById("big-plant-score").innerText = Math.floor(
             this.data.points
+          ).toLocaleString();
+          document.getElementById("lifetime-score").innerText = Math.floor(
+            this.data.lifetimePoints || 0
           ).toLocaleString();
           document.getElementById("total-clicks").innerText =
             this.data.clickCount.toLocaleString();
@@ -1156,12 +1318,13 @@
             const dimMult = Math.pow(10, this.data.dimension - 1);
             prevLimit = basePrev * dimMult;
           }
+
+          const progressScore = this.data.lifetimePoints || 0;
           const progress = Math.max(
             0,
             Math.min(
               100,
-              ((this.data.points - prevLimit) / (currentLimit - prevLimit)) *
-                100
+              ((progressScore - prevLimit) / (currentLimit - prevLimit)) * 100
             )
           );
           document.getElementById("level-bar").style.width = progress + "%";
@@ -1182,7 +1345,6 @@
             const elLvl = document.getElementById("lvl-" + id);
             const elCost = document.getElementById("cost-" + id);
             const elBtn = document.getElementById("btn-" + id);
-
             if (elLvl && elCost && elBtn) {
               elLvl.innerText = "Lvl " + u.c;
               const cost = Math.floor(u.b * Math.pow(1.5, u.c));
@@ -1190,7 +1352,6 @@
               elBtn.disabled = this.data.points < cost;
             }
           };
-
           updateBtn("click", "click");
           updateBtn("water", "water");
           updateBtn("auto", "auto");
@@ -1210,7 +1371,7 @@
             statusContainer.innerHTML = `<span class="text-red-500 font-bold text-sm">${timeLeft}s</span>`;
           } else {
             boostBtn.disabled = this.data.points < 500;
-            statusContainer.innerHTML = `<img src="tik.png" class="h-full object-contain">`;
+            statusContainer.innerHTML = `<img src="assets/tik.png" class="h-full object-contain">`;
           }
 
           document.getElementById("prestige-display").innerText =
@@ -1225,13 +1386,13 @@
         },
         checkGrowth() {
           const currentLimit = this.getCurrentStageLimit();
-          if (this.data.points >= currentLimit) {
+          if ((this.data.lifetimePoints || 0) >= currentLimit) {
             if (this.data.stage >= this.stages.length - 1) {
               this.data.dimension++;
               this.data.stage = 0;
               this.showToast(
-                "🌌 BOYUT ATLADIN!",
-                `Yeni Boyut: ${this.data.dimension}`,
+                t("level_up"),
+                `${t("new_dimension")} ${this.data.dimension}`,
                 "success"
               );
               audioManager.playDing();
@@ -1250,6 +1411,7 @@
             return;
           this.data.prestigeMultiplier *= 1.5;
           this.data.points = 0;
+          this.data.lifetimePoints = 0;
           this.data.stage = 0;
           this.data.clickPower = 1;
           this.data.autoPower = 0;
@@ -1266,7 +1428,7 @@
           this.updateUI();
           this.save();
           document.getElementById("btn-prestige").classList.add("hidden");
-          this.showToast("YENİDEN DOĞUŞ", "Daha güçlüsün!", "success");
+          this.showToast(t("rebirth"), t("stronger"), "success");
         },
         checkOfflineEarnings() {
           if (this.data.autoPower > 0 && this.data.lastSaveTime) {
@@ -1278,11 +1440,12 @@
               );
               if (earned > 0) {
                 this.data.points += earned;
+                this.data.lifetimePoints += earned;
                 this.data.lastSaveTime = Date.now();
                 this.save();
                 setTimeout(() => {
                   this.showToast(
-                    "ÇEVRİMDIŞI KAZANÇ",
+                    t("offline_earnings"),
                     `+${earned} SP`,
                     "success"
                   );
@@ -1323,8 +1486,8 @@
                   <div>
                     <div class="font-bold ${
                       isUnlocked ? "text-yellow-400" : "text-gray-400"
-                    }">${ach.title}</div>
-                    <div class="text-xs opacity-70">${ach.desc}</div>
+                    }">${t(ach.title)}</div>
+                    <div class="text-xs opacity-70">${t(ach.desc)}</div>
                   </div>
                 </div>`;
             });
@@ -1333,8 +1496,9 @@
         renderPlant() {
           document.getElementById("plant-img").src =
             this.stages[this.data.stage].img;
-          document.getElementById("level-name").innerText =
-            this.stages[this.data.stage].name;
+          document.getElementById("level-name").innerText = t(
+            this.stages[this.data.stage].name
+          );
         },
         createFloatingText(e, t) {
           const el = document.createElement("div");
@@ -1380,15 +1544,13 @@
                   this.data.upgrades[key] = { ...defaultUpgrades[key] };
                 } else {
                   this.data.upgrades[key].b = defaultUpgrades[key].b;
-                  if (typeof this.data.upgrades[key].c === "undefined") {
+                  if (typeof this.data.upgrades[key].c === "undefined")
                     this.data.upgrades[key].c = 0;
-                  }
                 }
               }
               if (typeof this.data.dimension === "undefined")
                 this.data.dimension = 1;
             } catch (e) {
-              console.error("Kayıt dosyası bozuk, sıfırlanıyor...", e);
               localStorage.removeItem(this.saveKey);
             }
           }
@@ -1421,10 +1583,10 @@
           this.isNight = !this.isNight;
           if (this.isNight) {
             document.body.classList.add("night-mode");
-            this.showToast("🌙 GECE", "Auto x3", "info");
+            this.showToast(t("night_day"), "Auto x3", "info");
           } else {
             document.body.classList.remove("night-mode");
-            this.showToast("☀️ GÜNDÜZ", "Normal", "info");
+            this.showToast(t("night_day"), "Normal", "info");
           }
           this.weatherLoop();
           this.updateUI();
@@ -1438,7 +1600,8 @@
         spawnBee() {
           if (!this.gameStarted) return;
           const b = document.createElement("div");
-          b.innerHTML = "🐝";
+          b.innerHTML =
+            '<img src="assets/bee.png" style="width: 80px; height: 80px; object-fit: contain;">';
           b.className = "bee-moving";
           b.style.top = 10 + Math.random() * 50 + "%";
           b.onclick = (e) => {
@@ -1451,8 +1614,9 @@
               )
             );
             this.data.points += r;
+            this.data.lifetimePoints += r;
             audioManager.playDing();
-            this.showToast("ARI", `+${r} SP`, "success");
+            this.showToast(t("bee"), `+${r} SP`, "success");
           };
           document.body.appendChild(b);
           setTimeout(() => b.remove(), 15000);
@@ -1476,8 +1640,9 @@
           e.classList.add("hidden");
           const b = Math.max(100, Math.floor(this.data.points * 0.3));
           this.data.points += b;
+          this.data.lifetimePoints += b;
           audioManager.playDing();
-          this.showToast("ALTIN TOHUM", `+${b} SP!`, "success");
+          this.showToast(t("golden_seed"), `+${b} SP!`, "success");
           this.updateUI();
         },
       };
